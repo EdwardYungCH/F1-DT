@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中一 DT：自動化與機械人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="assets/common.css">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 48px}
+.top{background:#14202b;color:#e9f0f4;border-radius:20px;padding:30px 34px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;position:relative;overflow:hidden}
+.top small{display:block;font-family:var(--f-disp);letter-spacing:.24em;color:#8fb1c9;font-size:.8rem;margin-bottom:6px}
+.top h1{font-size:2.2rem;font-weight:900;margin:0}
+.top p{color:#b2c3cf;max-width:34em;margin:10px 0 0}
+.top .bot{width:150px;margin-left:auto;flex:none}
+.top .bot svg{width:100%;height:auto;display:block}
+.who2{margin-top:14px;font-size:.9rem;color:#cfe0ec}
+h2.lab{font-size:.85rem;letter-spacing:.12em;color:var(--ink-3);margin:30px 0 12px;font-weight:800}
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.lesson{display:grid;grid-template-columns:70px 1fr;gap:14px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s,box-shadow .15s}
+.lesson:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:0 10px 24px rgba(20,32,43,.08)}
+.lesson .n{font-family:var(--f-disp);font-weight:700;font-size:2.6rem;line-height:1;color:var(--c);text-align:center;border-right:1px solid var(--line);padding-right:10px}
+.lesson h3{margin:0;font-size:1.12rem;font-weight:900}
+.lesson p{margin:4px 0 0;font-size:.9rem;color:var(--ink-2)}
+.lesson .meta{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:.78rem;font-weight:800;border-radius:999px;padding:2px 10px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-3)}
+.chip.go{background:#e6f5ec;border-color:#9fd5b3;color:#0f5e32}
+.chip.on{background:#fff6dc;border-color:#ebc56a;color:#6b4a00}
+.minibar{flex:1;min-width:80px;height:7px;border-radius:4px;background:#e3e9f0;overflow:hidden}
+.minibar i{display:block;height:100%;background:var(--c)}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.tool{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;text-decoration:none;color:inherit}
+.tool:hover{border-color:var(--t-mid)}
+.tool svg{width:48px;height:48px;flex:none}
+.tool b{display:block;font-size:1.05rem}
+.tool span{font-size:.88rem;color:var(--ink-2)}
+.cert{display:none;background:linear-gradient(120deg,#fff7df,#fff);border:2px solid #f0d58a;border-radius:16px;padding:16px 20px;margin-top:16px}
+.cert.show{display:flex;gap:14px;align-items:center}
+.cert b{font-size:1.1rem}
+.foot2{margin-top:30px;font-size:.82rem;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot2 a{color:var(--ink-3)}
+@media (max-width:560px){.top{padding:22px}.top h1{font-size:1.7rem}.top .bot{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <small>F1 · DESIGN &amp; TECHNOLOGY</small>
+      <h1>自動化與機械人</h1>
+      <p>中一設計與科技科自學網站。三堂課由「機械人是什麼」開始，到寫程式令麥昆小車走正方形、自己巡線，再用流程圖設計更聰明的巡線車。每一課都可以先用模擬器試，再用真車做。</p>
+      <div class="who2" id="who"></div>
+    </div>
+    <div class="bot">
+      <svg viewBox="0 0 160 150" aria-hidden="true">
+        <path d="M6 128 C 40 90, 90 150, 154 104" fill="none" stroke="#0b1116" stroke-width="12" stroke-linecap="round"/>
+        <g transform="translate(80 70)">
+          <rect x="-34" y="-36" width="68" height="62" rx="18" fill="#1d63c9"/>
+          <rect x="-46" y="-18" width="12" height="30" rx="5" fill="#9fb3c8"/><rect x="34" y="-18" width="12" height="30" rx="5" fill="#9fb3c8"/>
+          <circle cx="-13" cy="-10" r="9" fill="#fff"/><circle cx="13" cy="-10" r="9" fill="#fff"/><circle cx="-13" cy="-10" r="4" fill="#14202b"/><circle cx="13" cy="-10" r="4" fill="#14202b"/>
+          <rect x="-12" y="8" width="24" height="5" rx="2.5" fill="#fff"/>
+          <line x1="0" y1="-36" x2="0" y2="-50" stroke="#1d63c9" stroke-width="4"/><circle cx="0" cy="-52" r="6" fill="#ffd166"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <div class="cert" id="cert"><span style="font-size:2rem">🏅</span><div><b>恭喜！你已完成本單元三堂課。</b><div class="small muted">記得每一課都下載成績報告交給老師。</div></div></div>
+
+  <h2 class="lab">課堂</h2>
+  <div class="lessons" id="lessons"></div>
+
+  <h2 class="lab">工具</h2>
+  <div class="tools">
+    <a class="tool" href="sim/index.html">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="12" fill="#14202b"/><rect x="13" y="12" width="22" height="24" rx="7" fill="#fff"/><rect x="9" y="18" width="5" height="12" rx="2" fill="#9fb3c8"/><rect x="34" y="18" width="5" height="12" rx="2" fill="#9fb3c8"/><circle cx="19" cy="20" r="2.6" fill="#ff5a4f"/><circle cx="29" cy="20" r="2.6" fill="#ff5a4f"/><rect x="18" y="27" width="12" height="2.6" rx="1.3" fill="#14202b"/></svg>
+      <div><b>麥昆小車模擬器</b><span>用 MakeCode 積木編程，看小車在地磚和巡線圖上行走；可匯出到真的 MakeCode。</span></div>
+    </a>
+    <a class="tool" href="project.html">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="12" fill="#e08600"/><rect x="12" y="10" width="24" height="30" rx="3" fill="#fff"/><path d="M17 18h14M17 24h14M17 30h9" stroke="#e08600" stroke-width="3" stroke-linecap="round"/></svg>
+      <div><b>單元小專題：課室送遞機械人</b><span>運用三課所學，設計一部在課室送物件的巡線機械人。附評分準則。</span></div>
+    </a>
+  </div>
+
+  <div class="foot2"><span>學生進度只儲存在所用的電腦及瀏覽器內。插圖為本網站自繪。　版本 <span id="ver"></span></span><a href="teacher/">老師區</a></div>
+</div>
+<script src="assets/config.js"></script>
+<script>
+(function () {
+  var LESSONS = [
+    { n: 1, id: 'L1', href: 'L1/', c: '#1d63c9', title: '認識機械人．小車走正方形', desc: '感知、決定、動作；輸入→處理→輸出；用計時和差速轉向令小車走一格地磚正方形。' },
+    { n: 2, id: 'L2', href: 'L2/', c: '#0e7d6a', title: '巡線感應器與巡線機械人', desc: '紅外線反射、讀 1 定 0、三種轉彎方式（先預測再試驗），令小車自己沿黑線走完一圈。' },
+    { n: 3, id: 'L3', href: 'L3/', c: '#5644b8', title: '流程圖與分層修正', desc: '流程圖符號、判斷與迴圈；先畫流程圖，再設計用 5 個感應器的分層修正巡線車。' }
+  ];
+  function get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var done = 0;
+  document.getElementById('lessons').innerHTML = LESSONS.map(function (l) {
+    var d = get('f1dt:' + l.id), s = d && d.summary, prog = s ? s.prog : 0;
+    var badges = d && d.badges ? Object.keys(d.badges).length : 0;
+    if (prog >= 100) done++;
+    var chip = !s || !prog ? '<span class="chip">未開始</span>' : prog >= 100 ? '<span class="chip go">已完成</span>' : '<span class="chip on">進行中</span>';
+    return '<a class="lesson" href="' + l.href + '" style="--c:' + l.c + '"><div class="n">' + l.n + '</div><div><h3>' + esc(l.title) + '</h3><p>' + esc(l.desc) + '</p>' +
+      '<div class="meta">' + chip + (s && prog ? '<span class="minibar"><i style="width:' + prog + '%"></i></span><span class="chip">' + s.score + ' / ' + s.max + ' 分</span>' : '') + (badges ? '<span class="chip">🏅 ' + badges + '</span>' : '') + '</div></div></a>';
+  }).join('');
+  if (done === LESSONS.length) document.getElementById('cert').classList.add('show');
+  var st = get('f1dt:student');
+  document.getElementById('who').textContent = st && st.name ? '你好，' + st.cls + ' ' + st.num + ' ' + st.name + '！' : '';
+  document.getElementById('ver').textContent = (window.F1CONFIG || {}).VERSION || '';
+})();
+</script>
+</body>
+</html>

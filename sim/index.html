@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>麥昆小車模擬器</title>
+<link rel="stylesheet" href="sim.css">
+</head>
+<body>
+<header class="simbar">
+  <a class="brand" id="brand" href="../index.html" title="返回單元首頁">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="7" y="9" width="26" height="22" rx="8" fill="#fff"/><rect x="3" y="15" width="5" height="12" rx="2" fill="#9fb3c8"/><rect x="32" y="15" width="5" height="12" rx="2" fill="#9fb3c8"/><circle cx="15" cy="19" r="3" fill="#ff5a4f"/><circle cx="25" cy="19" r="3" fill="#ff5a4f"/><rect x="14" y="25" width="12" height="2.5" rx="1.2" fill="#14202b"/><line x1="20" y1="9" x2="20" y2="4" stroke="#fff" stroke-width="2"/><circle cx="20" cy="3.5" r="2.2" fill="#ffd166"/></svg>
+    <span>麥昆小車模擬器</span>
+  </a>
+  <label class="msel">任務
+    <select id="mission" aria-label="選擇任務"></select>
+  </label>
+  <label class="msel" id="sceneSel" hidden>場景
+    <select id="scene"><option value="tiles">地磚地面</option><option value="oval">0 字巡線圖</option><option value="sharp">急彎挑戰圖</option></select>
+  </label>
+  <span class="grow"></span>
+  <button class="tb" id="btnExport" type="button">匯出到 MakeCode</button>
+  <button class="tb" id="btnHelp" type="button">說明</button>
+</header>
+
+<div class="goal" id="goal"></div>
+
+<main class="simgrid">
+  <section class="blocks" aria-label="積木編程區">
+    <div id="blockly"></div>
+    <div class="ws-tools">
+      <button type="button" id="btnStarter" class="mini">載入起步程式</button>
+      <button type="button" id="btnClear" class="mini">清空</button>
+    </div>
+  </section>
+
+  <section class="stagecol" aria-label="模擬場景">
+    <div class="stagewrap">
+      <canvas id="stage" aria-label="小車俯視圖"></canvas>
+      <div class="hud"><span id="hudTime">0.0 秒</span><span id="hudScene"></span></div>
+      <div class="cam">
+        <button type="button" id="btnFollow" class="mini" aria-pressed="false">跟隨小車</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button type="button" class="run" id="btnRun">▶ 執行</button>
+      <button type="button" class="stop" id="btnStop" disabled>■ 停止</button>
+      <button type="button" class="reset" id="btnReset">↺ 重設</button>
+      <label class="spd">速度
+        <select id="speed">
+          <option value="0.25">慢動作</option>
+          <option value="1" selected>1 倍</option>
+          <option value="2">2 倍</option>
+          <option value="4">4 倍</option>
+          <option value="10">10 倍</option>
+        </select>
+      </label>
+      <label class="tog" title="模擬電量、左右馬達差異及感應器誤差。關閉後結果不計分。"><input type="checkbox" id="realism" checked> 真實誤差</label>
+    </div>
+
+    <div class="readouts">
+      <div class="ro sensors">
+        <b>循跡感測器</b>
+        <div class="leds" id="leds"></div>
+      </div>
+      <div class="ro wheels">
+        <b>馬達</b>
+        <div class="wbar"><span>左</span><i id="wL"></i><em id="wLv">0</em></div>
+        <div class="wbar"><span>右</span><i id="wR"></i><em id="wRv">0</em></div>
+      </div>
+      <div class="ro mb">
+        <b>micro:bit</b>
+        <div class="matrix" id="matrix"></div>
+      </div>
+    </div>
+
+    <div class="result" id="result" aria-live="polite"></div>
+    <ul class="log" id="log"></ul>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden><div class="mbox"><h3 id="mTitle"></h3><div id="mBody"></div><div class="mact" id="mAct"></div></div></div>
+
+<script src="blockly/blockly_compressed.js"></script>
+<script src="blockly/blocks_compressed.js"></script>
+<script src="blockly/msg/zh-hant.js"></script>
+<script src="engine.js"></script>
+<script src="blocks.js"></script>
+<script src="missions.js"></script>
+<script src="sim.js"></script>
+</body>
+</html>

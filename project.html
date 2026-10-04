@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>單元小專題：課室送遞機械人｜中一 DT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="assets/common.css">
+<style>
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 60px}
+.rubric td,.rubric th{font-size:.88rem}
+.rubric td:first-child{font-weight:700;width:16%}
+.cycle{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0}
+.cycle div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.9rem;position:relative}
+.cycle b{display:block;color:var(--t-d)}
+</style>
+</head>
+<body data-theme="l1">
+<header class="hero" style="background:linear-gradient(120deg,#8a4b00,#e08600)">
+  <div class="in"><div>
+    <div class="kicker">F1 DT · UNIT PROJECT</div>
+    <h1>單元小專題：課室送遞機械人</h1>
+    <p>運用三課所學——感應器、程式、流程圖和試驗修正——設計一部可以在課室送物件的巡線機械人。</p>
+  </div></div>
+</header>
+<div class="wrap">
+  <p style="margin-top:18px"><a href="index.html">← 單元首頁</a></p>
+
+  <section class="card"><header><h2>設計情境</h2></header>
+    <p>老師想有一部小車，把功課簿由<b>老師枱（A 站）</b>送到<b>課室後面的收集箱（B 站）</b>，再自己回來。路線會經過兩張書枱之間的窄位，有一個急彎；途中要停站，而且不可以撞到同學的腳。</p>
+    <div class="callout key"><span class="ttl">設計要求</span>
+      <ol>
+        <li>沿着地上的黑線，由 A 站去 B 站，再回到 A 站。</li>
+        <li>每個站有一條橫線：小車到站要<b>停 3 秒</b>，並亮前燈，然後繼續。</li>
+        <li>能通過急彎而不脫線；轉彎要順（物件不會跌出來）。</li>
+        <li>安全：脫線時要停車，不可以亂衝。</li>
+        <li>（加分）設計一個裝物件的小箱或擋板，並用卡紙製作。</li>
+      </ol></div>
+  </section>
+
+  <section class="card"><header><h2>設計循環</h2></header>
+    <div class="cycle">
+      <div><b>1. 了解問題</b>路線有幾個彎？站在哪裏？有什麼限制？</div>
+      <div><b>2. 搜集資料</b>重溫三課：讀 1 定 0、轉彎方式、分層修正。</div>
+      <div><b>3. 構思方案</b>畫出路線圖；決定用哪幾個感應器。</div>
+      <div><b>4. 畫流程圖</b>「到站」的菱形要放第幾個？為什麼？</div>
+      <div><b>5. 製作</b>先在模擬器試，再寫入真車；製作載物箱。</div>
+      <div><b>6. 測試及改良</b>每次只改一樣，記錄結果。</div>
+      <div><b>7. 評鑑</b>哪裏做得好？如果有多一星期，你會改什麼？</div>
+    </div>
+  </section>
+
+  <section class="card"><header><h2>要交的東西</h2></header>
+    <ul>
+      <li>路線圖（標示 A 站、B 站、急彎）及流程圖（紙本或電子）</li>
+      <li>MakeCode 分享連結</li>
+      <li>測試記錄表：最少 3 次，每次寫改了什麼、結果如何</li>
+      <li>一段不多於 30 秒的影片：小車完成一次來回</li>
+      <li>評鑑：100–150 字</li>
+    </ul>
+  </section>
+
+  <section class="card"><header><h2>評分準則</h2></header>
+    <div class="tbl-wrap"><table class="rubric">
+      <thead><tr><th>準則</th><th>4　優異</th><th>3　良好</th><th>2　合格</th><th>1　仍需努力</th></tr></thead>
+      <tbody>
+        <tr><td>流程圖</td><td>符號全對，每個菱形有是／否；判斷次序合理，並能解釋原因</td><td>符號大致正確，次序合理</td><td>有流程圖，但有符號或出路錯誤</td><td>沒有流程圖，或與程式不符</td></tr>
+        <tr><td>程式及功能</td><td>來回完成、到站停 3 秒及亮燈、脫線會停</td><td>完成單程及停站</td><td>能巡線，但未能停站</td><td>未能完成巡線</td></tr>
+        <tr><td>轉彎表現</td><td>用分層修正，急彎順利，沒有明顯急擺</td><td>能過急彎，偶有急擺</td><td>要多次嘗試才能過急彎</td><td>經常在急彎脫線</td></tr>
+        <tr><td>測試及改良</td><td>3 次以上記錄，每次只改一樣，有清楚結論</td><td>3 次記錄，有改良</td><td>有記錄但欠分析</td><td>沒有記錄</td></tr>
+        <tr><td>評鑑及安全</td><td>具體指出優點、限制及改良方法，並考慮安全</td><td>有優點及改良方法</td><td>只描述做了什麼</td><td>沒有評鑑</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small muted">建議時間：2–3 節。老師可按班情調整要求，例如只做單程。</p>
+  </section>
+</div>
+<script src="assets/config.js"></script>
+</body>
+</html>

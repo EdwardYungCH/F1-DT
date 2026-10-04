@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>成績匯總工具｜中一 DT 自動化與機械人</title>
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+.wrap{max-width:1200px;margin:0 auto;padding:24px 16px 60px}
+.gate{max-width:420px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.drop{border:3px dashed var(--t-mid);border-radius:16px;background:#fff;padding:28px;text-align:center;margin:14px 0}
+.drop.over{background:var(--t-soft)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tabs button{min-height:40px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-weight:700;padding:4px 14px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--t);border-color:var(--t);color:#fff}
+td.ok{color:var(--ok);font-weight:800} td.bad{color:var(--no);font-weight:800}
+.bar{display:inline-block;height:10px;border-radius:5px;background:var(--no);vertical-align:middle}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.stat b{display:block;font-size:1.5rem;color:var(--t-d)}
+table.wide{font-size:.85rem} table.wide th,table.wide td{padding:5px 7px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <h2 style="margin-bottom:8px">成績匯總工具</h2>
+  <p class="small muted">請輸入老師密碼。</p>
+  <input class="inp" id="pin" type="password" placeholder="密碼" autocomplete="off">
+  <p class="small" id="err" style="color:var(--no);min-height:1.2em"></p>
+  <button class="btn primary" id="go" type="button">進入</button>
+</div>
+<div class="wrap" id="main" hidden>
+  <h1 style="font-size:1.5rem">成績匯總工具</h1>
+  <p class="muted">把學生下載的成績報告（.html）一次過拖進來：自動核對驗證碼、列出成績、匯出 Excel 可開啟的 CSV，並找出全班最多人答錯的題目。檔案只在這部電腦處理，不會上載。</p>
+  <div class="drop" id="drop"><b>把成績報告拖到這裏</b><br><span class="small muted">可以一次放很多個檔案</span><br>
+    <label class="btn" style="margin-top:10px">選擇檔案<input type="file" id="file" multiple accept=".html,.htm,text/html" hidden></label></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="stats" id="stats"></div>
+  <div class="btnrow"><button class="btn go" id="csv" type="button">📥 匯出 CSV（Excel）</button><button class="btn" id="clear" type="button">清除全部</button><a class="btn ghost" href="index.html">返回老師區</a></div>
+  <h3>成績表</h3>
+  <div class="tbl-wrap" id="tbl"></div>
+  <h3>最多人答錯的題目（第一次作答）</h3>
+  <div class="tbl-wrap" id="items"></div>
+  <h3>無法讀取的檔案</h3>
+  <ul id="bad" class="small"></ul>
+</div>
+<script src="../assets/config.js"></script>
+<script src="../assets/sha.js"></script>
+<script>
+(function () {
+  var C = window.F1CONFIG || {}, rows = [], bad = [], lesson = 'L1';
+  function $(s) { return document.querySelector(s); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function open() { $('#gate').hidden = true; $('#main').hidden = false; render(); }
+  try { if (sessionStorage.getItem('f1dt:teacher') === '1') open(); } catch (e) {}
+  function go() { if ($('#pin').value !== C.TEACHER_PIN) { $('#err').textContent = '密碼不正確。'; return; } try { sessionStorage.setItem('f1dt:teacher', '1'); } catch (e) {} open(); }
+  $('#go').onclick = go; $('#pin').onkeydown = function (e) { if (e.key === 'Enter') go(); };
+
+  function parse(text, fname) {
+    var m = /<script type="application\/json" id="f1-report">([\s\S]*?)<\/script>/.exec(text);
+    if (!m) return { fname: fname, err: '不是本單元的成績報告' };
+    try {
+      var box = JSON.parse(m[1]), d = JSON.parse(box.payload);
+      var ok = SHA.hmac(C.SIGN_KEY, box.payload) === box.sig && d.app === C.APP;
+      return { fname: fname, d: d, ok: ok, sig: box.sig, code: (box.sig.slice(0, 4) + '-' + box.sig.slice(4, 8) + '-' + box.sig.slice(8, 12)).toUpperCase() };
+    } catch (e) { return { fname: fname, err: '檔案損壞' }; }
+  }
+  function addFiles(files) {
+    var list = Array.prototype.slice.call(files), n = list.length;
+    list.forEach(function (f) {
+      var r = new FileReader();
+      r.onload = function () {
+        var x = parse(String(r.result), f.name);
+        if (x.err) bad.push(x); else if (!rows.some(function (y) { return y.sig === x.sig; })) rows.push(x);
+        if (--n === 0) { var ls = rows.map(function (y) { return y.d.lesson; }); if (ls.length && ls.indexOf(lesson) < 0) lesson = ls[0]; render(); }
+      };
+      r.readAsText(f);
+    });
+  }
+  var drop = $('#drop');
+  drop.addEventListener('dragover', function (e) { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', function () { drop.classList.remove('over'); });
+  drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); });
+  $('#file').onchange = function () { addFiles(this.files); this.value = ''; };
+  $('#clear').onclick = function () { rows = []; bad = []; render(); };
+
+  function cur() { return rows.filter(function (r) { return r.d.lesson === lesson; }).sort(function (a, b) { return (a.d.cls + '').localeCompare(b.d.cls + '') || (+a.d.no - +b.d.no) || String(a.d.no).localeCompare(String(b.d.no)); }); }
+  function cols(list) { var seen = {}, out = []; list.forEach(function (r) { r.d.items.forEach(function (it) { if (it.max > 0 && !seen[it.key]) { seen[it.key] = 1; out.push({ key: it.key, label: it.label, max: it.max }); } }); }); return out; }
+  function fmt(t) { if (!t) return ''; var d = new Date(t), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
+  function render() {
+    var ls = ['L1', 'L2', 'L3'];
+    $('#tabs').innerHTML = ls.map(function (l) { var n = rows.filter(function (r) { return r.d.lesson === l; }).length; return '<button type="button" data-l="' + l + '" aria-pressed="' + (l === lesson) + '">第' + '一二三'[+l[1] - 1] + '堂（' + n + '）</button>'; }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (b) { b.onclick = function () { lesson = b.getAttribute('data-l'); render(); }; });
+    var list = cur(), cs = cols(list);
+    var avg = list.length ? Math.round(list.reduce(function (s, r) { return s + r.d.pct; }, 0) / list.length) : 0;
+    var badSig = list.filter(function (r) { return !r.ok; }).length;
+    var ver = list.filter(function (r) { return r.d.items.some(function (it) { return it.detail && it.detail.type === 'verify' && it.detail.ok; }); }).length;
+    $('#stats').innerHTML = '<div class="stat">報告數目<b>' + list.length + '</b></div><div class="stat">平均百分比<b>' + avg + '%</b></div><div class="stat">真車已驗收<b>' + ver + '</b></div><div class="stat">驗證失敗<b style="color:' + (badSig ? 'var(--no)' : 'var(--ok)') + '">' + badSig + '</b></div>';
+    if (!list.length) { $('#tbl').innerHTML = '<p class="muted">未有這一課的報告。</p>'; $('#items').innerHTML = ''; }
+    else {
+      var h = '<table class="wide"><thead><tr><th>班別</th><th>學號</th><th>姓名</th><th>總分</th><th>%</th><th>等級</th><th>驗證</th>' + cs.map(function (c) { return '<th title="' + esc(c.label) + '">' + esc(c.label.replace(/^\d+\.\s*/, '').slice(0, 10)) + '<br><span class="muted">/' + c.max + '</span></th>'; }).join('') + '<th>輸出時間</th></tr></thead><tbody>';
+      list.forEach(function (r) {
+        var d = r.d, map = {}; d.items.forEach(function (it) { map[it.key] = it; });
+        h += '<tr><td>' + esc(d.cls) + '</td><td>' + esc(d.no) + '</td><td>' + esc(d.name) + (d.teacherUsed ? ' <span class="muted" title="曾使用老師模式">*</span>' : '') + '</td><td>' + d.total + ' / ' + d.max + '</td><td>' + d.pct + '</td><td>' + esc(d.grade) + '</td>' +
+          '<td class="' + (r.ok ? 'ok' : 'bad') + '" title="' + esc(r.fname) + '">' + (r.ok ? '✔ ' : '✘ ') + r.code + '</td>' +
+          cs.map(function (c) { var it = map[c.key]; return '<td>' + (it ? it.score : '') + '</td>'; }).join('') + '<td>' + fmt(d.exported) + '</td></tr>';
+      });
+      $('#tbl').innerHTML = h + '</tbody></table><p class="small muted">* 曾使用老師模式。驗證失敗代表報告可能被修改，或來自其他單元。</p>';
+      // 題目分析
+      var agg = {};
+      list.forEach(function (r) {
+        r.d.items.forEach(function (it) {
+          var x = it.detail; if (!x || !x.rows || ['choice', 'match', 'fill'].indexOf(x.type) < 0 || it.max <= 0) return;
+          x.rows.forEach(function (q) {
+            if (q.ok === null || q.ok === undefined) return;
+            var k = it.label + '｜' + q.q; var a = agg[k] || (agg[k] = { sec: it.label, q: q.q, ans: q.ans, n: 0, c: 0, wrong: {} });
+            a.n++; if (q.ok) a.c++; else a.wrong[q.a] = (a.wrong[q.a] || 0) + 1;
+          });
+        });
+      });
+      var arr = Object.keys(agg).map(function (k) { return agg[k]; }).sort(function (a, b) { return a.c / a.n - b.c / b.n; }).slice(0, 15);
+      $('#items').innerHTML = arr.length ? '<table class="wide"><thead><tr><th>練習</th><th>題目</th><th>正確答案</th><th>答對率</th><th>最常見的錯誤答案</th></tr></thead><tbody>' + arr.map(function (a) {
+        var p = Math.round(a.c / a.n * 100), w = Object.keys(a.wrong).sort(function (x, y) { return a.wrong[y] - a.wrong[x]; })[0];
+        return '<tr><td>' + esc(a.sec) + '</td><td style="white-space:normal;max-width:24em">' + esc(a.q) + '</td><td>' + esc(a.ans) + '</td><td><span class="bar" style="width:' + (100 - p) * 0.6 + 'px"></span> ' + p + '%（' + a.c + '/' + a.n + '）</td><td>' + (w ? esc(w) + '（' + a.wrong[w] + ' 人）' : '') + '</td></tr>';
+      }).join('') + '</tbody></table>' : '<p class="muted">沒有可分析的題目。</p>';
+    }
+    $('#bad').innerHTML = bad.map(function (b) { return '<li>' + esc(b.fname) + '：' + esc(b.err) + '</li>'; }).join('') || '<li class="muted">沒有</li>';
+  }
+  $('#csv').onclick = function () {
+    var list = cur(); if (!list.length) return;
+    var cs = cols(list);
+    var head = ['課堂', '班別', '學號', '姓名', '總分', '滿分', '百分比', '等級', '驗證', '驗證碼'].concat(cs.map(function (c) { return c.label + '（/' + c.max + '）'; })).concat(['輸出時間', '曾用老師模式']);
+    var lines = [head].concat(list.map(function (r) {
+      var d = r.d, map = {}; d.items.forEach(function (it) { map[it.key] = it; });
+      return [d.lesson, d.cls, d.no, d.name, d.total, d.max, d.pct, d.grade, r.ok ? '正確' : '失敗', r.code].concat(cs.map(function (c) { return map[c.key] ? map[c.key].score : ''; })).concat([fmt(d.exported), d.teacherUsed ? '是' : '']);
+    }));
+    var csv = lines.map(function (l) { return l.map(function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(','); }).join('\r\n');
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'F1_DT_' + lesson + '_成績.csv'; document.body.appendChild(a); a.click(); a.remove();
+  };
+  window.F1Summary = { parse: parse, addText: function (t, n) { var x = parse(t, n); if (x.err) bad.push(x); else rows.push(x); render(); return x; } };
+})();
+</script>
+</body>
+</html>
