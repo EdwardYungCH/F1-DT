@@ -3,9 +3,10 @@ import os
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 PROGS = {
- 'blocks-sq-full': "X.x(X.start(X.init(X.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+X.n(4)+'</value><statement name=\"DO\">'+X.motor('A','1',50,X.pause(5000,X.stop('A',X.pause(500,X.motor('L','1',50,X.motor('R','-1',50,X.pause(1000,X.stop('A',X.pause(500)))))))))+'</statement></block>'))))",
- 'blocks-sq-straight': "X.x(X.motor('A','1',50,X.pause(5000,X.stop('A',X.pause(500)))))",
- 'blocks-sq-turn': "X.x(X.motor('L','1',50,X.motor('R','-1',50,X.pause(1000,X.stop('A',X.pause(500))))))",
+ 'blocks-sq-full': "X.squareV(5000, 1000)",
+ 'blocks-sq-vars': "X.x(X.vdecl([X.VF, X.VT]) + X.setv(X.VF, 5000, X.setv(X.VT, 1000)))",
+ 'blocks-sq-straight': "X.x(X.vdecl([X.VF]) + X.motor('A','1',50,X.pausev(X.VF,X.stop('A',X.pause(500)))))",
+ 'blocks-sq-turn': "X.x(X.vdecl([X.VT]) + X.motor('L','1',50,X.motor('R','-1',50,X.pausev(X.VT,X.stop('A',X.pause(500))))))",
  'blocks-l2-full': "X.x(X.start(X.init(X.pause(1000))) + X.forever(X.follower('back'),30,170))",
  'blocks-l2-stop': "X.x(X.forever(X.follower('stop'),30,30))",
 }

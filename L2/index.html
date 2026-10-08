@@ -12,6 +12,7 @@
 .parts td:nth-child(2){min-width:13em}
 .tilebox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}
 .tilebox .inp{width:7em}
+.vchip{display:inline-block;background:#fde8ec;border:1px solid #f2b6c1;color:#a3112b;border-radius:6px;padding:0 7px;font-size:.9em;font-weight:800;white-space:nowrap}
 </style>
 </head>
 <body data-theme="l2">
@@ -21,7 +22,7 @@
     <div>
       <div class="kicker">F1 DT · LESSON 2</div>
       <h1>第二堂：小車走正方形</h1>
-      <p>今課用 MakeCode 寫程式，令麥昆小車在一格地磚上走一個正方形。你會學到工程師每天都做的循環：下載 → 測試 → 觀察 → 調整 → 再下載。</p>
+      <p>兩人一組，用 MakeCode 寫程式，令麥昆小車在一格地磚上走一個正方形。你們會反覆「下載 → 測試 → 觀察 → 調整」，直至小車走得準。</p>
     </div>
     <div class="art"><img src="../assets/img/hero-l2.svg" alt=""></div>
   </div>
@@ -32,37 +33,37 @@
 
 <section class="card" id="student-sec" data-short="開始之前">
   <header><span class="num">0</span><h2>開始之前</h2></header>
+  <p>今課 1–2 人一組，<b>每組用一部電腦、交一份報告</b>。第一行填用這部電腦的同學；兩人一組的話，在「組員二」填另一位同學。</p>
   <div id="student"></div>
   <div class="goals" style="margin-top:14px">
     <b>完成今課後，你能夠：</b>
     <ol>
-      <li>把「走正方形」拆成<b>直行、停頓、轉彎、重複</b>四部分，並說出每部分的作用。</li>
-      <li>把程式下載到 micro:bit，並安全地測試小車。</li>
-      <li>用「測試 → 觀察 → 調整 → 再下載」的方法，<b>每次只改一個數字</b>，令小車走得準。</li>
+      <li>說出正方形程式每部分的作用：直行、停頓、轉彎、重複。</li>
+      <li>用兩個<b>變數</b>（前進時間、轉彎時間）控制小車，調整時只改這兩個數字。</li>
+      <li>把程式下載到 micro:bit，用「測試 → 觀察 → 調整 → 再下載」的方法令小車走得準。</li>
     </ol>
   </div>
-  <p class="small muted">本課滿分 50 分。選擇題<b>以第一次作答計分</b>，之後可以再試，是為了學習。答案會自動儲存在這部電腦。</p>
+  <p class="small muted">本課滿分 50 分，全部來自實作：模擬器 12、真車試驗記錄 12、老師驗收 18、自我檢查 4、學習日誌 4。資料會自動儲存在這部電腦。</p>
 </section>
 
-<section class="card" id="s1" data-short="準備：小車和 MakeCode">
-  <header><span class="num">1</span><h2>準備：認識小車和 MakeCode</h2></header>
-  <div class="callout key"><span class="ttl">今次任務</span>用 MakeCode 積木編程，令麥昆 Plus V2 小車沿<b>一格地磚</b>走出一個<b>正方形</b>：起點和終點大致相同，車頭轉回原來方向（共轉 4 次 90°）。</div>
+<section class="card" id="s1" data-short="準備：分工和 MakeCode">
+  <header><span class="num">1</span><h2>準備：分工、小車和 MakeCode</h2></header>
+  <div class="callout key"><span class="ttl">今次任務</span>令麥昆 Plus V2 小車沿<b>一格地磚</b>走出一個<b>正方形</b>：起點和終點大致相同，車頭轉回原來方向（共轉 4 次 90°）。</div>
+  <h3>兩人分工（每下載一次就對調）</h3>
+  <div class="roles">
+    <div><b>甲：編程及記錄</b>在電腦改變數、下載程式；填寫試驗記錄表</div>
+    <div><b>乙：測試及安全</b>放車、開關電源、量度邊長、看守路線</div>
+  </div>
+  <p class="small muted">一人一組的同學兩份工作都要做：先在電腦改好、下載，再到地上測試。</p>
   <figure class="fig zoomable">
     <div class="art"><img src="../assets/img/car-top.svg" alt="小車俯視示意圖，標示車輪、馬達、micro:bit、前燈、巡線感應器和電源開關"></div>
     <figcaption>麥昆 Plus V2 小車各部分（示意圖）</figcaption>
   </figure>
-  <h3>器材</h3>
+  <h3>器材（每組）</h3>
   <ul>
-    <li>每組：麥昆 Plus V2 小車、micro:bit、USB 線、電池各 1</li>
+    <li>麥昆 Plus V2 小車、micro:bit、USB 線、電池各 1</li>
     <li>電腦（Chrome 或 Edge）、軟尺、紙膠帶</li>
   </ul>
-  <h3>小組分工（每下載一次就輪換）</h3>
-  <div class="roles">
-    <div><b>編程員</b>改數字、下載程式</div>
-    <div><b>測試員</b>放車、開關電源</div>
-    <div><b>記錄員</b>觀察、量度、填記錄表</div>
-    <div><b>安全主任</b>看守路線，提醒同學站開</div>
-  </div>
   <div class="step"><h4><span class="sn">1</span>開啟 MakeCode，建立新專案</h4>
     <ol><li>用 Chrome 或 Edge 開啟 <code>makecode.microbit.org</code>，按「新專案」。</li>
       <li>專案名稱：<code class="pname">班別_學號_square</code>（例如 <code>1A_12_square</code>）。</li></ol></div>
@@ -77,55 +78,71 @@
       <thead><tr><th style="width:44%">積木</th><th style="width:22%">指令群</th><th>作用</th></tr></thead>
       <tbody>
         <tr><td><span class="blockname basic">當啟動時</span></td><td>基本</td><td>開機或按 reset 後執行一次</td></tr>
+        <tr><td><span class="vchip">變數 前進時間 設為 5000</span></td><td>變數</td><td>把數字存入變數；之後用變數就等於用這個數字</td></tr>
         <tr><td><span class="blockname basic">暫停 (ms) 100</span></td><td>基本</td><td>等待多少毫秒（1000 ms = 1 秒），馬達會保持上一個動作</td></tr>
         <tr><td><span class="blockname loop">重複 4 次</span></td><td>迴圈</td><td>同一組動作做 4 次</td></tr>
-        <tr><td><span class="blockname">初始化麥昆Plus</span></td><td>麥昆Plus V2&amp;V3</td><td><b>每個程式開頭都要加</b>，令 micro:bit 和小車連接</td></tr>
+        <tr><td><span class="blockname">初始化麥昆Plus</span></td><td>麥昆Plus V2&amp;V3</td><td><b>每個程式都要加</b>，令 micro:bit 和小車連接</td></tr>
         <tr><td><span class="blockname">設置 全部馬達 方向 前進 速度 50</span></td><td>麥昆Plus V2&amp;V3</td><td>控制左、右或全部馬達的方向和速度（0–255）</td></tr>
         <tr><td><span class="blockname">設置 全部馬達 停止</span></td><td>麥昆Plus V2&amp;V3</td><td>停車</td></tr>
       </tbody>
     </table></div>
-    <div class="callout safe"><span class="ttl">速度一律用 50</span>拉出馬達積木時，速度預設是 <b>100</b>，記得每一塊都改成 <b>50</b>。100 太快：起步和停車時車輪容易打滑、衝過頭，每次走法都不同，也較危險。</div>
-    <div class="callout key"><span class="ttl">最重要的概念</span>馬達積木<b>不會自己停</b>！「前進 3 秒」＝ 設置馬達前進 → 暫停 3000 ms → 設置馬達停止，三塊積木一組。</div></div>
+    <div class="callout safe"><span class="ttl">速度一律用 50</span>拉出馬達積木時，速度預設是 <b>100</b>，記得每一塊都改成 <b>50</b>。100 太快：起步和停車時車輪容易打滑、衝過頭，每次走法都不同，也較危險。</div></div>
 </section>
 
-<section class="card" id="s2" data-short="拆解正方形程式">
-  <header><span class="num">2</span><h2>拆解正方形程式</h2><span class="marks">8 分</span></header>
-  <p>正方形看似複雜，其實只是<b>同一個動作做 4 次</b>：直行一條邊，停一停，轉 90°，再停一停。</p>
+<section class="card" id="s2" data-short="正方形程式">
+  <header><span class="num">2</span><h2>正方形程式：兩個變數控制全部</h2></header>
+  <p>正方形其實只是<b>同一組動作做 4 次</b>：直行一條邊，停一停，轉 90°，再停一停。整個程式只有兩個數字需要調整，所以我們把它們放進兩個<b>變數</b>，寫在程式最頂。</p>
   <div class="fig-row">
     <figure class="fig zoomable"><div class="art"><img src="../assets/img/square-task.svg" alt="正方形路線：直行一邊加原地轉90度，重複4次"></div><figcaption>正方形 ＝（直行一邊 ＋ 轉 90°）× 4</figcaption></figure>
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-full.png" alt="完整程式：當啟動時，初始化麥昆Plus，暫停1000，重複4次：全部馬達前進50，暫停5000，全部馬達停止，暫停500，左側馬達前進50，右側馬達後退50，暫停1000，全部馬達停止，暫停500"></div><figcaption>完整程式（5000 和 1000 只是起步數字，之後要自己調整）</figcaption></figure>
+    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-full.png" alt="完整程式：當啟動時，變數前進時間設為5000，變數轉彎時間設為1000，初始化麥昆Plus，暫停1000，重複4次：全部馬達前進50，暫停前進時間，全部馬達停止，暫停500，左側馬達前進50，右側馬達後退50，暫停轉彎時間，全部馬達停止，暫停500"></div><figcaption>完整程式：調整時只改最頂兩行的數字</figcaption></figure>
   </div>
+
+  <h3>為什麼用變數？</h3>
+  <p><span class="vchip">前進時間</span> 和 <span class="vchip">轉彎時間</span> 好像兩個貼了名字的盒子。程式開頭把數字放進盒子，下面的「暫停」積木就從盒子取數字。調整時<b>只需改最頂兩行</b>，不用在長長的程式中逐塊找，也不會改錯了其他數字。</p>
+  <figure class="fig narrow zoomable"><div class="art"><img src="../assets/img/blocks-sq-vars.png" alt="變數前進時間設為5000，變數轉彎時間設為1000"></div><figcaption>起步數字：前進時間 5000 ms、轉彎時間 1000 ms（之後按真車調整）</figcaption></figure>
+
+  <div class="step"><h4><span class="sn">1</span>在 MakeCode 建立兩個變數</h4>
+    <ol><li>按積木清單的「<b>變數</b>」→「<b>建立一個變數…</b>」。</li>
+      <li>輸入名稱 <code>前進時間</code>，按「確定」。再按一次「建立一個變數…」，輸入 <code>轉彎時間</code>。</li>
+      <li>「變數」清單會多了 <span class="vchip">變數 前進時間 設為 0</span> 等積木。</li></ol></div>
+  <div class="step"><h4><span class="sn">2</span>在程式最頂設定數字</h4>
+    <ol><li>把兩塊「變數 … 設為 0」放進「當啟動時」的<b>最頂</b>。</li>
+      <li>用下拉選單揀好變數名稱，把 0 改成 <b>5000</b>（前進時間）及 <b>1000</b>（轉彎時間）。</li></ol></div>
+  <div class="step"><h4><span class="sn">3</span>在「暫停」裏用變數</h4>
+    <ol><li>直行後的「暫停」：從「變數」拖出圓角的 <span class="vchip">前進時間</span>，放進暫停的數字位置。</li>
+      <li>轉彎後的「暫停」：放入 <span class="vchip">轉彎時間</span>。</li>
+      <li>其他暫停（1000、500）保持數字，不用變數。</li></ol></div>
+
   <h3>逐部分看</h3>
   <div class="tbl-wrap"><table class="parts">
     <thead><tr><th>部分</th><th>積木</th><th>作用</th></tr></thead>
     <tbody>
-      <tr><td>A 準備</td><td><span class="blockname">初始化麥昆Plus</span> → <span class="blockname basic">暫停 1000</span></td><td>連接小車；開電源後等 1 秒才起步，讓測試員有時間縮手。</td></tr>
-      <tr><td>B 直行一條邊</td><td><span class="blockname">全部馬達 前進 50</span> → <span class="blockname basic">暫停 5000</span> → <span class="blockname">全部馬達 停止</span></td><td>兩個輪一起向前。<b>暫停的時間決定走多遠</b>：時間越長，邊越長。</td></tr>
-      <tr><td>C 中間的停頓</td><td><span class="blockname basic">暫停 500</span>（緊接「停止」之後）</td><td>小車有<b>慣性</b>，停車後仍會滑一點。等它完全停定才轉彎，轉角才會準；轉完也停一停，才開始下一條邊。</td></tr>
-      <tr><td>D 原地轉 90°</td><td><span class="blockname">左側 前進 50</span> → <span class="blockname">右側 後退 50</span> → <span class="blockname basic">暫停 1000</span> → <span class="blockname">全部馬達 停止</span></td><td>兩輪方向相反，小車繞兩輪中間打轉（差速轉向）。<b>暫停的時間決定轉多少度</b>。</td></tr>
-      <tr><td>E 重複 4 次</td><td><span class="blockname loop">重複 4 次</span>包住 B、C、D</td><td>正方形有 4 條邊、4 個角。不用抄 4 次積木，改數字時也只需改一處。</td></tr>
+      <tr><td>A 設定變數</td><td><span class="vchip">前進時間 設為 5000</span> → <span class="vchip">轉彎時間 設為 1000</span></td><td>把兩個要調整的數字放在最頂，一眼就看到。</td></tr>
+      <tr><td>B 準備</td><td><span class="blockname">初始化麥昆Plus</span> → <span class="blockname basic">暫停 1000</span></td><td>連接小車；開電源後等 1 秒才起步，讓測試的同學有時間縮手。</td></tr>
+      <tr><td>C 直行一條邊</td><td><span class="blockname">全部馬達 前進 50</span> → <span class="blockname basic">暫停 前進時間</span> → <span class="blockname">全部馬達 停止</span></td><td>兩個輪一起向前。<b>前進時間越長，邊越長</b>。</td></tr>
+      <tr><td>D 中間的停頓</td><td><span class="blockname basic">暫停 500</span>（緊接「停止」之後）</td><td>小車有<b>慣性</b>，停車後仍會滑一點。等它完全停定才轉彎，轉角才會準；轉完也停一停，才開始下一條邊。</td></tr>
+      <tr><td>E 原地轉 90°</td><td><span class="blockname">左側 前進 50</span> → <span class="blockname">右側 後退 50</span> → <span class="blockname basic">暫停 轉彎時間</span> → <span class="blockname">全部馬達 停止</span></td><td>兩輪方向相反，小車繞兩輪中間打轉（差速轉向）。<b>轉彎時間越長，轉得越多</b>。</td></tr>
+      <tr><td>F 重複 4 次</td><td><span class="blockname loop">重複 4 次</span>包住 C、D、E</td><td>正方形有 4 條邊、4 個角。</td></tr>
     </tbody>
   </table></div>
   <div class="fig-row">
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-straight.png" alt="直行一條邊：全部馬達前進50，暫停5000，全部馬達停止，暫停500"></div><figcaption>B ＋ C：直行一條邊，再停一停</figcaption></figure>
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-turn.png" alt="原地轉90度：左側馬達前進50，右側馬達後退50，暫停1000，全部馬達停止，暫停500"></div><figcaption>D ＋ C：原地向右轉，再停一停</figcaption></figure>
+    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-straight.png" alt="直行一條邊：全部馬達前進50，暫停前進時間，全部馬達停止，暫停500"></div><figcaption>C ＋ D：直行一條邊，再停一停</figcaption></figure>
+    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-turn.png" alt="原地轉90度：左側馬達前進50，右側馬達後退50，暫停轉彎時間，全部馬達停止，暫停500"></div><figcaption>E ＋ D：原地向右轉，再停一停</figcaption></figure>
     <figure class="fig zoomable"><div class="art" id="turn3"></div><figcaption>左輪前進、右輪後退：圓心在兩輪中間</figcaption></figure>
   </div>
-  <div class="callout key"><span class="ttl">只有兩個數字要調整</span><b>直行的暫停時間</b>控制邊長；<b>轉彎的暫停時間</b>控制角度。其他數字（速度 50、停頓 500、等 1000）保持不變。</div>
-  <h3>練習 1：每部分做什麼？<span class="tag">8 分</span></h3>
-  <div id="q-parts"></div>
+  <div class="callout key"><span class="ttl">最重要的概念</span>馬達積木<b>不會自己停</b>：動作 → 暫停 → 停止，三塊一組。</div>
 </section>
 
 <section class="card" id="s3" data-short="先在模擬器試">
-  <header><span class="num">3</span><h2>先在模擬器試</h2><span class="marks">8 分</span></header>
-  <p>在模擬器砌出上面的程式（記得速度改成 50），按「▶ 執行」。模擬器也是一個小循環：<b>執行 → 看結果 → 改一個數字 → 再執行</b>。結果欄會告訴你每邊大約多長、每次大約轉多少度。</p>
+  <header><span class="num">3</span><h2>先在模擬器試</h2><span class="marks">12 分</span></header>
+  <p>模擬器已經建立好兩個變數（在「變數」清單）。砌出上面的程式，按「▶ 執行」，看結果欄：它會告訴你每邊大約多長、每次大約轉多少度，以及應該改哪個變數。<b>改 → 執行 → 看結果 → 再改</b>，直至過關。</p>
   <div id="sim-sq"></div>
-  <div class="callout tip">模擬小車和真車一樣有誤差，而且每位同學的小車都有少少不同。模擬器過關後，真車仍然要再試——數字通常不會一樣。</div>
+  <div class="callout tip">模擬小車和真車一樣有誤差，而且每組的模擬小車都有少少不同。模擬器過關後，真車仍然要再試——兩個數字通常不會一樣。</div>
 </section>
 
 <section class="card" id="s4" data-short="下載到 micro:bit">
-  <header><span class="num">4</span><h2>把程式下載到 micro:bit</h2><span class="marks">5 分</span></header>
-  <p>在 MakeCode 砌好程式後，要把它「寫入」micro:bit，小車才會照着做。每改一次數字，就要<b>重新下載一次</b>。</p>
+  <header><span class="num">4</span><h2>把程式下載到 micro:bit</h2></header>
+  <p>在 MakeCode 砌好程式後，要把它「寫入」micro:bit，小車才會照着做。每改一次變數，就要<b>重新下載一次</b>。</p>
   <div class="callout safe">下載時把小車的<b>電源關掉</b>，車放在<b>地上</b>，不要放在桌邊——程式一寫入，開電源小車就會衝出去。</div>
   <div class="step"><h4><span class="sn">1</span>接上 USB 線</h4>
     <ol><li>確認小車電源是 <b>OFF</b>。micro:bit 可以留在車上（LED 面向前）。</li>
@@ -147,43 +164,38 @@
       <li>把小車放在地磚的一角，<b>車頭對正磚縫</b>，左輪貼着磚縫。</li>
       <li>用紙膠帶在車頭和車側貼一個記號：每次都放回同一位置，結果才可以比較。</li></ol></div>
   <div class="step"><h4><span class="sn">5</span>開電源，縮手站開</h4>
-    <ol><li>測試員開電源，立即縮手。程式由頭開始：初始化 → 等 1 秒 → 起步。</li>
+    <ol><li>開電源，立即縮手。程式由頭開始：設定變數 → 初始化 → 等 1 秒 → 起步。</li>
       <li>小車走完會自己停下。想再看一次：關電源，放回起點，再開電源（或者按 micro:bit 背面的 reset 鍵）。</li></ol></div>
   <details class="more"><summary>用 iPad？</summary><div><p>iPad 不能用 USB 下載。請用「micro:bit」app：先用藍牙配對 micro:bit（按住 A+B 再按 reset，見到圖案後依 app 指示），然後在 app 內開啟 MakeCode 專案並按「Flash」傳送。</p></div></details>
-  <h3>練習 2：下載和測試的正確次序<span class="tag">5 分</span></h3>
-  <div id="q-order"></div>
 </section>
 
 <section class="card" id="s5" data-short="測試→觀察→調整">
-  <header><span class="num">5</span><h2>測試 → 觀察 → 調整 → 再下載</h2><span class="marks">14 分</span></header>
-  <p>第一次下載，小車幾乎一定<b>不會</b>走得準——這很正常。工程師的做法是不斷重複下面的循環，每次都令結果好一點：</p>
-  <figure class="fig zoomable"><div class="art"><img src="../assets/img/dl-cycle.svg" alt="循環圖：修改程式、下載、測試、觀察記錄、決定調整，然後再修改程式"></div><figcaption>每一圈只改一個數字</figcaption></figure>
+  <header><span class="num">5</span><h2>測試 → 觀察 → 調整 → 再下載</h2><span class="marks">12 分</span></header>
+  <p>第一次下載，小車幾乎一定<b>不會</b>走得準——這很正常。不斷重複下面的循環，每次都令結果好一點：</p>
+  <figure class="fig zoomable"><div class="art"><img src="../assets/img/dl-cycle.svg" alt="循環圖：修改程式、下載、測試、觀察記錄、決定調整，然後再修改程式"></div><figcaption>每一圈只改一個變數</figcaption></figure>
 
-  <h3>觀察：記錄員要看什麼？</h3>
+  <h3>觀察：要看什麼？</h3>
   <ol>
     <li><b>第一條邊停在哪裏？</b>用軟尺量小車走了多少 cm，和地磚邊長比較。</li>
     <li><b>第一個轉角後，車身和磚縫平行嗎？</b>平行就是剛好 90°；車頭未轉夠是「太少」，轉過了是「太多」。</li>
     <li><b>最後停在哪裏？</b>量一量離起點多遠，車頭是否回到原來方向。</li>
   </ol>
   <figure class="fig zoomable"><div class="art"><img src="../assets/img/observe.svg" alt="四種常見走法：直行太短、直行太長、轉得太少、轉得太多，每種都附上調整方法"></div><figcaption>虛線是地磚，藍線是小車走過的路</figcaption></figure>
-  <div class="callout tip"><span class="ttl">看得更清楚的方法</span>先把「重複 4 次」改成「重複 <b>1</b> 次」：小車只走一條邊、轉一個角，觀察更快更準。調好兩個數字後，才改回 4 次走完整個正方形。</div>
+  <div class="callout tip"><span class="ttl">看得更清楚的方法</span>先把「重複 4 次」改成「重複 <b>1</b> 次」：小車只走一條邊、轉一個角，觀察更快更準。調好兩個變數後，才改回 4 次走完整個正方形。</div>
 
-  <h3>調整：改哪個數字？改多少？</h3>
+  <h3>調整：改哪個變數？改多少？</h3>
   <div class="tbl-wrap"><table>
-    <thead><tr><th style="width:22%">觀察到</th><th style="width:26%">改哪個數字</th><th>改多少</th></tr></thead>
+    <thead><tr><th style="width:22%">觀察到</th><th style="width:22%">改哪個變數</th><th>改多少</th></tr></thead>
     <tbody>
-      <tr><td>邊太短／太長</td><td>直行的暫停時間</td><td>用比例計：<b>新時間 ＝ 舊時間 × 地磚邊長 ÷ 實際走了多少</b>。例：5000 ms 走了 50 cm，地磚 60 cm → 5000 × 60 ÷ 50 ＝ 6000 ms</td></tr>
-      <tr><td>轉得太少／太多</td><td>轉彎的暫停時間</td><td>每次 ±50 ms；差不多時改為 ±20 ms，慢慢逼近</td></tr>
-      <tr><td>每次結果都不同</td><td>先不要改數字</td><td>檢查：速度是否 50？有沒有中間的停頓？電池夠電嗎？每次是否放回同一位置？</td></tr>
+      <tr><td>邊太短／太長</td><td><span class="vchip">前進時間</span></td><td>用比例計：<b>新數字 ＝ 舊數字 × 地磚邊長 ÷ 實際走了多少</b>。例：5000 走了 50 cm，地磚 60 cm → 5000 × 60 ÷ 50 ＝ 6000</td></tr>
+      <tr><td>轉得太少／太多</td><td><span class="vchip">轉彎時間</span></td><td>每次 ±50；差不多時改為 ±20，慢慢逼近</td></tr>
+      <tr><td>每次結果都不同</td><td>先不要改</td><td>檢查：速度是否 50？有沒有中間的停頓？電池夠電嗎？每次是否放回同一位置？</td></tr>
     </tbody>
   </table></div>
-  <div class="callout key"><span class="ttl">每次只改一個數字</span>如果同時改了兩個數字，走好了或走差了，你都不知道是哪一個的功勞。建議<b>先調好直行（邊長），再調轉彎（角度）</b>。</div>
+  <div class="callout key"><span class="ttl">每次只改一個變數</span>如果同時改了兩個，走好了或走差了，你都不知道是哪一個的功勞。建議<b>先調好前進時間（邊長），再調轉彎時間（角度）</b>。</div>
 
-  <h3>練習 3：觀察到這樣，應該怎樣調整？<span class="tag">6 分</span></h3>
-  <div id="q-adjust"></div>
-
-  <h3>真車試驗記錄表<span class="tag">8 分</span></h3>
-  <p>每下載一次就填一行。填入兩個數字、量到的邊長和轉角情況，最後一欄會建議下一次只改哪一個數字。至少完整記錄 <b>3 次</b>。</p>
+  <h3>真車試驗記錄表<span class="tag">12 分</span></h3>
+  <p>每下載一次就填一行：兩個變數的數字、量到的邊長和轉角情況。最後一欄會建議下一次只改哪一個變數。至少完整記錄 <b>3 次</b>。</p>
   <div class="tilebox"><label class="fld" for="tile" style="margin:0">我們的地磚邊長（自己量）：</label><input class="inp" id="tile" type="number" inputmode="decimal"> cm</div>
   <div id="trials"></div>
 
@@ -192,10 +204,11 @@
     <thead><tr><th style="width:28%">現象</th><th>可能原因</th><th>解決方法</th></tr></thead>
     <tbody>
       <tr><td>完全不動</td><td>電源未開、電池弱、micro:bit 未插好</td><td>開電源、換電池、重新插好</td></tr>
-      <tr><td>下載了卻沒反應</td><td>忘記「初始化麥昆Plus」；下載未完成就拔線</td><td>在「當啟動時」第一行加上它；重新下載，等黃燈停閃</td></tr>
-      <tr><td>改了數字但走法一樣</td><td>改了之後忘記下載</td><td>每改一次都要再按「下載」</td></tr>
+      <tr><td>下載了卻沒反應</td><td>忘記「初始化麥昆Plus」；下載未完成就拔線</td><td>加上初始化；重新下載，等黃燈停閃</td></tr>
+      <tr><td>改了變數但走法一樣</td><td>改了之後忘記下載；或者暫停積木仍然是數字，沒有用變數</td><td>每改一次都要再按「下載」；檢查暫停積木內是紅色的變數</td></tr>
+      <tr><td>小車一開電源就停</td><td>變數放在「重複」入面，或者設為 0</td><td>兩塊「設為」要放在「當啟動時」最頂</td></tr>
       <tr><td>只有一邊車輪轉</td><td>直行時用了「左側／右側馬達」</td><td>直行要選「全部馬達」</td></tr>
-      <tr><td>一直向前不停</td><td>忘記「暫停」或「停止」</td><td>每個動作後補上暫停 ＋ 停止</td></tr>
+      <tr><td>一直向前不停</td><td>忘記「停止」</td><td>每個動作後補上暫停 ＋ 停止</td></tr>
       <tr><td>衝得太快、轉角時打滑</td><td>速度仍是預設的 100</td><td>每塊馬達積木都改成 50</td></tr>
       <tr><td>越走越歪</td><td>左右馬達力度不同、電池弱</td><td>快的一邊速度調低（50 → 45），或換電池</td></tr>
     </tbody>
@@ -203,40 +216,39 @@
 </section>
 
 <section class="card" id="s6" data-short="老師驗收">
-  <header><span class="num">6</span><h2>老師驗收及自我檢查</h2><span class="marks">12 分</span></header>
+  <header><span class="num">6</span><h2>老師驗收及自我檢查</h2><span class="marks">22 分</span></header>
   <p>真車走得準了，就請老師來看一次完整的正方形。</p>
   <div id="verify"></div>
   <div id="mclink" style="margin-top:12px"></div>
-  <h3>自我檢查<span class="tag">2 分</span></h3>
+  <h3>自我檢查<span class="tag">4 分</span></h3>
   <div id="checks"></div>
-  <h3>挑戰（做得快的同學，不計分）</h3>
+  <h3>挑戰（做得快的組別，不計分）</h3>
   <ol>
-    <li><b>三角形：</b>改成走正三角形。每次要轉多少度？「重複」要改成幾次？</li>
-    <li><b>變數：</b>建立變數 <code>邊長時間</code> 和 <code>轉彎時間</code>，之後只改一個數字就能調整整個程式。</li>
-    <li><b>大正方形：</b>走 2 × 2 格地磚的大正方形，只准改<b>一個</b>數字。</li>
-    <li><b>提示燈：</b>每轉完一個角，就在 LED 顯示 1、2、3、4，或者開前燈一下。</li>
+    <li><b>大正方形：</b>走 2 × 2 格地磚的大正方形。只准改<b>一個變數</b>，應該改哪一個？改成多少？</li>
+    <li><b>三角形：</b>改成走正三角形。每次要轉多少度？「重複」要改成幾次？「轉彎時間」大約要改成多少？</li>
+    <li><b>提示燈：</b>每轉完一個角，就開前燈一下，或在 LED 顯示 1、2、3、4。</li>
   </ol>
 </section>
 
 <section class="card" id="s7" data-short="總結及學習日誌">
-  <header><span class="num">7</span><h2>總結、詞彙及學習日誌</h2><span class="marks">3 分</span></header>
+  <header><span class="num">7</span><h2>總結、詞彙及學習日誌</h2><span class="marks">4 分</span></header>
   <ol>
     <li>複雜的動作可以<b>拆解</b>成簡單的部分：直行、停頓、轉彎，再用<b>迴圈</b>重複。</li>
-    <li>馬達積木不會自己停：動作 → 暫停 → 停止，三塊一組；動作之間的停頓令結果更穩定。</li>
-    <li>程式很少一次就對：<b>測試 → 觀察 → 調整 → 再下載</b>，每次只改一個數字。</li>
+    <li>把要調整的數字放進<b>變數</b>，寫在程式最頂：調整時只改一處。</li>
+    <li>程式很少一次就對：<b>測試 → 觀察 → 調整 → 再下載</b>，每次只改一個變數。</li>
     <li>今次的小車只靠<b>計時</b>走正方形，它不知道自己走成怎樣——這叫<b>開環控制</b>。下一課會加上感應器。</li>
   </ol>
   <div class="tbl-wrap"><table>
     <thead><tr><th>中文</th><th>English</th><th>中文</th><th>English</th></tr></thead>
     <tbody>
-      <tr><td>程式</td><td>Program</td><td>迴圈</td><td>Loop</td></tr>
-      <tr><td>下載</td><td>Download</td><td>除錯</td><td>Debugging</td></tr>
-      <tr><td>試驗與修正</td><td>Trial and error</td><td>差速轉向</td><td>Differential steering</td></tr>
-      <tr><td>慣性</td><td>Inertia</td><td>開環控制</td><td>Open-loop control</td></tr>
+      <tr><td>程式</td><td>Program</td><td>變數</td><td>Variable</td></tr>
+      <tr><td>迴圈</td><td>Loop</td><td>下載</td><td>Download</td></tr>
+      <tr><td>除錯</td><td>Debugging</td><td>試驗與修正</td><td>Trial and error</td></tr>
+      <tr><td>差速轉向</td><td>Differential steering</td><td>開環控制</td><td>Open-loop control</td></tr>
     </tbody>
   </table></div>
   <h3>學習日誌（最少 20 字）</h3>
-  <p class="small muted">你們試了幾次才成功？哪一次的調整最有用？模擬器和真車的數字有什麼分別？</p>
+  <p class="small muted">你們試了幾次才成功？哪一次的調整最有用？用變數有什麼好處？模擬器和真車的數字有什麼分別？</p>
   <div id="log"></div>
   <div class="callout key"><span class="ttl">下一課預告</span>巡線感應器：為小車加上「眼睛」，令它自己沿着黑線行走。</div>
 </section>
@@ -245,7 +257,7 @@
   <header><span class="num">✓</span><h2>成績及交功課</h2></header>
   <div id="scoretable"></div>
   <div class="btnrow" id="submitBtns"></div>
-  <p class="small muted">繳交：下載成績報告（檔名例如 <code>DT_F1_L2_1A_12_陳大文.html</code>），連同 MakeCode 分享連結，上傳到 Google Classroom／eClass。</p>
+  <p class="small muted">繳交：每組下載<b>一份</b>成績報告（兩人一組時檔名會有兩個名字，例如 <code>DT_F1_L2_1A_12_陳大文_5_李小明.html</code>），連同 MakeCode 分享連結，上傳到 Google Classroom／eClass。老師的成績匯總工具會為兩位組員各記一行。</p>
 </section>
 
 <footer class="foot">中一設計與科技｜自動化與機械人｜第二堂　·　插圖為本網站自繪示意圖</footer>
@@ -258,48 +270,14 @@
 <script src="../assets/art.js"></script>
 <script src="../assets/common.js"></script>
 <script>
-F1.start({ id: 'L2', key: 'f1dt:L2', theme: 'l2', title: '第二堂：小車走正方形', short: '第二堂' });
+F1.start({ id: 'L2', key: 'f1dt:L2', theme: 'l2', title: '第二堂：小車走正方形', short: '第二堂', pair: true });
 
-/* ---- 2 拆解 ---- */
 document.getElementById('turn3').innerHTML = F1Art.turnPanel(3, { mirror: true });
-F1.match('#q-parts', { key: 'parts', label: '1. 拆解正方形程式', sec: 's2', max: 8, head: ['積木', '作用'],
-  hint: '答錯的再看看上面的表：哪個數字控制邊長？哪個控制角度？',
-  rows: [
-    { html: '<span class="blockname">初始化麥昆Plus</span> → <span class="blockname basic">暫停 1000</span>（最開頭）', answer: 'a' },
-    { html: '<span class="blockname">全部馬達 前進 50</span> → <span class="blockname basic">暫停 5000</span> → <span class="blockname">停止</span>', answer: 'b' },
-    { html: '<span class="blockname basic">暫停 500</span>（緊接「停止」之後）', answer: 'c' },
-    { html: '<span class="blockname">左側 前進 50</span> ＋ <span class="blockname">右側 後退 50</span> → <span class="blockname basic">暫停 1000</span>', answer: 'd' },
-    { html: '<span class="blockname loop">重複 4 次</span>', answer: 'e' }],
-  options: [
-    { v: 'a', t: '連接小車，開電源後等 1 秒才起步' },
-    { v: 'b', t: '走一條邊：暫停時間決定邊有多長' },
-    { v: 'c', t: '等小車完全停定，下一個動作才準' },
-    { v: 'd', t: '原地轉彎：暫停時間決定轉多少度' },
-    { v: 'e', t: '正方形有 4 條邊和 4 個角' }] });
 
 /* ---- 3 模擬器 ---- */
-F1.sim('#sim-sq', { key: 'simSq', mission: 'l2sq', title: '走一格地磚正方形', goal: '速度 50、用「重複 4 次」；每邊 55–65 cm，回到起點 15 cm 內，車頭偏差 15° 內。', max: 8, sec: 's3', only: 'l2sq' });
+F1.sim('#sim-sq', { key: 'simSq', mission: 'l2sq', title: '走一格地磚正方形', goal: '兩個變數放在最頂；速度 50、用「重複 4 次」；每邊 55–65 cm，回到起點 15 cm 內，車頭偏差 15° 內。', max: 12, sec: 's3', only: 'l2sq' });
 
-/* ---- 4 下載次序 ---- */
-F1.match('#q-order', { key: 'order', label: '2. 下載及測試的次序', sec: 's4', max: 5, head: ['次序', '要做的事'],
-  hint: '想一想：未寫入完成可以拔線嗎？車未放好可以開電源嗎？',
-  rows: [{ html: '<b>第 1 步</b>', answer: 'a' }, { html: '<b>第 2 步</b>', answer: 'b' }, { html: '<b>第 3 步</b>', answer: 'c' }, { html: '<b>第 4 步</b>', answer: 'd' }, { html: '<b>第 5 步</b>', answer: 'e' }],
-  options: [
-    { v: 'a', t: '關掉小車電源，用 USB 線接駁電腦和 micro:bit' },
-    { v: 'b', t: '按「下載」，等黃燈停止閃動' },
-    { v: 'c', t: '拔掉 USB 線' },
-    { v: 'd', t: '把小車放在起點，車頭對正磚縫' },
-    { v: 'e', t: '開電源，縮手站開，觀察小車' }] });
-
-/* ---- 5 觀察 → 調整 ---- */
-var ADJ = [{ v: 'f+', t: '直行時間加長' }, { v: 'f-', t: '直行時間縮短' }, { v: 't+', t: '轉彎時間加長' }, { v: 't-', t: '轉彎時間縮短' }];
-F1.choice('#q-adjust', { key: 'adjust', label: '3. 觀察 → 調整', sec: 's5', layout: 'rows', max: 6, shuffle: true, options: ADJ, items: [
-  { id: 'short', title: '第一條邊停在磚縫前約 8 cm，未走到角位。', answer: 'f+', why: '邊太短：走的時間不夠，直行的暫停時間要加長。' },
-  { id: 'long', title: '小車衝過了磚縫才停下來。', answer: 'f-', why: '邊太長：直行的暫停時間要縮短。' },
-  { id: 'less', title: '轉角後，車頭還未對正磚縫，差一點點。', answer: 't+', why: '轉得太少：轉彎的暫停時間要加長，例如 +50 ms。' },
-  { id: 'more', title: '每個角都轉過了頭，路線好像越走越向內捲。', answer: 't-', why: '轉得太多：轉彎的暫停時間要縮短，例如 −50 ms。' }
-], after: '記住：邊長看直行時間，角度看轉彎時間；每次只改一個。' });
-
+/* ---- 5 試驗記錄 ---- */
 (function () {
   var tst = F1.state('tile', { v: '60' });
   var ti = document.getElementById('tile'); ti.value = tst.v || '';
@@ -310,36 +288,36 @@ F1.choice('#q-adjust', { key: 'adjust', label: '3. 觀察 → 調整', sec: 's5'
     var f = parseFloat(r.f), d = parseFloat(r.d), tt = parseFloat(r.t);
     if (!(f > 0 && d > 0 && tt > 0) || !r.jt) return null;
     var L = tile();
-    if (Math.abs(d - L) > 2) return { f: Math.round(f * L / d / 10) * 10, t: tt, what: '改直行' };
-    if (r.jt === 'less') return { f: f, t: tt + 50, what: '改轉彎' };
-    if (r.jt === 'more') return { f: f, t: Math.max(0, tt - 50), what: '改轉彎' };
+    if (Math.abs(d - L) > 2) return { f: Math.round(f * L / d / 10) * 10, t: tt, what: 'f' };
+    if (r.jt === 'less') return { f: f, t: tt + 50, what: 't' };
+    if (r.jt === 'more') return { f: f, t: Math.max(0, tt - 50), what: 't' };
     return { f: f, t: tt, what: 'ok' };
   }
-  F1.trials('#trials', { key: 'trials', label: '4. 真車試驗記錄', max: 8, sec: 's5', minRows: 3,
-    cols: [{ k: 'f', label: '直行時間 (ms)', type: 'number', ph: '例：5000', w: '8em' }, { k: 'd', label: '一條邊走了 (cm)', type: 'number', ph: '例：50', w: '8em' },
-      { k: 't', label: '轉彎時間 (ms)', type: 'number', ph: '例：1000', w: '8em' }, { k: 'jt', label: '轉角', type: 'select', options: JT, w: '9em' }],
-    example: ['5000', '50', '1000', '轉太少', '改直行 → 6000 ms'],
+  F1.trials('#trials', { key: 'trials', label: '1. 真車試驗記錄', max: 12, sec: 's5', minRows: 3,
+    cols: [{ k: 'f', label: '前進時間', type: 'number', ph: '例：5000', w: '7em' }, { k: 'd', label: '一條邊走了 (cm)', type: 'number', ph: '例：50', w: '8em' },
+      { k: 't', label: '轉彎時間', type: 'number', ph: '例：1000', w: '7em' }, { k: 'jt', label: '轉角', type: 'select', options: JT, w: '9em' }],
+    example: ['5000', '50', '1000', '轉太少', '只改前進時間 → 6000'],
     next: function (r) {
       var s = sugg(r); if (!s) return '';
-      if (s.what === 'ok') return '<b style="color:var(--ok)">✔ 兩個數字都準了</b>';
-      return s.what === '改直行' ? '只改直行 → <b>' + s.f + ' ms</b>' : '只改轉彎 → <b>' + s.t + ' ms</b>';
+      if (s.what === 'ok') return '<b style="color:var(--ok)">✔ 兩個變數都準了</b>';
+      return s.what === 'f' ? '只改前進時間 → <b>' + s.f + '</b>' : '只改轉彎時間 → <b>' + s.t + '</b>';
     },
     carry: function (last, nr) { var s = sugg(last); if (s) { nr.f = String(s.f); nr.t = String(s.t); } },
     complete: function (r) { return String(r.f || '').trim() && String(r.d || '').trim() && String(r.t || '').trim() && r.jt; } });
 })();
 
 /* ---- 6 驗收 ---- */
-F1.verify('#verify', { key: 'real', label: '5. 真車走正方形（老師驗收）', what: '真車用速度 50 走完一格地磚正方形，大致回到起點', max: 10, sec: 's6' });
+F1.verify('#verify', { key: 'real', label: '2. 真車走正方形（老師驗收）', what: '真車用速度 50、兩個變數，走完一格地磚正方形，大致回到起點', max: 18, sec: 's6' });
 F1.mclink('#mclink', { key: 'link', sec: 's6' });
-F1.checklist('#checks', { key: 'checks', label: '6. 自我檢查', max: 2, sec: 's6', items: [
-  '我在「當啟動時」第一行加了「初始化麥昆Plus」',
-  '每塊馬達積木的速度都是 50',
+F1.checklist('#checks', { key: 'checks', label: '3. 自我檢查', max: 4, sec: 's6', items: [
+  '「當啟動時」最頂設定了「前進時間」和「轉彎時間」兩個變數',
+  '直行和轉彎的「暫停」用了這兩個變數',
+  '程式有「初始化麥昆Plus」，每塊馬達積木的速度都是 50',
   '每個「停止」之後都有停頓（暫停 500）',
-  '我用了「重複 4 次」，而不是抄 4 次同樣的積木',
-  '我每次只改一個數字，並把結果記錄下來'] });
+  '我們每次只改一個變數，並把結果記錄下來'] });
 
 /* ---- 7 學習日誌 ---- */
-F1.text('#log', { key: 'log', label: '7. 學習日誌', max: 3, min: 20, sec: 's7', placeholder: '例：我們試了 4 次。第一次邊太短，用比例把 5000 改成 6000 後……' });
+F1.text('#log', { key: 'log', label: '4. 學習日誌', max: 4, min: 20, sec: 's7', placeholder: '例：我們試了 4 次。第一次邊太短，用比例把前進時間由 5000 改成 6000 後……' });
 
 /* 專案名稱提示 */
 function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_square'; }); }

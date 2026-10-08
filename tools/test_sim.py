@@ -35,9 +35,10 @@ CASES = {
   # mission: [(label, js-expression-building-xml or None, expect)]
   'l3poe': [('stop (starter)', None, 'fail'),
             ('back', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000))) + F1Xml.forever(F1Xml.follower('back'),30,170))", 'pass')],
-  'l2sq': [('square 50: 5600/1020', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+F1Xml.n(4)+'</value><statement name=\"DO\">'+F1Xml.motor('A','1',50,F1Xml.pause(5600,F1Xml.stop('A',F1Xml.pause(500,F1Xml.motor('L','1',50,F1Xml.motor('R','-1',50,F1Xml.pause(1020,F1Xml.stop('A',F1Xml.pause(500)))))))))+'</statement></block>'))))", 'pass'),
-          ('starter numbers 5000/1000', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+F1Xml.n(4)+'</value><statement name=\"DO\">'+F1Xml.motor('A','1',50,F1Xml.pause(5000,F1Xml.stop('A',F1Xml.pause(500,F1Xml.motor('L','1',50,F1Xml.motor('R','-1',50,F1Xml.pause(1000,F1Xml.stop('A',F1Xml.pause(500)))))))))+'</statement></block>'))))", 'fail'),
-          ('speed 100', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+F1Xml.n(4)+'</value><statement name=\"DO\">'+F1Xml.motor('A','1',100,F1Xml.pause(2650,F1Xml.stop('A',F1Xml.pause(500,F1Xml.motor('L','1',100,F1Xml.motor('R','-1',100,F1Xml.pause(490,F1Xml.stop('A',F1Xml.pause(500)))))))))+'</statement></block>'))))", 'fail'),
+  'l2sq': [('variables 5600/1020', "F1Xml.squareV(5600, 1020)", 'pass'),
+          ('starter numbers 5000/1000', "F1Xml.squareV(5000, 1000)", 'fail'),
+          ('speed 100', "F1Xml.squareV(2650, 490, 100)", 'fail'),
+          ('no variables', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+F1Xml.n(4)+'</value><statement name=\"DO\">'+F1Xml.motor('A','1',50,F1Xml.pause(5600,F1Xml.stop('A',F1Xml.pause(500,F1Xml.motor('L','1',50,F1Xml.motor('R','-1',50,F1Xml.pause(1020,F1Xml.stop('A',F1Xml.pause(500)))))))))+'</statement></block>'))))", 'fail'),
           ('no repeat (one side)', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.motor('A','1',50,F1Xml.pause(5600,F1Xml.stop('A'))))))", 'fail')],
   'l3lap': [('follower back', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000))) + F1Xml.forever(F1Xml.follower('back'),30,170))", 'pass'),
             ('in on-start only', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000,F1Xml.follower('back')))))", 'fail')],

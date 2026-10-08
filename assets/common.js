@@ -546,18 +546,27 @@
       '<div><label class="fld" for="f_cls">班別</label><input class="inp" id="f_cls" placeholder="例：1A" autocomplete="off"></div>' +
       '<div><label class="fld" for="f_num">學號</label><input class="inp" id="f_num" placeholder="例：12" inputmode="numeric" autocomplete="off"></div>' +
       '<div><label class="fld" for="f_name">姓名</label><input class="inp" id="f_name" placeholder="例：陳大文" autocomplete="off"></div></div>' +
+      (L.pair ? '<div class="pairbox"><b>組員二</b><span class="small muted">（兩人一組才填；一人一組請留空。報告會同時記錄兩位同學）</span>' +
+        '<div class="idgrid"><div><label class="fld" for="f_pnum">組員二 學號</label><input class="inp" id="f_pnum" placeholder="例：5" inputmode="numeric" autocomplete="off"></div>' +
+        '<div><label class="fld" for="f_pname">組員二 姓名</label><input class="inp" id="f_pname" placeholder="例：李小明" autocomplete="off"></div></div></div>' : '') +
       '<p class="small muted stmsg"></p>';
     [['f_cls', 'cls'], ['f_num', 'num'], ['f_name', 'name']].forEach(function (x) {
       var el = $('#' + x[0]); el.value = STU[x[1]] || '';
       el.oninput = function () { var v = el.value.trim(); STU[x[1]] = x[1] === 'cls' ? v.toUpperCase() : v; put('f1dt:student', STU); refresh(); };
     });
+    if (L.pair) [['f_pnum', 'num'], ['f_pname', 'name']].forEach(function (x) {
+      var el = $('#' + x[0]); D.partner = D.partner || {}; el.value = D.partner[x[1]] || '';
+      el.oninput = function () { D.partner[x[1]] = el.value.trim(); put(L.key, D); refresh(); };
+    });
   }
+  function partner() { var p = D && D.partner; return L && L.pair && p && p.name ? p : null; }
+  F1.partner = partner;
   function refresh() {
     var t = totals();
     var pill = $('.topbar .pill'); if (pill) pill.textContent = t.score + ' / ' + t.max + ' 分';
     var bar = $('.topbar .bar i'); if (bar) bar.style.width = t.prog + '%';
     var pct = $('.topbar .pct'); if (pct) pct.textContent = t.prog + '%';
-    var who = $('.topbar .who'); if (who) who.textContent = stuOK() ? STU.cls + ' ' + STU.num + ' ' + STU.name : '未填姓名';
+    var who = $('.topbar .who'); if (who) who.textContent = stuOK() ? STU.cls + ' ' + STU.num + ' ' + STU.name + (partner() ? '＋' + partner().name : '') : '未填姓名';
     var m = $('.stmsg'); if (m) m.textContent = stuOK() ? '✔ 資料已填妥。（四課共用；換同學用這部電腦時，系統會先問你是誰）' : '⚠️ 請先填寫班別、學號及姓名，否則不能輸出功課。';
     F1.comps.forEach(function (c) { if (c.refresh) c.refresh(); });
     // 小節完成
@@ -588,7 +597,7 @@
     var t = totals();
     return {
       app: CFG.APP, v: CFG.VERSION, lesson: L.id, title: L.title,
-      cls: STU.cls, no: STU.num, name: STU.name,
+      cls: STU.cls, no: STU.num, name: STU.name, partner: partner() ? { no: partner().num || '', name: partner().name } : null,
       exported: Date.now(), total: t.score, max: t.max, pct: t.pct, grade: grade(t.pct),
       items: F1.comps.map(function (c) { return { key: c.key, label: c.label, score: Math.round(scoreOf(c) * 10) / 10, max: c.max, done: c.done(), detail: c.report ? c.report() : null }; }),
       badges: Object.keys(D.badges || {}).length, teacherUsed: !!D.teacherUsed
@@ -600,7 +609,7 @@
     var code = sig ? (sig.slice(0, 4) + '-' + sig.slice(4, 8) + '-' + sig.slice(8, 12)).toUpperCase() : '';
     var h = '<div class="rhead"><div><div class="rk">中一設計與科技｜自動化與機械人</div><h1>' + e(d.title) + '　學習報告</h1></div>' +
       '<div class="rv ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✔ 驗證碼正確' : '✘ 驗證失敗：報告可能被修改') + '<br><b>' + code + '</b></div></div>';
-    h += '<div class="rinfo"><span>班別：<b>' + e(d.cls) + '</b></span><span>學號：<b>' + e(d.no) + '</b></span><span>姓名：<b>' + e(d.name) + '</b></span><span>輸出時間：' + dt(d.exported) + '</span></div>';
+    h += '<div class="rinfo"><span>班別：<b>' + e(d.cls) + '</b></span><span>學號：<b>' + e(d.no) + '</b></span><span>姓名：<b>' + e(d.name) + '</b></span>' + (d.partner && d.partner.name ? '<span>組員二：<b>' + e(d.partner.no) + ' ' + e(d.partner.name) + '</b></span>' : '') + '<span>輸出時間：' + dt(d.exported) + '</span></div>';
     h += '<div class="rscore"><div class="big">' + d.total + ' <small>/ ' + d.max + '</small></div><div>' + d.pct + '%　' + e(d.grade) + (d.teacherUsed ? '<br><small>（曾使用老師模式）</small>' : '') + '</div></div>';
     h += '<table><tr><th>評分項目</th><th>得分</th><th>滿分</th></tr>';
     d.items.forEach(function (it) { if (it.max > 0) h += '<tr><td>' + e(it.label) + (it.done ? '' : '（未完成）') + '</td><td>' + it.score + '</td><td>' + it.max + '</td></tr>'; });
@@ -661,7 +670,8 @@
   function exportReport() {
     if (!stuOK()) { dialog({ title: '未填學生資料', html: '<p>請先在本課開頭填寫班別、學號及姓名。</p>' }).then(function () { location.hash = '#student-sec'; }); return; }
     var r = reportHTML();
-    download('DT_F1_' + L.id + '_' + STU.cls + '_' + STU.num + '_' + STU.name + '.html', r.html);
+    var pp = partner();
+    download('DT_F1_' + L.id + '_' + STU.cls + '_' + STU.num + '_' + STU.name + (pp ? '_' + (pp.num || '') + '_' + pp.name : '') + '.html', r.html);
     D.exported = Date.now(); save(true);
     dialog({ title: '已下載成績報告', html: '<p>檔案在「下載」資料夾，請上傳到 Google Classroom／eClass。</p><p>驗證碼：<b>' + (r.sig.slice(0, 4) + '-' + r.sig.slice(4, 8) + '-' + r.sig.slice(8, 12)).toUpperCase() + '</b></p><p><b>如果這是共用電腦</b>，請清除這部電腦上的資料，下一位同學才不會看到你的答案。</p>',
       buttons: [{ t: '保留資料' }, { t: '清除這部電腦的資料', kind: 'primary', f: function () { clearAll(); setTimeout(function () { location.reload(); }, 50); } }] });

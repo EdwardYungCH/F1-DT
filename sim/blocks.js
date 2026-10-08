@@ -21,7 +21,7 @@
   M.LOGIC_NEGATE_TITLE = '非 %1';
   M.VARIABLES_SET = '變數 %1 設為 %2';
   M.MATH_CHANGE_TITLE = '變數 %1 改變 %2';
-  M.NEW_VARIABLE = '建立變數…';
+  M.NEW_VARIABLE = '建立一個變數…';
   M.NEW_VARIABLE_TITLE = '新變數的名稱：';
   M.DELETE_BLOCK = '刪除積木';
   M.DELETE_X_BLOCKS = '刪除 %1 個積木';

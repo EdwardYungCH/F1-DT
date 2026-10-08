@@ -66,13 +66,24 @@ table.wide{font-size:.85rem} table.wide th,table.wide td{padding:5px 7px;white-s
       return { fname: fname, d: d, ok: ok, sig: box.sig, code: (box.sig.slice(0, 4) + '-' + box.sig.slice(4, 8) + '-' + box.sig.slice(8, 12)).toUpperCase() };
     } catch (e) { return { fname: fname, err: '檔案損壞' }; }
   }
+  function addParsed(x) {
+    if (x.err) { bad.push(x); return; }
+    if (rows.some(function (y) { return y.sig === x.sig; })) return;
+    rows.push(x);
+    // 兩人一組：同一份報告為組員二另開一行，分數相同
+    var pt = x.d.partner;
+    if (pt && pt.name) {
+      var d2 = JSON.parse(JSON.stringify(x.d)); d2.no = pt.no; d2.name = pt.name; d2.partner = { no: x.d.no, name: x.d.name };
+      rows.push({ fname: x.fname, d: d2, ok: x.ok, sig: x.sig + '#2', code: x.code });
+    }
+  }
   function addFiles(files) {
     var list = Array.prototype.slice.call(files), n = list.length;
     list.forEach(function (f) {
       var r = new FileReader();
       r.onload = function () {
         var x = parse(String(r.result), f.name);
-        if (x.err) bad.push(x); else if (!rows.some(function (y) { return y.sig === x.sig; })) rows.push(x);
+        addParsed(x);
         if (--n === 0) { var ls = rows.map(function (y) { return y.d.lesson; }); if (ls.length && ls.indexOf(lesson) < 0) lesson = ls[0]; render(); }
       };
       r.readAsText(f);
@@ -90,19 +101,19 @@ table.wide{font-size:.85rem} table.wide th,table.wide td{padding:5px 7px;white-s
   function fmt(t) { if (!t) return ''; var d = new Date(t), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
   function render() {
     var ls = ['L1', 'L2', 'L3', 'L4'];
-    $('#tabs').innerHTML = ls.map(function (l) { var n = rows.filter(function (r) { return r.d.lesson === l; }).length; return '<button type="button" data-l="' + l + '" aria-pressed="' + (l === lesson) + '">第' + '一二三'[+l[1] - 1] + '堂（' + n + '）</button>'; }).join('');
+    $('#tabs').innerHTML = ls.map(function (l) { var n = rows.filter(function (r) { return r.d.lesson === l; }).length; return '<button type="button" data-l="' + l + '" aria-pressed="' + (l === lesson) + '">第' + '一二三四五'[+l[1] - 1] + '堂（' + n + '）</button>'; }).join('');
     Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (b) { b.onclick = function () { lesson = b.getAttribute('data-l'); render(); }; });
     var list = cur(), cs = cols(list);
     var avg = list.length ? Math.round(list.reduce(function (s, r) { return s + r.d.pct; }, 0) / list.length) : 0;
     var badSig = list.filter(function (r) { return !r.ok; }).length;
     var ver = list.filter(function (r) { return r.d.items.some(function (it) { return it.detail && it.detail.type === 'verify' && it.detail.ok; }); }).length;
-    $('#stats').innerHTML = '<div class="stat">報告數目<b>' + list.length + '</b></div><div class="stat">平均百分比<b>' + avg + '%</b></div><div class="stat">真車已驗收<b>' + ver + '</b></div><div class="stat">驗證失敗<b style="color:' + (badSig ? 'var(--no)' : 'var(--ok)') + '">' + badSig + '</b></div>';
+    $('#stats').innerHTML = '<div class="stat">學生人數<b>' + list.length + '</b></div><div class="stat">平均百分比<b>' + avg + '%</b></div><div class="stat">真車已驗收<b>' + ver + '</b></div><div class="stat">驗證失敗<b style="color:' + (badSig ? 'var(--no)' : 'var(--ok)') + '">' + badSig + '</b></div>';
     if (!list.length) { $('#tbl').innerHTML = '<p class="muted">未有這一課的報告。</p>'; $('#items').innerHTML = ''; }
     else {
       var h = '<table class="wide"><thead><tr><th>班別</th><th>學號</th><th>姓名</th><th>總分</th><th>%</th><th>等級</th><th>驗證</th>' + cs.map(function (c) { return '<th title="' + esc(c.label) + '">' + esc(c.label.replace(/^\d+\.\s*/, '').slice(0, 10)) + '<br><span class="muted">/' + c.max + '</span></th>'; }).join('') + '<th>輸出時間</th></tr></thead><tbody>';
       list.forEach(function (r) {
         var d = r.d, map = {}; d.items.forEach(function (it) { map[it.key] = it; });
-        h += '<tr><td>' + esc(d.cls) + '</td><td>' + esc(d.no) + '</td><td>' + esc(d.name) + (d.teacherUsed ? ' <span class="muted" title="曾使用老師模式">*</span>' : '') + '</td><td>' + d.total + ' / ' + d.max + '</td><td>' + d.pct + '</td><td>' + esc(d.grade) + '</td>' +
+        h += '<tr><td>' + esc(d.cls) + '</td><td>' + esc(d.no) + '</td><td>' + esc(d.name) + (d.partner && d.partner.name ? ' <span class="muted">（同組：' + esc(d.partner.name) + '）</span>' : '') + (d.teacherUsed ? ' <span class="muted" title="曾使用老師模式">*</span>' : '') + '</td><td>' + d.total + ' / ' + d.max + '</td><td>' + d.pct + '</td><td>' + esc(d.grade) + '</td>' +
           '<td class="' + (r.ok ? 'ok' : 'bad') + '" title="' + esc(r.fname) + '">' + (r.ok ? '✔ ' : '✘ ') + r.code + '</td>' +
           cs.map(function (c) { var it = map[c.key]; return '<td>' + (it ? it.score : '') + '</td>'; }).join('') + '<td>' + fmt(d.exported) + '</td></tr>';
       });
@@ -130,16 +141,16 @@ table.wide{font-size:.85rem} table.wide th,table.wide td{padding:5px 7px;white-s
   $('#csv').onclick = function () {
     var list = cur(); if (!list.length) return;
     var cs = cols(list);
-    var head = ['課堂', '班別', '學號', '姓名', '總分', '滿分', '百分比', '等級', '驗證', '驗證碼'].concat(cs.map(function (c) { return c.label + '（/' + c.max + '）'; })).concat(['輸出時間', '曾用老師模式']);
+    var head = ['課堂', '班別', '學號', '姓名', '同組組員', '總分', '滿分', '百分比', '等級', '驗證', '驗證碼'].concat(cs.map(function (c) { return c.label + '（/' + c.max + '）'; })).concat(['輸出時間', '曾用老師模式']);
     var lines = [head].concat(list.map(function (r) {
       var d = r.d, map = {}; d.items.forEach(function (it) { map[it.key] = it; });
-      return [d.lesson, d.cls, d.no, d.name, d.total, d.max, d.pct, d.grade, r.ok ? '正確' : '失敗', r.code].concat(cs.map(function (c) { return map[c.key] ? map[c.key].score : ''; })).concat([fmt(d.exported), d.teacherUsed ? '是' : '']);
+      return [d.lesson, d.cls, d.no, d.name, d.partner && d.partner.name ? (d.partner.no + ' ' + d.partner.name).trim() : '', d.total, d.max, d.pct, d.grade, r.ok ? '正確' : '失敗', r.code].concat(cs.map(function (c) { return map[c.key] ? map[c.key].score : ''; })).concat([fmt(d.exported), d.teacherUsed ? '是' : '']);
     }));
     var csv = lines.map(function (l) { return l.map(function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(','); }).join('\r\n');
     var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
     a.download = 'F1_DT_' + lesson + '_成績.csv'; document.body.appendChild(a); a.click(); a.remove();
   };
-  window.F1Summary = { parse: parse, addText: function (t, n) { var x = parse(t, n); if (x.err) bad.push(x); else rows.push(x); render(); return x; } };
+  window.F1Summary = { parse: parse, addText: function (t, n) { var x = parse(t, n); addParsed(x); render(); return x; } };
 })();
 </script>
 </body>

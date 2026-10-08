@@ -271,6 +271,9 @@ details.more.warn > summary{color:var(--no)}
 .roles b{display:block;color:var(--t-d)}
 
 /* ---------- 成績表 ---------- */
+.pairbox{margin-top:12px;padding:12px 14px;border:1px dashed var(--t-mid);border-radius:12px;background:#fff}
+.pairbox > b{color:var(--t-d);margin-right:6px}
+.pairbox .idgrid{margin-top:8px}
 .idgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .scoretbl td:nth-child(2),.scoretbl td:nth-child(3){text-align:center;width:6em}
 .scoretbl tr.tot td{background:var(--t-soft);font-weight:800}
