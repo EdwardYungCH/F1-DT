@@ -49,7 +49,7 @@ h2.lab{font-size:.85rem;letter-spacing:.12em;color:var(--ink-3);margin:30px 0 12
     <div>
       <small>F1 · DESIGN &amp; TECHNOLOGY</small>
       <h1>自動化與機械人</h1>
-      <p>中一設計與科技科自學網站。三堂課由「機械人是什麼」開始，到寫程式令麥昆小車走正方形、自己巡線，再用流程圖設計更聰明的巡線車。每一課都可以先用模擬器試，再用真車做。</p>
+      <p>中一設計與科技科自學網站。四堂課由「機械人是什麼」開始，到寫程式令麥昆小車走正方形、自己巡線，再用流程圖設計更聰明的巡線車。每一課都可以先用模擬器試，再用真車做。</p>
       <div class="who2" id="who"></div>
     </div>
     <div class="bot">
@@ -66,7 +66,7 @@ h2.lab{font-size:.85rem;letter-spacing:.12em;color:var(--ink-3);margin:30px 0 12
     </div>
   </header>
 
-  <div class="cert" id="cert"><span style="font-size:2rem">🏅</span><div><b>恭喜！你已完成本單元三堂課。</b><div class="small muted">記得每一課都下載成績報告交給老師。</div></div></div>
+  <div class="cert" id="cert"><span style="font-size:2rem">🏅</span><div><b>恭喜！你已完成本單元四堂課。</b><div class="small muted">記得每一課都下載成績報告交給老師。</div></div></div>
 
   <h2 class="lab">課堂</h2>
   <div class="lessons" id="lessons"></div>
@@ -79,7 +79,7 @@ h2.lab{font-size:.85rem;letter-spacing:.12em;color:var(--ink-3);margin:30px 0 12
     </a>
     <a class="tool" href="project.html">
       <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="12" fill="#e08600"/><rect x="12" y="10" width="24" height="30" rx="3" fill="#fff"/><path d="M17 18h14M17 24h14M17 30h9" stroke="#e08600" stroke-width="3" stroke-linecap="round"/></svg>
-      <div><b>單元小專題：課室送遞機械人</b><span>運用三課所學，設計一部在課室送物件的巡線機械人。附評分準則。</span></div>
+      <div><b>單元小專題：課室送遞機械人</b><span>運用四課所學，設計一部在課室送物件的巡線機械人。附評分準則。</span></div>
     </a>
   </div>
 
@@ -89,9 +89,10 @@ h2.lab{font-size:.85rem;letter-spacing:.12em;color:var(--ink-3);margin:30px 0 12
 <script>
 (function () {
   var LESSONS = [
-    { n: 1, id: 'L1', href: 'L1/', c: '#1d63c9', title: '認識機械人．小車走正方形', desc: '感知、決定、動作；輸入→處理→輸出；用計時和差速轉向令小車走一格地磚正方形。' },
-    { n: 2, id: 'L2', href: 'L2/', c: '#0e7d6a', title: '巡線感應器與巡線機械人', desc: '紅外線反射、讀 1 定 0、三種轉彎方式（先預測再試驗），令小車自己沿黑線走完一圈。' },
-    { n: 3, id: 'L3', href: 'L3/', c: '#5644b8', title: '流程圖與分層修正', desc: '流程圖符號、判斷與迴圈；先畫流程圖，再設計用 5 個感應器的分層修正巡線車。' }
+    { n: 1, id: 'L1', href: 'L1/', c: '#1d63c9', title: '認識機械人', desc: '感知、決定、動作；機械人、自動化系統還是都不是；用輸入→處理→輸出拆解機械人。' },
+    { n: 2, id: 'L2', href: 'L2/', c: '#b4235a', title: '小車走正方形', desc: '拆解程式（直行、停頓、轉彎、重複），下載到 micro:bit，用測試→觀察→調整的循環令小車走一格地磚正方形。' },
+    { n: 3, id: 'L3', href: 'L3/', c: '#0e7d6a', title: '巡線感應器與巡線機械人', desc: '紅外線反射、讀 1 定 0、三種轉彎方式（先預測再試驗），令小車自己沿黑線走完一圈。' },
+    { n: 4, id: 'L4', href: 'L4/', c: '#5644b8', title: '流程圖與分層修正', desc: '流程圖符號、判斷與迴圈；先畫流程圖，再設計用 5 個感應器的分層修正巡線車。' }
   ];
   function get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }

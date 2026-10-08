@@ -3,9 +3,9 @@ import os
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 PROGS = {
- 'blocks-l1-a': "X.x(X.start(X.init(X.motor('A','1',100,X.pause(2000,X.stop('A'))))))",
- 'blocks-l1-b': "X.x(X.start(X.init(X.pause(1000,X.motor('L','1',100,X.motor('R','-1',100,X.pause(500,X.stop('A'))))))))",
- 'blocks-l1-square': "X.x(X.start(X.init(X.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+X.n(4)+'</value><statement name=\"DO\">'+X.motor('A','1',100,X.pause(3000,X.stop('A',X.pause(300,X.motor('L','1',100,X.motor('R','-1',100,X.pause(500,X.stop('A',X.pause(300)))))))))+'</statement></block>'))))",
+ 'blocks-sq-full': "X.x(X.start(X.init(X.pause(1000,'<block type=\"f1_repeat\"><value name=\"TIMES\">'+X.n(4)+'</value><statement name=\"DO\">'+X.motor('A','1',50,X.pause(5000,X.stop('A',X.pause(500,X.motor('L','1',50,X.motor('R','-1',50,X.pause(1000,X.stop('A',X.pause(500)))))))))+'</statement></block>'))))",
+ 'blocks-sq-straight': "X.x(X.motor('A','1',50,X.pause(5000,X.stop('A',X.pause(500)))))",
+ 'blocks-sq-turn': "X.x(X.motor('L','1',50,X.motor('R','-1',50,X.pause(1000,X.stop('A',X.pause(500))))))",
  'blocks-l2-full': "X.x(X.start(X.init(X.pause(1000))) + X.forever(X.follower('back'),30,170))",
  'blocks-l2-stop': "X.x(X.forever(X.follower('stop'),30,30))",
 }

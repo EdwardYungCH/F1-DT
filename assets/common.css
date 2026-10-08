@@ -12,10 +12,10 @@
   --r:14px;--top:56px;
   color-scheme:light;
 }
-body[data-theme="l2"]{--t:#0e7d6a;--t-d:#0a5c4e;--t-soft:#e2f3ef;--t-mid:#a8dacd}
-body[data-theme="l3"]{--t:#5644b8;--t-d:#3e3090;--t-soft:#eeebfb;--t-mid:#cbc3f0}
+body[data-theme="l2"]{--t:#b4235a;--t-d:#8a1a44;--t-soft:#fbe9f0;--t-mid:#efb3c9}
+body[data-theme="l3"]{--t:#0e7d6a;--t-d:#0a5c4e;--t-soft:#e2f3ef;--t-mid:#a8dacd}
+body[data-theme="l4"]{--t:#5644b8;--t-d:#3e3090;--t-soft:#eeebfb;--t-mid:#cbc3f0}
 html{font-size:17px;scroll-padding-top:calc(var(--top) + 12px)}
-html[data-fs="s"]{font-size:15px} html[data-fs="l"]{font-size:19.5px}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);line-height:1.75;-webkit-font-smoothing:antialiased}
@@ -38,7 +38,7 @@ kbd{font-family:inherit;background:#fff;border:1px solid var(--line);border-bott
 
 /* ---------- 頂部列 ---------- */
 .topbar{position:sticky;top:0;z-index:50;height:var(--top);background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.topbar .in{max-width:1240px;margin:auto;height:100%;display:flex;align-items:center;gap:10px;padding:0 16px}
+.topbar .in{max-width:920px;margin:auto;height:100%;display:flex;align-items:center;gap:10px;padding:0 16px}
 .crumb{display:flex;align-items:center;gap:6px;font-size:.88rem;color:var(--ink-3);white-space:nowrap;min-width:0}
 .crumb a{color:var(--ink-2);text-decoration:none;font-weight:700}
 .crumb a:hover{color:var(--t-d)}
@@ -52,13 +52,12 @@ kbd{font-family:inherit;background:#fff;border:1px solid var(--line);border-bott
 .tbtn{min-height:40px;min-width:40px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink-2);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .tbtn:hover{background:var(--surface-2);color:var(--ink)}
 .tbtn[aria-pressed="true"]{background:var(--t-soft);border-color:var(--t-mid);color:var(--t-d)}
-.tbtn.menu{display:none}
 .topbar .tbtn{white-space:nowrap;text-decoration:none}
 .who{font-size:.85rem;color:var(--ink-2);white-space:nowrap;max-width:9em;overflow:hidden;text-overflow:ellipsis}
 
 /* ---------- 課堂標題 ---------- */
 .hero{background:linear-gradient(120deg,var(--t-d),var(--t));color:#fff;position:relative;overflow:hidden}
-.hero .in{max-width:1240px;margin:auto;padding:28px 16px 30px;display:flex;gap:20px;align-items:center}
+.hero .in{max-width:920px;margin:auto;padding:28px 16px 30px;display:flex;gap:20px;align-items:center}
 .hero .kicker{font-family:var(--f-disp);letter-spacing:.18em;font-size:.78rem;opacity:.85;font-weight:700}
 .hero h1{font-size:1.85rem;font-weight:900;margin:4px 0 6px}
 .hero p{margin:0;opacity:.92;max-width:44em}
@@ -66,16 +65,7 @@ kbd{font-family:inherit;background:#fff;border:1px solid var(--line);border-bott
 .hero .art svg{display:block;width:100%;height:auto}
 
 /* ---------- 版面 ---------- */
-.layout{max-width:1240px;margin:0 auto;padding:20px 16px 60px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;align-items:start}
-.toc{position:sticky;top:calc(var(--top) + 16px);max-height:calc(100vh - var(--top) - 32px);overflow:auto;font-size:.9rem}
-.toc h4{font-size:.78rem;letter-spacing:.12em;color:var(--ink-3);margin:0 0 8px;font-weight:800}
-.toc ol{list-style:none;padding:0;margin:0}
-.toc li{margin:0}
-.toc a{display:flex;gap:8px;align-items:flex-start;padding:6px 10px;border-radius:8px;color:var(--ink-2);text-decoration:none;line-height:1.45;border-left:3px solid transparent}
-.toc a:hover{background:#fff;color:var(--ink)}
-.toc a.on{background:#fff;color:var(--t-d);border-left-color:var(--t);font-weight:700}
-.toc a .st{flex:none;width:1.2em;color:var(--ok);font-weight:800}
-.toc .part{font-size:.75rem;color:var(--ink-3);font-weight:800;margin:12px 10px 4px;letter-spacing:.06em}
+.layout{max-width:920px;margin:0 auto;padding:20px 16px 60px}
 main{min-width:0;counter-reset:fig}
 .page-tools{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
 
@@ -288,12 +278,6 @@ details.more.warn > summary{color:var(--no)}
 .badge{display:inline-flex;align-items:center;gap:4px;background:#fff7df;border:1px solid #f0d58a;color:#6b4a00;border-radius:999px;padding:2px 10px;font-size:.82rem;font-weight:700}
 
 /* ---------- 課堂導航 ---------- */
-.lesson-nav{display:flex;justify-content:space-between;gap:12px;margin-top:10px;flex-wrap:wrap}
-.lesson-nav a{flex:1;min-width:200px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;text-decoration:none;color:var(--ink)}
-.lesson-nav a small{display:block;color:var(--ink-3);font-size:.8rem}
-.lesson-nav a b{font-size:1rem}
-.lesson-nav a.next{text-align:right}
-.lesson-nav a:hover{border-color:var(--t-mid)}
 footer.foot{text-align:center;color:var(--ink-3);font-size:.82rem;padding:10px 0 30px}
 
 /* ---------- 浮動 ---------- */
@@ -306,9 +290,6 @@ footer.foot{text-align:center;color:var(--ink-3);font-size:.82rem;padding:10px 0
 .lightbox{position:fixed;inset:0;background:rgba(10,15,20,.9);z-index:160;display:grid;place-items:center;padding:18px;cursor:zoom-out}
 .lightbox .lb-in{background:#fff;border-radius:12px;max-width:96vw;max-height:92vh;overflow:auto;padding:10px}
 .lightbox .lb-in svg,.lightbox .lb-in img{display:block;width:min(1200px,92vw);height:auto}
-.drawer{position:fixed;inset:0;z-index:140;background:rgba(15,25,35,.45)}
-.drawer .panel{position:absolute;left:0;top:0;bottom:0;width:min(320px,86vw);background:var(--bg);padding:16px;overflow:auto}
-.drawer .toc{position:static;max-height:none}
 
 /* ---------- 老師模式 ---------- */
 .teacher-only{display:none!important}
@@ -317,7 +298,7 @@ body.teacher .topbar{border-bottom:3px solid #e0b25c}
 
 /* ---------- 列印 ---------- */
 @media print{
-  .topbar,.toc,.sec-tools,.next-sec,.lesson-nav,.btnrow,.simcard iframe,.page-tools,.verify button{display:none!important}
+  .topbar,.sec-tools,.next-sec,.btnrow,.simcard iframe,.verify button{display:none!important}
   .layout{display:block;padding:0}
   section.card{break-inside:avoid;border:0;padding:8px 0}
   section.card.collapsed > :not(header){display:block!important}
@@ -325,11 +306,6 @@ body.teacher .topbar{border-bottom:3px solid #e0b25c}
 }
 
 /* ---------- 手機 ---------- */
-@media (max-width:1100px){
-  .layout{grid-template-columns:1fr}
-  .layout > .toc{display:none}
-  .tbtn.menu{display:inline-flex}
-}
 @media (max-width:640px){
   :root{--top:52px}
   .crumb .trail,.who,.tbtn .lbl{display:none}

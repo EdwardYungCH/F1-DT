@@ -1,4 +1,4 @@
-"""第四堂障礙物 3D 打印檔（STL，單位 mm）。
+"""第五堂障礙物 3D 打印檔（STL，單位 mm）。
 執行：python3 tools/gen_stl.py        → 輸出到 assets/stl/，並檢查每個實體是否密封
       python3 tools/gen_stl.py png    → 另外輸出預覽圖 assets/stl/preview.png
 

@@ -22,7 +22,7 @@
   Object.keys(MIS).forEach(function (k) {
     if (only && only.split(',').indexOf(k) < 0 && k !== mid) return;
     var m = MIS[k], o = document.createElement('option');
-    o.value = k; o.textContent = (m.lesson ? '第' + '一二三'[m.lesson - 1] + '堂｜' : '') + m.title;
+    o.value = k; o.textContent = (m.lesson ? '第' + '一二三四五'[m.lesson - 1] + '堂｜' : '') + m.title;
     sel.appendChild(o);
   });
   sel.value = mid;
@@ -66,7 +66,7 @@
     var newQ = new URLSearchParams(location.search); newQ.set('m', m); history.replaceState(null, '', '?' + newQ.toString());
     makeWorkspace(M.level);
     var saved = store(progKey(m));
-    if (!saved && m === 'l3tier') saved = store(progKey('l3lap'));
+    if (!saved && m === 'l4tier') saved = store(progKey('l4lap'));
     loadXml(saved || M.starter);
     $('#sceneSel').hidden = !M.free;
     setScene(M.free ? ($('#scene').value || 'oval') : M.scene);
@@ -368,8 +368,16 @@
       var st = { closure: +dist.toFixed(1), heading: +head.toFixed(0), path: +E.distance.toFixed(0), turned: +abs.toFixed(0), repeat: usedRepeat };
       if (E.distance < 150) return finish('fail', '未走完四條邊', '只走了 ' + E.distance.toFixed(0) + ' cm。一格地磚正方形大約要走 240 cm。', st);
       if (!usedRepeat) return finish('fail', '未用「重複 4 次」', '路線差不多了，但要用「重複 4 次」，不要抄 4 次積木。', st);
-      if (dist <= 15 && head <= 15) return finish('pass', '正方形完成！', '回到起點附近（相差 ' + dist.toFixed(1) + ' cm），車頭偏差 ' + head.toFixed(0) + '°。', st);
-      return finish('fail', '未回到起點', '相差 ' + dist.toFixed(1) + ' cm，車頭偏差 ' + head.toFixed(0) + '°。' + (abs < 330 ? '轉彎太少：每次轉彎的暫停時間要加長。' : abs > 390 ? '轉彎太多：每次轉彎的暫停時間要縮短。' : '直行時間可能要調整。'), st);
+      var speeds = ws.getAllBlocks(false).filter(function (b) { return b.type === 'f1_mq_motor'; }).map(function (b) { var v = b.getInputTargetBlock('S'); return v && v.type === 'math_number' ? +v.getFieldValue('NUM') : NaN; });
+      if (speeds.some(function (v) { return v !== 50; })) return finish('fail', '速度要用 50', '有馬達積木的速度不是 50（預設 100 太快，容易衝過頭和打滑）。把每塊馬達積木的速度都改成 50。', st);
+      var side = E.distance / 4, each = abs / 4, tips = [];
+      st.side = +side.toFixed(1); st.each = +each.toFixed(0);
+      if (side < 55) tips.push('每邊約 ' + side.toFixed(0) + ' cm，太短：直行的暫停時間要加長。');
+      else if (side > 65) tips.push('每邊約 ' + side.toFixed(0) + ' cm，太長：直行的暫停時間要縮短。');
+      if (each < 86) tips.push('每次約轉 ' + each.toFixed(0) + '°，太少：轉彎的暫停時間要加長（例如 +50 ms）。');
+      else if (each > 94) tips.push('每次約轉 ' + each.toFixed(0) + '°，太多：轉彎的暫停時間要縮短（例如 −50 ms）。');
+      if (dist <= 15 && head <= 15 && side >= 55 && side <= 65) return finish('pass', '正方形完成！', '每邊約 ' + side.toFixed(0) + ' cm，回到起點附近（相差 ' + dist.toFixed(1) + ' cm），車頭偏差 ' + head.toFixed(0) + '°。記下你用的兩個數字。', st);
+      return finish('fail', '未走成一格地磚的正方形', '相差起點 ' + dist.toFixed(1) + ' cm，車頭偏差 ' + head.toFixed(0) + '°。' + (tips.join(' ') || '差少少：微調轉彎時間（±20 ms）再試。') + ' 每次只改一個數字。', st);
     }
     if (M.check === 'lap' || M.check === 'tier') {
       return finish('fail', '程式完結了', '巡線程式要放在「重複無限次」內，令小車不停感知。');

@@ -274,8 +274,8 @@
     paint();
     $('.btn', row).onclick = function () { check(false); };
     if (st.first !== null) check(true);
-    return reg({ key: o.key, label: o.label, max: blanks.length, sec: o.sec,
-      score: function () { return st.first || 0; }, done: function () { return st.first !== null; },
+    return reg({ key: o.key, label: o.label, max: o.max || blanks.length, sec: o.sec,
+      score: function () { return o.max ? (st.first || 0) / blanks.length * o.max : (st.first || 0); }, done: function () { return st.first !== null; },
       report: function () { return { type: 'fill', first: st.first, rows: blanks.map(function (b, i) { return { q: '第 ' + (i + 1) + ' 格', a: st.val[i] || '', ans: b.ans, ok: st.val[i] ? ok(i) : null }; }) }; } });
   };
 
@@ -485,61 +485,22 @@
 
   function buildTop() {
     var tb = document.createElement('div'); tb.className = 'topbar';
-    var nav = CFG.NAV_LINKS !== false;
     tb.innerHTML = '<div class="in">' +
-      '<button type="button" class="tbtn menu" aria-label="目錄">☰</button>' +
-      '<div class="crumb">' + MASCOT + (nav ? '<span class="trail"><a href="../index.html">中一 DT 單元</a> ›</span>' : '') + '<span class="here">' + esc(L.short) + '</span></div>' +
+      '<div class="crumb">' + MASCOT + '<span class="here">' + esc(L.short) + '</span></div>' +
       '<div class="prog" title="完成進度"><span class="bar"><i></i></span><span class="pct">0%</span></div>' +
       '<span class="pill" title="目前分數">0 / 0</span>' +
       '<span class="who"></span>' +
-      '<button type="button" class="tbtn fs" title="字體大小" aria-label="字體大小">A<span class="lbl">±</span></button>' +
-      '<button type="button" class="tbtn speak" title="朗讀" aria-pressed="false">🔊<span class="lbl">朗讀</span></button>' +
       '<a class="tbtn" href="#submit" title="成績及交功課" aria-label="成績及交功課">📥<span class="lbl">交功課</span></a>' +
       '</div>';
     document.body.prepend(tb);
-    $('.tbtn.menu', tb).onclick = openDrawer;
-    $('.tbtn.fs', tb).onclick = function () {
-      var order = ['', 'l', 's'], cur = document.documentElement.getAttribute('data-fs') || '';
-      var nx = order[(order.indexOf(cur) + 1) % 3]; if (nx) document.documentElement.setAttribute('data-fs', nx); else document.documentElement.removeAttribute('data-fs');
-      var pr = get('f1dt:prefs') || {}; pr.fs = nx; put('f1dt:prefs', pr);
-      toast(nx === 'l' ? '大字體' : nx === 's' ? '小字體' : '標準字體');
-    };
-    $('.tbtn.speak', tb).onclick = function () { speakMode(!speaking); };
-  }
-  function buildToc() {
-    var toc = document.createElement('nav'); toc.className = 'toc'; toc.setAttribute('aria-label', '本課內容');
-    var html = '<h4>本課內容</h4><ol>';
-    $$('main > .part-banner, main > section.card').forEach(function (s) {
-      if (s.classList.contains('part-banner')) { html += '<li class="part">' + esc(s.getAttribute('data-short') || $('b', s).textContent) + '</li>'; return; }
-      var h = $('header h2', s), n = $('header .num', s);
-      html += '<li><a href="#' + s.id + '" data-id="' + s.id + '"><span class="st"></span><span>' + (n ? esc(n.textContent) + '. ' : '') + esc(s.getAttribute('data-short') || h.textContent) + '</span></a></li>';
-    });
-    html += '</ol><div class="page-tools"><a class="btn sm ghost" href="#submit">成績及交功課</a></div>';
-    toc.innerHTML = html;
-    $('.layout').prepend(toc);
-    // 目前位置
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (ents) {
-        ents.forEach(function (e) { if (e.isIntersecting) { $$('.toc a').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-id') === e.target.id); }); } });
-      }, { rootMargin: '-30% 0px -60% 0px' });
-      $$('main > section.card').forEach(function (s) { io.observe(s); });
-    }
-  }
-  function openDrawer() {
-    var d = document.createElement('div'); d.className = 'drawer';
-    d.innerHTML = '<div class="panel"></div>';
-    var t = $('.layout > .toc').cloneNode(true); $('.panel', d).appendChild(t);
-    d.addEventListener('click', function (e) { if (e.target === d || e.target.closest('a')) d.remove(); });
-    document.body.appendChild(d);
   }
   function buildSections() {
     var secs = $$('main > section.card');
     secs.forEach(function (s, i) {
       var hd = $('header', s);
       var tools = document.createElement('div'); tools.className = 'sec-tools';
-      tools.innerHTML = '<button type="button" class="rd" title="朗讀這一節">🔊</button><button type="button" class="cl" title="摺起／展開">摺起</button>';
+      tools.innerHTML = '<button type="button" class="cl" title="摺起／展開">摺起</button>';
       hd.appendChild(tools);
-      $('.rd', tools).onclick = function () { speakSection(s); };
       $('.cl', tools).onclick = function () { s.classList.toggle('collapsed'); this.textContent = s.classList.contains('collapsed') ? '展開' : '摺起'; };
       var next = secs[i + 1];
       if (next && !s.hasAttribute('data-nonext')) {
@@ -549,40 +510,6 @@
       }
     });
   }
-  function buildNav() {
-    if (CFG.NAV_LINKS === false || !L.nav) return;
-    var n = document.createElement('div'); n.className = 'lesson-nav';
-    n.innerHTML = (L.nav.prev ? '<a class="prev" href="' + L.nav.prev.href + '"><small>← 上一課</small><b>' + esc(L.nav.prev.title) + '</b></a>' : '<span></span>') +
-      (L.nav.next ? '<a class="next" href="' + L.nav.next.href + '"><small>下一課 →</small><b>' + esc(L.nav.next.title) + '</b></a>' : '<span></span>');
-    $('main').appendChild(n);
-  }
-
-  /* ---------- 朗讀 ---------- */
-  var speaking = false;
-  function voice() { var vs = window.speechSynthesis ? speechSynthesis.getVoices() : []; return vs.filter(function (v) { return /zh[-_]HK|yue/i.test(v.lang); })[0] || vs.filter(function (v) { return /zh/i.test(v.lang); })[0] || null; }
-  function speakText(t) {
-    if (!window.speechSynthesis) { toast('這個瀏覽器不支援朗讀'); return; }
-    speechSynthesis.cancel();
-    t.replace(/([。！？])/g, '$1\n').split('\n').forEach(function (part) {
-      part = part.trim(); if (!part) return;
-      var u = new SpeechSynthesisUtterance(part); var v = voice(); if (v) u.voice = v; u.lang = v ? v.lang : 'zh-HK'; u.rate = 0.95;
-      speechSynthesis.speak(u);
-    });
-  }
-  function speakSection(s) {
-    var c = s.cloneNode(true); $$('button,.sec-tools,.next-sec,script,svg,textarea,.simcard,table', c).forEach(function (x) { x.remove(); });
-    speakText(c.textContent.replace(/\s+/g, ' ').replace(/([。！？])/g, '$1\n'));
-  }
-  function speakMode(on) {
-    speaking = on; var b = $('.tbtn.speak'); if (b) b.setAttribute('aria-pressed', on);
-    if (!on && window.speechSynthesis) speechSynthesis.cancel();
-    toast(on ? '朗讀模式：按任何段落即讀出' : '已關閉朗讀');
-  }
-  document.addEventListener('click', function (e) {
-    if (!speaking) return;
-    var p = e.target.closest('main p, main li, main .def, main .callout, main td, main h2, main h3, main figcaption');
-    if (p && !e.target.closest('button,a,input,textarea,.pick,.blank')) speakText(p.textContent);
-  });
 
   /* ---------- 放大圖、表格捲動提示、圖片 ---------- */
   function enhance() {
@@ -631,7 +558,7 @@
     var bar = $('.topbar .bar i'); if (bar) bar.style.width = t.prog + '%';
     var pct = $('.topbar .pct'); if (pct) pct.textContent = t.prog + '%';
     var who = $('.topbar .who'); if (who) who.textContent = stuOK() ? STU.cls + ' ' + STU.num + ' ' + STU.name : '未填姓名';
-    var m = $('.stmsg'); if (m) m.textContent = stuOK() ? '✔ 資料已填妥。（三課共用；換同學用這部電腦時，系統會先問你是誰）' : '⚠️ 請先填寫班別、學號及姓名，否則不能輸出功課。';
+    var m = $('.stmsg'); if (m) m.textContent = stuOK() ? '✔ 資料已填妥。（四課共用；換同學用這部電腦時，系統會先問你是誰）' : '⚠️ 請先填寫班別、學號及姓名，否則不能輸出功課。';
     F1.comps.forEach(function (c) { if (c.refresh) c.refresh(); });
     // 小節完成
     $$('main > section.card').forEach(function (s) {
@@ -639,7 +566,6 @@
       var done = keys.length && keys.every(function (c) { return c.done(); });
       var was = s.classList.contains('done');
       s.classList.toggle('done', !!done);
-      var a = $('.toc a[data-id="' + s.id + '"] .st'); if (a) a.textContent = done ? '✓' : '';
       if (done && !was && booted) {
         D.badges = D.badges || {};
         if (!D.badges[s.id]) { D.badges[s.id] = Date.now(); put(L.key, D); toast('🏅 完成：' + (s.getAttribute('data-short') || $('header h2', s).textContent)); }
@@ -781,12 +707,11 @@
   F1.start = function (lesson) {
     L = lesson;
     if (L.theme) document.body.setAttribute('data-theme', L.theme);
-    var pr = get('f1dt:prefs') || {}; if (pr.fs) document.documentElement.setAttribute('data-fs', pr.fs);
     D = get(L.key) || { v: 1, items: {}, badges: {} };
     D.items = D.items || {};
     STU = get('f1dt:student') || {};
     F1.stu = STU;
-    buildTop(); buildSections(); buildToc(); buildNav(); bindStudent(); bindSubmit(); enhance();
+    buildTop(); buildSections(); bindStudent(); bindSubmit(); enhance();
     return F1;
   };
   F1.ready = function () {     // 課堂頁建立所有元件後呼叫

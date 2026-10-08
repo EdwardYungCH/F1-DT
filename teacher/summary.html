@@ -89,7 +89,7 @@ table.wide{font-size:.85rem} table.wide th,table.wide td{padding:5px 7px;white-s
   function cols(list) { var seen = {}, out = []; list.forEach(function (r) { r.d.items.forEach(function (it) { if (it.max > 0 && !seen[it.key]) { seen[it.key] = 1; out.push({ key: it.key, label: it.label, max: it.max }); } }); }); return out; }
   function fmt(t) { if (!t) return ''; var d = new Date(t), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
   function render() {
-    var ls = ['L1', 'L2', 'L3'];
+    var ls = ['L1', 'L2', 'L3', 'L4'];
     $('#tabs').innerHTML = ls.map(function (l) { var n = rows.filter(function (r) { return r.d.lesson === l; }).length; return '<button type="button" data-l="' + l + '" aria-pressed="' + (l === lesson) + '">第' + '一二三'[+l[1] - 1] + '堂（' + n + '）</button>'; }).join('');
     Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (b) { b.onclick = function () { lesson = b.getAttribute('data-l'); render(); }; });
     var list = cur(), cs = cols(list);

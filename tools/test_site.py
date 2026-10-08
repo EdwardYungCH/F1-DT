@@ -26,13 +26,13 @@ with sync_playwright() as p:
     pg = ctx.new_page(); E = errs_of(pg)
 
     print('1. 每頁載入沒有錯誤')
-    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'sim/index.html?m=l2lap', 'project.html', 'teacher/index.html', 'teacher/summary.html']:
+    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'project.html', 'teacher/index.html', 'teacher/summary.html']:
         E.clear(); pg.goto(U(page)); pg.wait_for_timeout(700)
         check(not E, page + ' 沒有錯誤 ' + (str(E) if E else ''))
 
     print('2. 手機版沒有左右捲動')
     m = b.new_context(viewport={'width': 390, 'height': 844}); mp = m.new_page()
-    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'project.html']:
+    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'project.html']:
         mp.goto(U(page)); mp.wait_for_timeout(600)
         w = mp.evaluate('document.documentElement.scrollWidth')
         check(w <= 392, page + f' 手機闊度 {w}px')
@@ -42,7 +42,6 @@ with sync_playwright() as p:
     pg.goto(U('L1/index.html')); pg.evaluate('localStorage.clear()'); pg.reload(); pg.wait_for_timeout(500)
     pg.fill('#f_cls', '1a'); pg.fill('#f_num', '12'); pg.fill('#f_name', '陳大文')
     check(pg.evaluate("JSON.parse(localStorage.getItem('f1dt:student')).cls") == '1A', '班別自動轉大楷')
-    check('1A_12_square' in pg.inner_text('#s6'), '專案名稱提示更新')
     # 填充
     for i, w in enumerate(['sense', 'environment', 'decisions', 'program', 'actions']):
         pg.locator('#q-fill .blank').nth(i).click(); pick_sheet(pg, w)
@@ -66,33 +65,9 @@ with sync_playwright() as p:
     pg.locator('#d1 textarea').fill('比賽可以測試機械人的平衡和反應，將來可以用來救災和照顧長者。')
     pg.locator('#d2 textarea').fill('短')
     pg.wait_for_timeout(800)
-    # 計算器
-    pg.locator('#calc input[data-k=d]').fill('45'); pg.locator('#calc .btn').click()
-    check('2667' in pg.inner_text('#calc'), '計算器結果 2667 ms')
-    # 轉彎記錄
-    r0 = pg.locator('#turnlog tr.r').nth(0)
-    r0.locator('input[data-k=ms]').fill('500'); r0.locator('input[data-k=deg]').fill('80°'); r0.locator('.pick').click(); pick_sheet(pg, '太少'); r0.locator('input[data-k=adj]').fill('50')
-    check('550' in r0.inner_text(), '轉彎記錄自動計算下次 550')
-    pg.locator('#turnlog .btn.go').click()
-    r3 = pg.locator('#turnlog tr.r').nth(3)
-    check(r3.locator('input[data-k=ms]').input_value() == '550', '新增一行自動帶入 550')
-    r1 = pg.locator('#turnlog tr.r').nth(1)
-    r1.locator('input[data-k=ms]').fill('550'); r1.locator('input[data-k=deg]').fill('90°'); r1.locator('.pick').click(); pick_sheet(pg, '剛好')
-    pg.wait_for_timeout(300)
-    check('已完整記錄 2 次' in pg.inner_text('#s8'), '轉彎記錄 2 次')
-    # 模擬器結果（注入）
-    pg.evaluate("""localStorage.setItem('f1sim:res:l1a', JSON.stringify({mission:'l1a',pass:true,best:{stats:{distance:45.2}},attempts:[{t:Date.now(),pass:true,title:'完成直線測試',stats:{distance:45.2}}],ts:'maqueenPlusV2.I2CInit()'}))""")
-    # 老師驗收：錯密碼再正確密碼
-    pg.locator('#verify .btn').click(); pg.fill('.modal input', 'wrong'); pg.locator('.modal .btn.primary').click()
-    check('密碼不正確' in pg.inner_text('.modal'), '老師驗收：錯密碼被拒')
-    pg.fill('.modal input', PIN); pg.locator('.modal .btn.primary').click()
-    check('老師已驗收' in pg.inner_text('#verify'), '老師驗收：正確密碼')
-    pg.locator('#mclink input').fill('https://makecode.com/_abcDEF123456')
-    check('格式正確' in pg.inner_text('#mclink'), 'MakeCode 連結格式檢查')
     pg.reload(); pg.wait_for_timeout(600)
     tot = pg.inner_text('.topbar .pill')
-    check(tot.startswith('28'), '重新載入後分數保留：' + tot)
-    check('✔ 已過關' in pg.inner_text('#sim-a'), '模擬器結果顯示已過關')
+    check(tot.startswith('27.3'), '重新載入後分數保留（10+3.3+10+4）：' + tot)
     check('5 / 5' in pg.inner_text('#s3'), '配對結果保留')
 
     print('4. 下載報告、驗證碼及篡改')
@@ -106,9 +81,9 @@ with sync_playwright() as p:
     tmp = ROOT + '/tools/_report.html'; open(tmp, 'w', encoding='utf-8').write(html)
     rp.goto(U('tools/_report.html')); rp.wait_for_timeout(500)
     check('驗證碼正確' in rp.inner_text('body'), '報告：驗證碼正確')
-    check('陳大文' in rp.inner_text('body') and '28' in rp.inner_text('.rscore'), '報告：姓名及分數')
+    check('陳大文' in rp.inner_text('body') and '27.3' in rp.inner_text('.rscore'), '報告：姓名及分數')
     check(not RE, '報告沒有錯誤 ' + str(RE))
-    tampered = html.replace('\\"total\\":28', '\\"total\\":49', 1)
+    tampered = html.replace('\\"total\\":27.3', '\\"total\\":49', 1)
     check(tampered != html, '已製作篡改版本')
     open(tmp, 'w', encoding='utf-8').write(tampered); rp.goto(U('tools/_report.html')); rp.wait_for_timeout(400)
     check('驗證失敗' in rp.inner_text('body'), '報告：篡改後驗證失敗')
@@ -135,14 +110,52 @@ with sync_playwright() as p:
     pg.locator('.modal .btn', has_text='不是').click(); pg.wait_for_timeout(800)
     check(pg.evaluate("localStorage.getItem('f1dt:L1')") is None or '0 / 50' in pg.inner_text('.topbar .pill'), '答「不是」會清空')
 
-    print('7. 第二、三堂主要互動')
-    pg.goto(U('L2/index.html')); pg.wait_for_timeout(400)
+    print('7. 第二堂：拆解、試驗記錄、模擬器、老師驗收')
+    pg.goto(U('L2/index.html')); pg.wait_for_timeout(500)
+    check('1A_12_square' in pg.inner_text('#s1'), '專案名稱提示（共用學生資料）')
+    ans = {'初始化': '連接小車', '前進 50': '走一條邊', '暫停 500': '停定', '後退 50': '原地轉彎', '重複 4 次': '4 條邊'}
+    rows = pg.locator('#q-parts tbody tr')
+    for i in range(rows.count()):
+        txt = rows.nth(i).locator('td').first.inner_text()
+        key = '後退 50' if '後退' in txt else '前進 50' if '前進' in txt else '初始化' if '初始化' in txt else '重複 4 次' if '重複' in txt else '暫停 500'
+        rows.nth(i).locator('.pick').click(); pick_sheet(pg, ans[key])
+    pg.locator('#s2 .btn.primary').click()
+    check('5 / 5' in pg.inner_text('#s2'), '拆解程式全對')
+    pg.fill('#tile', '60')
+    r0 = pg.locator('#trials tr.r').nth(0)
+    r0.locator('input[data-k=f]').fill('5000'); r0.locator('input[data-k=d]').fill('50'); r0.locator('input[data-k=t]').fill('1000'); r0.locator('.pick').click(); pick_sheet(pg, '轉太少')
+    check('只改直行 → 6000 ms' in r0.inner_text(), '記錄表建議只改直行 6000 ms')
+    pg.locator('#trials .btn.go').click()
+    r3 = pg.locator('#trials tr.r').nth(3)
+    check(r3.locator('input[data-k=f]').input_value() == '6000' and r3.locator('input[data-k=t]').input_value() == '1000', '新增一行自動帶入 6000／1000')
+    r1 = pg.locator('#trials tr.r').nth(1)
+    r1.locator('input[data-k=f]').fill('6000'); r1.locator('input[data-k=d]').fill('60'); r1.locator('input[data-k=t]').fill('1000'); r1.locator('.pick').click(); pick_sheet(pg, '轉太少')
+    check('只改轉彎 → 1050 ms' in r1.inner_text(), '邊長準了才建議改轉彎 1050 ms')
+    pg.evaluate("""localStorage.setItem('f1sim:res:l2sq', JSON.stringify({mission:'l2sq',pass:true,best:{stats:{closure:3.1}},attempts:[{t:Date.now(),pass:true,title:'正方形完成！',stats:{closure:3.1}}],ts:'maqueenPlusV2.I2CInit()'}))""")
+    pg.locator('#verify .btn').click(); pg.fill('.modal input', 'wrong'); pg.locator('.modal .btn.primary').click()
+    check('密碼不正確' in pg.inner_text('.modal'), '老師驗收：錯密碼被拒')
+    pg.fill('.modal input', PIN); pg.locator('.modal .btn.primary').click()
+    check('老師已驗收' in pg.inner_text('#verify'), '老師驗收：正確密碼')
+    pg.locator('#mclink input').fill('https://makecode.com/_abcDEF123456')
+    check('格式正確' in pg.inner_text('#mclink'), 'MakeCode 連結格式檢查')
+    pg.reload(); pg.wait_for_timeout(600)
+    check('✔ 已過關' in pg.inner_text('#sim-sq'), '模擬器結果顯示已過關')
+    tot = pg.inner_text('.topbar .pill'); check(tot.startswith('30'), '第二堂分數（拆解 8＋模擬器 8＋記錄 4＋驗收 10）：' + tot)
+    check(pg.locator('.toc, .tbtn.speak, .tbtn.fs, .lesson-nav').count() == 0, '沒有目錄、朗讀、字體大小、上下課連結')
+    for page in ['L1', 'L2', 'L3', 'L4']:
+        pg.goto(U(page + '/index.html')); pg.wait_for_timeout(300)
+        hrefs = pg.eval_on_selector_all('a[href]', 'as => as.map(a => a.getAttribute("href"))')
+        bad = [h for h in hrefs if not h.startswith('../sim/') and (re.search(r'(^|/)(L\d|index\.html)', h) or h.startswith('../'))]
+        check(not bad, page + ' 沒有連往其他課或首頁的連結 ' + (str(bad) if bad else ''))
+
+    print('8. 第三、四堂主要互動')
+    pg.goto(U('L3/index.html')); pg.wait_for_timeout(400)
     check(pg.locator('#after-predict').is_hidden(), '預測前看不到模擬器及比較表')
     pg.locator('#predict .opt').nth(2).click()
     check(pg.locator('#after-predict').is_visible(), '預測後才顯示')
     rows = pg.locator('#q-act .qrow'); rows.nth(1).locator('.opt', has_text='向左修正').click()
     check('第一次已答對' in rows.nth(1).inner_text() or '答對了' in rows.nth(1).inner_text(), '理想動作 110 → 向左修正')
-    pg.goto(U('L3/index.html')); pg.wait_for_timeout(400)
+    pg.goto(U('L4/index.html')); pg.wait_for_timeout(400)
     pg.locator('#q-flow .btn.ghost').click(); pg.wait_for_timeout(300)
     check('全部馬達' in pg.inner_text('#flow') and '0 / 6' in pg.inner_text('#s4') or '0 / 10' in pg.inner_text('#s4'), '顯示正確流程圖（0 分）')
     tier = ['前進 40', '② 左側停止', '② 左側前進 40', '③ 左側後退', '③ 左側前進 40', '全部馬達 停止']
@@ -152,7 +165,7 @@ with sync_playwright() as p:
     check('6 / 6' in pg.inner_text('#s6'), '分層修正流程圖全對')
     check('左側 後退 20' in pg.inner_text('#tier'), '分層流程圖即時顯示答案')
 
-    print('8. 老師區密碼')
+    print('9. 老師區密碼')
     tp = ctx.new_page(); tp.goto(U('teacher/index.html'))
     check(tp.locator('#main').is_hidden(), '未輸入密碼看不到內容')
     tp.fill('#pin', PIN); tp.click('#go'); check(tp.locator('#main').is_visible(), '輸入密碼後看到')

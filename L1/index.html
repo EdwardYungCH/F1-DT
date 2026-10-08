@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>第一堂：認識機械人．小車走正方形｜中一 DT 自動化與機械人</title>
+<title>第一堂：認識機械人｜中一 DT 自動化與機械人</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="../assets/common.css">
@@ -14,8 +14,8 @@
   <div class="in">
     <div>
       <div class="kicker">F1 DT · LESSON 1</div>
-      <h1>第一堂：認識機械人．小車走正方形</h1>
-      <p>掃地機械人怎樣知道前面有牆？今課先找出機械人和普通機器的分別，再寫程式令麥昆小車走一個正方形。</p>
+      <h1>第一堂：認識機械人</h1>
+      <p>掃地機械人怎樣知道前面有牆？今課找出機械人和普通機器有什麼分別，再用「輸入 → 處理 → 輸出」拆解一部機械人。</p>
     </div>
     <div class="art"><img src="../assets/img/hero-l1.svg" alt=""></div>
   </div>
@@ -32,19 +32,13 @@
     <ol>
       <li>用「感知、決定、動作」分辨機械人、自動化系統和普通機器。</li>
       <li>用「輸入 → 處理 → 輸出」拆解一部機械人。</li>
-      <li>用 MakeCode 寫程式，經量度和試驗，令小車走一格地磚的正方形。</li>
     </ol>
   </div>
-  <p class="small muted">本課滿分 50 分：第一部分（概念練習）26 分；第二部分（模擬器及真車實作）24 分。選擇題<b>以第一次作答計分</b>，之後可以再試，是為了學習。答案會自動儲存在這部電腦。</p>
+  <p class="small muted">本課滿分 50 分。選擇題<b>以第一次作答計分</b>，之後可以再試，是為了學習。答案會自動儲存在這部電腦。</p>
 </section>
 
-<div class="part-banner" data-short="第一部分：認識機械人">
-  <span class="pno">1</span>
-  <div><b>第一部分：認識機械人</b><span>可以在上課前自學（約 35 分鐘）</span></div>
-</div>
-
 <section class="card" id="s1" data-short="什麼是機械人？">
-  <header><span class="num">1</span><h2>什麼是機械人？</h2><span class="marks">5 分</span></header>
+  <header><span class="num">1</span><h2>什麼是機械人？</h2><span class="marks">10 分</span></header>
   <div class="def">
     <span class="lbl">機械人的定義</span>
     機械人通常是能夠<em>感知環境</em>，然後依照<em>程式</em>作出<em>決定</em>，從而<em>執行動作</em>的系統。
@@ -62,13 +56,13 @@
       <tr><td><b>動作</b> Act</td><td>真的動起來：移動、轉動、發聲、發光</td><td>右輪後退、左輪前進</td></tr>
     </tbody>
   </table></div>
-  <h3>練習 1：填寫英文定義<span class="tag">5 分</span></h3>
+  <h3>練習 1：填寫英文定義<span class="tag">10 分</span></h3>
   <p>按每一格，由字詞庫選出正確的英文字。</p>
   <div id="q-fill"></div>
 </section>
 
 <section class="card" id="s2" data-short="機械人？自動化系統？">
-  <header><span class="num">2</span><h2>是機械人、自動化系統，還是都不是？</h2><span class="marks">6 分</span></header>
+  <header><span class="num">2</span><h2>是機械人、自動化系統，還是都不是？</h2><span class="marks">10 分</span></header>
   <p>很多東西都「會動」，但不是全部都是機械人。今次分三類：</p>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:24%">類別</th><th>特點</th><th style="width:28%">例子</th></tr></thead>
@@ -92,17 +86,17 @@
 </section>
 
 <section class="card" id="s3" data-short="用途配對">
-  <header><span class="num">3</span><h2>配對：機械人和自動化系統的用途</h2><span class="marks">5 分</span></header>
+  <header><span class="num">3</span><h2>配對：機械人和自動化系統的用途</h2><span class="marks">10 分</span></header>
   <p>為每一項選出最合適的用途。</p>
   <div id="q-match"></div>
   <div class="callout tip">
     <span class="ttl">香港的例子</span>
-    香港的醫院有運送藥物和物資的機械人；機場的行李處理系統會自動把行李分送到正確的航班；很多大型倉庫用「自動導引車」（AGV）沿着地上的線運貨——第二堂我們就會做一部這樣的巡線車。
+    香港的醫院有運送藥物和物資的機械人；機場的行李處理系統會自動把行李分送到正確的航班；很多大型倉庫用「自動導引車」（AGV）沿着地上的線運貨——第三堂我們就會做一部這樣的巡線車。
   </div>
 </section>
 
 <section class="card" id="s4" data-short="影片：機械人運動會">
-  <header><span class="num">4</span><h2>影片：世界人形機器人運動會</h2><span class="marks">4 分</span></header>
+  <header><span class="num">4</span><h2>影片：世界人形機器人運動會</h2><span class="marks">8 分</span></header>
   <p>2026 年 8 月，第二屆世界人形機器人運動會在北京國家速滑館「冰絲帶」舉行，有來自 16 個國家和地區的 666 支隊伍、超過 2000 個機械人參加 51 個項目。</p>
   <h3>影片一：機械人也會「失手」</h3>
   <div id="v1"></div>
@@ -119,7 +113,7 @@
     </tbody>
   </table></div>
   <p class="small muted">資料來源：新華網、iThome 2026 年 8 月報道。機械人和人類的比賽規則不同，所以只可作參考。</p>
-  <h3>觀後討論（每題 2 分，最少寫 15 字）</h3>
+  <h3>觀後討論（每題 4 分，最少寫 15 字）</h3>
   <p><b>Q1　機械人在運動會上比賽，對真實生活有什麼用？</b></p>
   <div id="d1"></div>
   <p style="margin-top:14px"><b>Q2　如果人形機械人進入工廠、酒店、醫院或家庭，會帶來什麼好處和問題？</b></p>
@@ -138,7 +132,7 @@
 </section>
 
 <section class="card" id="s5" data-short="輸入→處理→輸出">
-  <header><span class="num">5</span><h2>機械人的運作：輸入 → 處理 → 輸出</h2><span class="marks">6 分</span></header>
+  <header><span class="num">5</span><h2>機械人的運作：輸入 → 處理 → 輸出</h2><span class="marks">10 分</span></header>
   <p>所有機械人（其實所有電子系統）都可以拆成三部分：</p>
   <figure class="fig zoomable">
     <div class="art"><img src="../assets/img/ipo.svg" alt="輸入、處理、輸出三格，以及由輸出回到輸入的回饋箭頭"></div>
@@ -152,132 +146,16 @@
       <tr><td><b>輸出</b></td><td>車輪馬達、吸塵馬達、掃刷、提示聲</td><td>電動馬達拉動門</td></tr>
     </tbody>
   </table></div>
-  <h3>練習 3：這個部件屬於哪一階段？<span class="tag">6 分</span></h3>
+  <h3>練習 3：這個部件屬於哪一階段？<span class="tag">10 分</span></h3>
   <div id="q-ipo"></div>
 </section>
 
-<div class="part-banner" data-short="第二部分：小車走正方形">
-  <span class="pno">2</span>
-  <div><b>第二部分：課堂實作——令小車走一個正方形</b><span>先在模擬器試，再用真車做（約 2 × 40 分鐘）</span></div>
-</div>
-
-<section class="card" id="s6" data-short="準備：小車和 MakeCode">
-  <header><span class="num">6</span><h2>準備：認識小車和 MakeCode</h2></header>
-  <div class="callout key"><span class="ttl">今次任務</span>用 MakeCode 積木編程，令麥昆 Plus V2 小車沿<b>一格地磚</b>走出一個<b>正方形</b>：起點和終點大致相同，車頭轉回原來方向（共轉 4 次 90°）。</div>
-  <figure class="fig zoomable">
-    <div class="art"><img src="../assets/img/car-top.svg" alt="小車俯視示意圖，標示車輪、馬達、micro:bit、前燈、巡線感應器和電源開關"></div>
-    <figcaption>麥昆 Plus V2 小車各部分（示意圖）</figcaption>
-  </figure>
-  <h3>器材</h3>
-  <ul>
-    <li>每組：麥昆 Plus V2 小車、micro:bit、USB 線、電池各 1</li>
-    <li>電腦（Chrome 或 Edge）、間尺或軟尺、紙膠帶</li>
-  </ul>
-  <h3>小組分工（每做完一個實驗就輪換）</h3>
-  <div class="roles">
-    <div><b>編程員</b>砌積木、下載程式</div>
-    <div><b>測試員</b>放車、開電源、看車</div>
-    <div><b>記錄員</b>量度、填記錄表</div>
-    <div><b>安全主任</b>看守路線，提醒同學站開</div>
-  </div>
-  <div class="step"><h4><span class="sn">1</span>開啟 MakeCode，建立新專案</h4>
-    <ol><li>用 Chrome 開啟 <code>makecode.microbit.org</code>，按「新專案」。</li>
-      <li>專案名稱：<code class="pname">班別_學號_square</code>（例如 <code>1A_12_square</code>）。</li></ol></div>
-  <div class="step"><h4><span class="sn">2</span>加入麥昆 Plus 擴展</h4>
-    <ol><li>在積木清單最下面按「<b>擴展</b>」。</li>
-      <li>整條貼上：<code>https://github.com/DFRobot/pxt-DFRobot_MaqueenPlus_v20</code>，按 Enter。</li>
-      <li>選 <b>maqueenPlusV2</b>。成功後多了 3 組積木：IR、矩陣激光測距、<b>麥昆Plus V2&amp;V3</b>。</li></ol>
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/ext-steps.svg" alt="MakeCode 加入擴展的三個步驟示意圖"></div><figcaption>加入 maqueenPlusV2 擴展（示意圖）</figcaption></figure>
-    <p class="small muted">擴展是跟專案的：每個新專案都要再加一次。</p></div>
-  <div class="step"><h4><span class="sn">3</span>今次要用的積木</h4>
-    <div class="tbl-wrap"><table>
-      <thead><tr><th style="width:44%">積木</th><th style="width:22%">指令群</th><th>作用</th></tr></thead>
-      <tbody>
-        <tr><td><span class="blockname basic">當啟動時</span></td><td>基本</td><td>開機或按 reset 後執行一次</td></tr>
-        <tr><td><span class="blockname basic">暫停 (ms) 100</span></td><td>基本</td><td>等待多少毫秒（1000 ms = 1 秒），馬達會保持上一個動作</td></tr>
-        <tr><td><span class="blockname loop">重複 4 次</span></td><td>迴圈</td><td>同一組動作做 4 次（正方形有 4 條邊）</td></tr>
-        <tr><td><span class="blockname">初始化麥昆Plus</span></td><td>麥昆Plus V2&amp;V3</td><td><b>每個程式開頭都要加</b>，令 micro:bit 和小車連接</td></tr>
-        <tr><td><span class="blockname">設置 全部馬達 方向 前進 速度 100</span></td><td>麥昆Plus V2&amp;V3</td><td>控制左、右或全部馬達的方向和速度（0–255）</td></tr>
-        <tr><td><span class="blockname">設置 全部馬達 停止</span></td><td>麥昆Plus V2&amp;V3</td><td>停車</td></tr>
-      </tbody>
-    </table></div>
-    <div class="callout key"><span class="ttl">最重要的概念</span>馬達積木<b>不會自己停</b>！「前進 3 秒」＝ 設置馬達前進 → 暫停 3000 ms → 設置馬達停止，三塊積木一組。</div></div>
-</section>
-
-<section class="card" id="s7" data-short="實驗一：走直線">
-  <header><span class="num">7</span><h2>實驗一：走直線，量速度</h2><span class="marks">5 分</span></header>
-  <figure class="fig narrow zoomable"><div class="art"><img src="../assets/img/blocks-l1-a.png" alt="測試程式 A：當啟動時，初始化麥昆Plus，設置全部馬達前進速度100，暫停2000毫秒，設置全部馬達停止"></div><figcaption>測試程式 A：前進 2 秒</figcaption></figure>
-  <div id="sim-a"></div>
-  <h3>用真車量度</h3>
-  <ol><li>用紙膠帶標出起點（對準車頭）。</li>
-    <li>下載程式（見第 9 節的步驟），拔 USB，開電源，小車立即起步。</li>
-    <li>量出小車走了多少 cm；再量一格地磚的邊長（多數約 60 cm，一定要自己量）。</li></ol>
-  <h3>直線時間計算器<span class="tag">3 分</span></h3>
-  <div id="calc"></div>
-</section>
-
-<section class="card" id="s8" data-short="實驗二：轉 90°">
-  <header><span class="num">8</span><h2>實驗二：原地轉 90°</h2><span class="marks">5 分</span></header>
-  <p>要<b>原地轉</b>，就要<b>左輪前進、右輪後退</b>（差速轉向 Differential steering）。兩輪方向相反，車就繞着兩輪中間打轉。</p>
-  <div class="fig-row">
-    <figure class="fig zoomable"><div class="art" id="turn3"></div><figcaption>左輪前進、右輪後退：圓心在兩輪中間</figcaption></figure>
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-l1-b.png" alt="測試程式 B：初始化，暫停1000，左側馬達前進100，右側馬達後退100，暫停500，全部馬達停止"></div><figcaption>測試程式 B：原地向右轉</figcaption></figure>
-  </div>
-  <p>轉 90° 要多少毫秒<b>沒有標準答案</b>：電池電量、地板和車輪都有影響，要靠<b>試驗和修正</b>（Trial and Error）。</p>
-  <div id="sim-b"></div>
-  <h3>真車轉彎記錄表<span class="tag">3 分</span></h3>
-  <p>填入暫停時間和實際轉了多少度，選「太多／太少」和預計調整多少毫秒，最後一欄會算出下次應該試的數字。至少完整記錄 <b>2 次</b>。</p>
-  <div id="turnlog"></div>
-  <div class="callout tip">用地磚的磚縫做參考線：車身與磚縫平行，就是剛好 90°。每次只加減 50 ms，慢慢逼近。</div>
-</section>
-
-<section class="card" id="s9" data-short="組合：走正方形">
-  <header><span class="num">9</span><h2>組合：走一格地磚的正方形</h2><span class="marks">12 分</span></header>
-  <div class="fig-row">
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/square-task.svg" alt="正方形路線：直行一邊加原地轉90度，重複4次"></div><figcaption>正方形 ＝（直行一邊 ＋ 轉 90°）× 4</figcaption></figure>
-    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-l1-square.png" alt="完整程式：重複4次，前進、暫停、停止、轉彎、停止"></div><figcaption>完整程式（數字要換成你自己試出來的）</figcaption></figure>
-  </div>
-  <div class="callout tip"><span class="ttl">為什麼不用「重複無限次」？</span>「重複無限次」會不停地畫正方形，小車會走出課室！今次只走一次，所以用「重複 4 次」，放在「當啟動時」入面。想再走一次？按 micro:bit 背面的 reset 鍵。</div>
-  <div id="sim-c"></div>
-  <div class="step"><h4><span class="sn">1</span>下載到 micro:bit</h4>
-    <ol><li>USB 線接電腦，按左下角「<b>下載</b>」。</li>
-      <li>把 <code>.hex</code> 檔拖到 <b>MICROBIT</b> 磁碟機（或先「配對裝置」，之後一按就燒錄）。黃燈閃完就完成。</li>
-      <li><b>拔掉 USB</b>，把 micro:bit 插上小車（LED 面向前），車放在地磚一角，車頭對正磚縫。</li>
-      <li>開電源，小車 1 秒後起步。想重試就按 micro:bit 背面的 reset 鍵。</li></ol>
-    <details class="more"><summary>用 iPad？</summary><div><p>iPad 不能用 USB 下載。請用「micro:bit」app：先用藍牙配對 micro:bit（按住 A+B 再按 reset，見到圖案後依 app 指示），然後在 app 內開啟 MakeCode 專案並按「Flash」傳送。</p></div></details></div>
-  <div class="callout safe">在地面測試，不要放在桌邊；小車行走時同學站開，不要用手擋車輪。</div>
-  <div class="step"><h4><span class="sn">2</span>除錯（Debugging）</h4>
-    <div class="tbl-wrap"><table>
-      <thead><tr><th style="width:28%">現象</th><th>可能原因</th><th>解決方法</th></tr></thead>
-      <tbody>
-        <tr><td>完全不動</td><td>電源未開、電池弱、micro:bit 未插好</td><td>開電源、換電池、重新插好</td></tr>
-        <tr><td>下載了卻沒反應</td><td>忘記「初始化麥昆Plus」</td><td>在「當啟動時」第一行加上它</td></tr>
-        <tr><td>只有一邊車輪轉</td><td>直行時用了「左側／右側馬達」</td><td>直行要選「全部馬達」</td></tr>
-        <tr><td>一直向前不停</td><td>忘記「暫停」或「停止」</td><td>每個動作後補上暫停 ＋ 停止</td></tr>
-        <tr><td>走成菱形</td><td>轉彎時間不準</td><td>每次加減 50 ms</td></tr>
-        <tr><td>越走越歪</td><td>左右馬達力度不同、電池弱</td><td>快的一邊速度調低（100 → 95），或換電池</td></tr>
-      </tbody>
-    </table></div></div>
-  <div id="verify"></div>
-  <div id="mclink" style="margin-top:12px"></div>
-  <h3>自我檢查<span class="tag">2 分</span></h3>
-  <div id="checks"></div>
-  <h3>挑戰（做得快的同學，不計分）</h3>
-  <ol>
-    <li><b>三角形：</b>改成走正三角形。每次要轉多少度？「重複」要改成幾次？</li>
-    <li><b>變數：</b>建立變數 <code>邊長時間</code> 和 <code>轉彎時間</code>，之後只改一個數字就能調整整個程式。</li>
-    <li><b>大正方形：</b>走 2 × 2 格地磚的大正方形，只准改<b>一個</b>數字。</li>
-    <li><b>提示燈：</b>每轉完一個角，就在 LED 顯示 1、2、3、4，或者開前燈一下。</li>
-  </ol>
-</section>
-
-<section class="card" id="s10" data-short="總結及學習日誌">
-  <header><span class="num">10</span><h2>總結、詞彙及學習日誌</h2><span class="marks">2 分</span></header>
+<section class="card" id="s6" data-short="總結及學習日誌">
+  <header><span class="num">6</span><h2>總結、詞彙及學習日誌</h2><span class="marks">2 分</span></header>
   <ol>
     <li>機械人能<b>感知環境 → 依程式作決定 → 執行動作</b>；自動化系統只做一件固定的工作。</li>
     <li>會動的不一定是機械人（風扇、遙控車），像機械人的也不一定是（擺設）。</li>
     <li>任何機械人都可拆成<b>輸入（感應器）→ 處理（控制器＋程式）→ 輸出（驅動器）</b>。</li>
-    <li>今次的小車只靠<b>計時</b>走正方形，它不知道自己走成怎樣——這叫<b>開環控制</b>。下一課會加上感應器。</li>
   </ol>
   <div class="tbl-wrap"><table>
     <thead><tr><th>中文</th><th>English</th><th>中文</th><th>English</th></tr></thead>
@@ -285,14 +163,13 @@
       <tr><td>機械人</td><td>Robot</td><td>自動化</td><td>Automation</td></tr>
       <tr><td>感應器</td><td>Sensor</td><td>驅動器</td><td>Actuator</td></tr>
       <tr><td>輸入／處理／輸出</td><td>Input / Process / Output</td><td>微控制器</td><td>Microcontroller</td></tr>
-      <tr><td>程式</td><td>Program</td><td>迴圈</td><td>Loop</td></tr>
-      <tr><td>除錯</td><td>Debugging</td><td>差速轉向</td><td>Differential steering</td></tr>
+      <tr><td>程式</td><td>Program</td><td>決定</td><td>Decision</td></tr>
     </tbody>
   </table></div>
   <h3>學習日誌（最少 20 字）</h3>
-  <p class="small muted">今課最難的是什麼？你怎樣解決？模擬器和真車有什麼分別？</p>
+  <p class="small muted">今課最令你意外的是什麼？試舉一部你身邊的機械人或自動化系統，說出它的輸入、處理和輸出。</p>
   <div id="log"></div>
-  <div class="callout key"><span class="ttl">下一課預告</span>巡線感應器：為小車加上「眼睛」，令它自己沿着黑線行走。</div>
+  <div class="callout key"><span class="ttl">下一課預告</span>用 MakeCode 寫程式，令麥昆小車在地磚上走一個正方形。</div>
 </section>
 
 <section class="card" id="submit" data-short="成績及交功課" data-nonext>
@@ -308,15 +185,13 @@
 
 <script src="../assets/config.js"></script>
 <script src="../assets/sha.js"></script>
-<script src="../sim/engine.js"></script>
 <script src="../assets/art.js"></script>
 <script src="../assets/common.js"></script>
 <script>
-F1.start({ id: 'L1', key: 'f1dt:L1', theme: 'l1', title: '第一堂：認識機械人．小車走正方形', short: '第一堂',
-  nav: { next: { href: '../L2/', title: '第二堂：巡線機械人' } } });
+F1.start({ id: 'L1', key: 'f1dt:L1', theme: 'l1', title: '第一堂：認識機械人', short: '第一堂' });
 
 /* ---- 1 填充 ---- */
-F1.fill('#q-fill', { key: 'fill', label: '1. 英文定義填充', sec: 's1',
+F1.fill('#q-fill', { key: 'fill', label: '1. 英文定義填充', sec: 's1', max: 10,
   zh: '中文：機械人是一部能夠感知環境、依照程式作出決定，然後執行動作的機器。',
   parts: ['A robot is a machine that can ', { ans: 'sense' }, ' the ', { ans: 'environment' }, ', make ', { ans: 'decisions' }, ' using a ', { ans: 'program' }, ', and then carry out ', { ans: 'actions' }, '.'],
   bank: ['sense', 'environment', 'decisions', 'program', 'actions', 'remote', 'decorations', 'sound'] });
@@ -324,7 +199,7 @@ F1.fill('#q-fill', { key: 'fill', label: '1. 英文定義填充', sec: 's1',
 /* ---- 2 分類 ---- */
 var R3 = [{ v: 'R', t: '機械人' }, { v: 'A', t: '自動化系統' }, { v: 'N', t: '都不是' }];
 function pic(f, alt) { return '<img src="../assets/img/' + f + '" alt="' + alt + '" style="display:block;width:100%">'; }
-F1.choice('#q-robot', { key: 'robot', label: '2. 機械人／自動化系統分類', sec: 's2', max: 6, shuffle: true, options: R3, items: [
+F1.choice('#q-robot', { key: 'robot', label: '2. 機械人／自動化系統分類', sec: 's2', max: 10, shuffle: true, options: R3, items: [
   { id: 'arm', title: '工業機械手臂', en: 'Industrial robot arm', pic: pic('q1-arm.svg', '工業機械手臂'), answer: 'R', why: '有位置感應器（不少還有鏡頭），依程式做精確動作；改寫程式就可以由焊接改做搬運。' },
   { id: 'deli', title: '送餐機械人', en: 'Food delivery robot', pic: pic('q2-delivery.svg', '送餐機械人'), answer: 'R', why: '用鏡頭和感應器認路、避開客人，自己決定路線，再用馬達行走。' },
   { id: 'vac', title: '自動掃地機械人', en: 'Robot vacuum', pic: pic('q3-vacuum.svg', '掃地機械人'), answer: 'R', why: '碰到牆會轉向，電量低會回充電座：典型的「感知 → 決定 → 動作」。' },
@@ -337,7 +212,7 @@ F1.choice('#q-robot', { key: 'robot', label: '2. 機械人／自動化系統分�
 ] });
 
 /* ---- 3 用途配對 ---- */
-F1.match('#q-match', { key: 'match', label: '3. 用途配對', sec: 's3', head: ['機械人／系統', '用途'],
+F1.match('#q-match', { key: 'match', label: '3. 用途配對', sec: 's3', max: 10, head: ['機械人／系統', '用途'],
   hint: '把答錯的再想：它感知什麼？做什麼動作？',
   rows: [
     { html: '<b>工業機械手臂</b>', answer: 'a' }, { html: '<b>送餐機械人</b>', answer: 'b' }, { html: '<b>自動掃地機械人</b>', answer: 'c' },
@@ -352,13 +227,13 @@ F1.match('#q-match', { key: 'match', label: '3. 用途配對', sec: 's3', head: 
 /* ---- 4 影片及討論 ---- */
 F1.video('#v1', { type: 'gdrive', id: '1FJHNPTfrtjKMGWVqamwlrLC3Ewh1rGth', title: '2026 第二屆世界人形機器人運動會：失手片段剪輯' });
 F1.video('#v2', { type: 'gdrive', id: '1i5gbkzhbU8x-xQmlK-8BfT2VbyG8lmcp', title: '世界人形機器人運動會：精彩瞬間' });
-F1.text('#d1', { key: 'd1', label: '4. 討論 Q1：運動會對真實生活有什麼用', max: 2, min: 15, sec: 's4' });
-F1.text('#d2', { key: 'd2', label: '4. 討論 Q2：人形機械人的好處與問題', max: 2, min: 15, sec: 's4', placeholder: '好處……／問題……' });
+F1.text('#d1', { key: 'd1', label: '4. 討論 Q1：運動會對真實生活有什麼用', max: 4, min: 15, sec: 's4' });
+F1.text('#d2', { key: 'd2', label: '4. 討論 Q2：人形機械人的好處與問題', max: 4, min: 15, sec: 's4', placeholder: '好處……／問題……' });
 
 /* ---- 5 輸入處理輸出 ---- */
 var IPO = [{ v: 'in', t: '輸入' }, { v: 'pr', t: '處理' }, { v: 'ou', t: '輸出' }];
 function part(f, alt) { return pic('part-' + f + '.svg', alt); }
-F1.choice('#q-ipo', { key: 'ipo', label: '5. 部件分類（輸入／處理／輸出）', sec: 's5', layout: 'rows', max: 6, shuffle: true, options: IPO, items: [
+F1.choice('#q-ipo', { key: 'ipo', label: '5. 部件分類（輸入／處理／輸出）', sec: 's5', layout: 'rows', max: 10, shuffle: true, options: IPO, items: [
   { id: 'us', title: '超聲波感應器：發出聲波再接收回音，量度距離', pic: part('ultrasonic', '超聲波感應器'), answer: 'in' },
   { id: 'line', title: '巡線感應器：分辨地面是黑線還是白色', pic: part('line', '巡線感應器'), answer: 'in' },
   { id: 'btn', title: '按鈕 A、B：讓使用者告訴機械人「開始」', pic: part('buttons', '按鈕'), answer: 'in' },
@@ -371,68 +246,9 @@ F1.choice('#q-ipo', { key: 'ipo', label: '5. 部件分類（輸入／處理／�
   { id: 'servo', title: '伺服馬達：轉到指定角度，用於機械臂和爪', pic: part('servo', '伺服馬達'), answer: 'ou' }
 ], after: '記住：感應器＝輸入；控制器和程式＝處理；會動、會發聲發光＝輸出。' });
 
-/* ---- 7 模擬器：直線 + 計算器 ---- */
-document.getElementById('turn3').innerHTML = F1Art.turnPanel(3, { mirror: true });
-F1.sim('#sim-a', { key: 'simA', mission: 'l1a', title: '測試程式 A', goal: '在模擬器砌出程式 A，看看小車走了多少 cm。', max: 2, sec: 's7', only: 'l1a,l1b,l1c' });
-(function () {
-  var st = F1.state('calc', { t: '2', d: '', tile: '60', ok: false });
-  var el = document.getElementById('calc');
-  el.innerHTML = '<div class="idgrid"><div><label class="fld">① 測試前進了幾多秒？</label><input class="inp" type="number" step="0.5" data-k="t"></div>' +
-    '<div><label class="fld">② 真車走了幾多 cm？</label><input class="inp" type="number" data-k="d" placeholder="例：40"></div>' +
-    '<div><label class="fld">③ 一格地磚邊長（cm）</label><input class="inp" type="number" data-k="tile"></div></div>' +
-    '<div class="btnrow"><button type="button" class="btn primary">計算</button></div><div class="res"></div>' +
-    '<p class="small muted">公式：速度 ＝ 距離 ÷ 時間；所需時間 ＝ 地磚邊長 ÷ 速度 × 1000（毫秒）</p>';
-  F1.$$('input', el).forEach(function (i) { var k = i.getAttribute('data-k'); i.value = st[k] || ''; i.oninput = function () { st[k] = i.value; st.ok = false; F1.save(true); }; });
-  var res = F1.$('.res', el);
-  function calc(quiet) {
-    var t = parseFloat(st.t), d = parseFloat(st.d), L = parseFloat(st.tile);
-    if (!(t > 0 && d > 0 && L > 0)) { res.className = 'res'; res.textContent = '請填入三個大於 0 的數字。'; st.ok = false; return; }
-    if (d > 300 || L > 200) { res.className = 'res'; res.textContent = '數字好像太大了，請再量一次。'; st.ok = false; return; }
-    var v = d / t, ms = Math.round(L / v * 1000);
-    st.ok = true; st.ms = ms;
-    res.className = 'res good';
-    res.innerHTML = '速度 ＝ ' + d + ' ÷ ' + t + ' ＝ ' + v.toFixed(1) + ' cm/秒<br>走 ' + L + ' cm 需要 ' + (ms / 1000).toFixed(2) + ' 秒 → 在「暫停 (ms)」填 <b>' + ms + '</b>';
-    if (!quiet) F1.save();
-  }
-  F1.$('.btn', el).onclick = function () { calc(false); };
-  if (st.ok) calc(true);
-  F1.custom({ key: 'calc', label: '7. 直線量度及計算', max: 3, sec: 's7', score: function () { return st.ok ? 3 : 0; }, done: function () { return !!st.ok; },
-    report: function () { return { type: 'kv', rows: [['測試時間（秒）', st.t], ['真車距離（cm）', st.d], ['地磚邊長（cm）', st.tile], ['計算結果（ms）', st.ok ? st.ms : '未計算']] }; } });
-})();
+/* ---- 6 學習日誌 ---- */
+F1.text('#log', { key: 'log', label: '6. 學習日誌', max: 2, min: 20, sec: 's6', placeholder: '例：我家的冷氣機會量度室溫（輸入），……' });
 
-/* ---- 8 轉彎 ---- */
-F1.sim('#sim-b', { key: 'simB', mission: 'l1b', title: '測試程式 B', goal: '調整暫停時間，令模擬小車剛好轉 90°（±8°）。', max: 2, sec: 's8', only: 'l1a,l1b,l1c' });
-var JD = [{ v: 'less', t: '太少（未夠 90°）' }, { v: 'more', t: '太多（超過 90°）' }, { v: 'ok', t: '剛好 90° ✔' }];
-F1.trials('#turnlog', { key: 'turn', label: '8. 真車轉彎試驗記錄', max: 3, sec: 's8',
-  cols: [{ k: 'ms', label: '暫停時間 (ms)', type: 'number', ph: '例：500', w: '8em' }, { k: 'deg', label: '實際轉了多少度', type: 'text', ph: '例：80°', w: '8em' },
-    { k: 'jd', label: '太多／太少？', type: 'select', options: JD, w: '11em' }, { k: 'adj', label: '預計調整 (ms)', type: 'number', ph: '例：50', w: '7em' }],
-  example: ['450', '約 80°', '太少（未夠 90°）', '＋50'],
-  next: function (r) {
-    var ms = parseFloat(r.ms), adj = parseFloat(r.adj);
-    if (r.jd === 'ok') return ms > 0 ? '<b style="color:var(--ok)">✔ 就用 ' + ms + ' ms</b>' : '';
-    if (!(ms > 0) || !r.jd) return '';
-    if (!(adj > 0)) return '<span style="color:var(--amber)">↑ 請填調整</span>';
-    return '下次試 <b>' + Math.max(0, r.jd === 'less' ? ms + adj : ms - adj) + ' ms</b>';
-  },
-  carry: function (last, nr) { var ms = parseFloat(last.ms), adj = parseFloat(last.adj); if (ms > 0 && adj > 0 && last.jd !== 'ok') nr.ms = String(last.jd === 'less' ? ms + adj : ms - adj); },
-  complete: function (r) { return String(r.ms || '').trim() && String(r.deg || '').trim() && r.jd && (r.jd === 'ok' || String(r.adj || '').trim()); } });
-
-/* ---- 9 正方形 ---- */
-F1.sim('#sim-c', { key: 'simC', mission: 'l1c', title: '走一格地磚正方形', goal: '回到起點 15 cm 內、車頭偏差 15° 內，而且要用「重複 4 次」。', max: 4, sec: 's9', only: 'l1a,l1b,l1c' });
-F1.verify('#verify', { key: 'real', label: '9. 真車走正方形（老師驗收）', what: '真車走完一格地磚正方形，大致回到起點', max: 6, sec: 's9' });
-F1.mclink('#mclink', { key: 'link', sec: 's9' });
-F1.checklist('#checks', { key: 'checks', label: '9. 自我檢查', max: 2, sec: 's9', items: [
-  '我在「當啟動時」第一行加了「初始化麥昆Plus」',
-  '我量度了地磚邊長，並計算出直行所需的時間',
-  '我用試驗方法找出轉 90° 所需的時間',
-  '我用了「重複 4 次」，而不是抄 4 次同樣的積木'] });
-
-/* ---- 10 學習日誌 ---- */
-F1.text('#log', { key: 'log', label: '10. 學習日誌', max: 2, min: 20, sec: 's10', placeholder: '例：真車轉 90° 要 560 ms，比模擬器多，因為……' });
-
-/* 專案名稱提示 */
-function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_square'; }); }
-pname(); document.addEventListener('input', function (e) { if (e.target.id === 'f_cls' || e.target.id === 'f_num') pname(); });
 F1.ready();
 </script>
 </body>

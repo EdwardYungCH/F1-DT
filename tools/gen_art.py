@@ -384,10 +384,71 @@ def square_task():
     s += t(420, 70, '直行一邊', 14, BLUE, weight=800) + t(420, 92, '＋ 原地轉 90°', 14, ORANGE, weight=800) + t(420, 118, '× 4 次', 18, INK, weight=900)
     return svg(W, H, s, '走一格地磚正方形')
 
+# ------------------------------------------------------------------ 下載 → 測試 → 觀察 → 調整 循環
+def dl_cycle():
+    W, H = 760, 330
+    p = 'dc'
+    s = defs(p) + f'<rect width="{W}" height="{H}" rx="16" fill="{PAPER}"/>'
+    cx, cy, rx, ry = 380, 168, 270, 110
+    nodes = [('① 修改程式', '在 MakeCode 改數字', '#eef4fc', BLUE),
+             ('② 下載', 'USB → micro:bit', '#eef4fc', BLUE),
+             ('③ 測試', '拔線、放車、開電源', '#fff1e0', ORANGE),
+             ('④ 觀察記錄', '邊長？轉角？', '#fff1e0', ORANGE),
+             ('⑤ 決定調整', '每次只改一個數字', '#e9f8ee', GREEN)]
+    pts = []
+    for i in range(5):
+        a = -math.pi / 2 + i * 2 * math.pi / 5
+        pts.append((cx + rx * math.cos(a), cy + ry * math.sin(a)))
+    def edge(x, y, dx, dy, m=8):
+        k = min(82 / abs(dx) if dx else 1e9, 32 / abs(dy) if dy else 1e9)
+        L = math.hypot(dx, dy); return x + dx * k + dx / L * m, y + dy * k + dy / L * m
+    for i in range(5):
+        (x1, y1), (x2, y2) = pts[i], pts[(i + 1) % 5]
+        dx, dy = x2 - x1, y2 - y1
+        sx, sy = edge(x1, y1, dx, dy); ex, ey = edge(x2, y2, -dx, -dy, 12)
+        mx, my = (sx + ex) / 2, (sy + ey) / 2; ox, oy = mx - cx, my - cy; L = math.hypot(ox, oy)
+        qx, qy = mx + ox / L * 18, my + oy / L * 18
+        col = GREEN if i == 4 else INK
+        s += f'<path d="M{sx:.0f} {sy:.0f} Q{qx:.0f} {qy:.0f} {ex:.0f} {ey:.0f}" fill="none" stroke="{col}" stroke-width="3" marker-end="url(#{p}{"g" if i == 4 else "k"})"/>'
+    for (x, y), (a, b, bg, st) in zip(pts, nodes):
+        s += f'<rect x="{x-82:.0f}" y="{y-32:.0f}" width="164" height="64" rx="16" fill="{bg}" stroke="{st}" stroke-width="2.5"/>'
+        s += t(x, y - 4, a, 17, st, weight=800) + t(x, y + 18, b, 12.5, INK, weight=500)
+    s += t(cx, cy - 6, '不斷重複', 16, MUTED, weight=800) + t(cx, cy + 16, '直至走得準', 14, MUTED, weight=600)
+    return svg(W, H, s, '修改、下載、測試、觀察、調整的循環')
+
+# ------------------------------------------------------------------ 觀察：四種常見走法
+def observe_panels():
+    W, H = 760, 230
+    p = 'ob'
+    s = defs(p) + f'<rect width="{W}" height="{H}" rx="16" fill="{PAPER}"/>'
+    cases = [('直行太短', 0.78, 90, '邊長要加長：直行暫停 ＋'), ('直行太長', 1.2, 90, '邊長要縮短：直行暫停 －'),
+             ('轉得太少', 1.0, 78, '轉彎暫停 ＋（例如 +50 ms）'), ('轉得太多', 1.0, 102, '轉彎暫停 －（例如 −50 ms）')]
+    for k, (title, f, ang, tip) in enumerate(cases):
+        ox = 20 + k * 185; side = 74; x0, y0 = ox + 46, 160
+        s += f'<rect x="{ox}" y="14" width="170" height="200" rx="12" fill="#fff" stroke="#d7e0ea"/>'
+        s += f'<rect x="{x0}" y="{y0-side}" width="{side}" height="{side}" fill="none" stroke="#c9b99c" stroke-width="2" stroke-dasharray="6 5"/>'
+        x, y, h = x0, y0, -90.0; pts = [(x, y)]
+        for i in range(4):
+            x += side * f * math.cos(math.radians(h)); y += side * f * math.sin(math.radians(h)); pts.append((x, y)); h += ang
+        d = 'M' + ' L'.join(f'{a:.1f} {b:.1f}' for a, b in pts)
+        s += f'<path d="{d}" fill="none" stroke="{BLUE}" stroke-width="3" stroke-linejoin="round" marker-end="url(#{p}b)"/>'
+        s += f'<circle cx="{x0}" cy="{y0}" r="6" fill="{ORANGE}"/>'
+        s += t(ox + 85, 40, title, 16, RED if k else RED, weight=800)
+        s += t(ox + 85, 202, tip, 11.5, INK, weight=600)
+    return svg(W, H, s, '觀察小車走法：直行太短、直行太長、轉得太少、轉得太多')
+
 # ------------------------------------------------------------------ 課堂頁標題插圖
 def hero(n):
     W, H = 340, 220
     s = ''
+    if n == 0:
+        s += '<rect x="250" y="30" width="22" height="170" rx="4" fill="#fff" fill-opacity=".85"/>'
+        for r in (40, 62, 84):
+            s += f'<path d="M{150+r*0.2:.0f} {120-r} A{r} {r} 0 0 1 {150+r*0.2:.0f} {120+r}" transform="translate(40 0)" fill="none" stroke="#ffd166" stroke-width="4" stroke-linecap="round" opacity="{1.1-r/100:.2f}"/>'
+        s += '<g transform="translate(120 120)"><circle r="58" fill="#fff" stroke="#14202b" stroke-width="3"/><circle r="40" fill="none" stroke="#c9d3de" stroke-width="2"/>'
+        s += '<rect x="30" y="-14" width="22" height="28" rx="6" fill="#1f2a36"/><circle cx="-14" cy="-8" r="6" fill="#1f2a36"/><circle cx="14" cy="-8" r="6" fill="#1f2a36"/>'
+        s += '<circle cx="-12" cy="-10" r="2" fill="#fff"/><circle cx="16" cy="-10" r="2" fill="#fff"/><path d="M-12 14 Q0 24 12 14" fill="none" stroke="#1f2a36" stroke-width="3" stroke-linecap="round"/></g>'
+        return svg(W, H, s, '')
     if n == 1:
         s += '<rect x="10" y="20" width="320" height="190" rx="18" fill="#ffffff" opacity=".12"/>'
         for x in range(10, 340, 80): s += f'<line x1="{x}" y1="20" x2="{x}" y2="210" stroke="#fff" stroke-opacity=".25" stroke-width="2"/>'
@@ -417,7 +478,8 @@ if __name__ == '__main__':
         'q1-arm.svg': q1_arm(), 'q2-delivery.svg': q2_delivery(), 'q3-vacuum.svg': q3_vacuum(), 'q4-lift.svg': q4_lift(),
         'q5-door.svg': q5_door(), 'q6-rc.svg': q6_rc(), 'q7-fan.svg': q7_fan(), 'q8-claw.svg': q8_claw(), 'q9-ornament.svg': q9_ornament(),
         'ipo.svg': ipo(), 'sda-loop.svg': sda_loop(), 'ir-principle.svg': ir_principle(), 'car-top.svg': car_top(), 'car-under.svg': car_under(),
-        'ext-steps.svg': ext_steps(), 'square-task.svg': square_task(), 'hero-l1.svg': hero(1), 'hero-l2.svg': hero(2), 'hero-l3.svg': hero(3),
+        'ext-steps.svg': ext_steps(), 'square-task.svg': square_task(), 'dl-cycle.svg': dl_cycle(), 'observe.svg': observe_panels(),
+        'hero-l1.svg': hero(0), 'hero-l2.svg': hero(1), 'hero-l3.svg': hero(2), 'hero-l4.svg': hero(3),
     }
     for k, (label, body) in PARTS.items():
         files[k + '.svg'] = part(defs('pm') + body, label)
