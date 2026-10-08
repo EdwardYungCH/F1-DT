@@ -378,7 +378,8 @@
       var usedRepeat = ws.getAllBlocks(false).some(function (b) { return b.type === 'f1_repeat'; });
       measure = '離起點 ' + dist.toFixed(1) + ' cm';
       var st = { closure: +dist.toFixed(1), heading: +head.toFixed(0), path: +E.distance.toFixed(0), turned: +abs.toFixed(0), repeat: usedRepeat };
-      if (E.distance < 150) return finish('fail', '未走完四條邊', '只走了 ' + E.distance.toFixed(0) + ' cm。一格地磚正方形大約要走 240 cm。', st);
+      var T = E.scene.tile || 30;
+      if (E.distance < T * 2.5) return finish('fail', '未走完四條邊', '只走了 ' + E.distance.toFixed(0) + ' cm。一格地磚正方形大約要走 ' + T * 4 + ' cm。', st);
       if (!usedRepeat) return finish('fail', '未用「重複 4 次」', '路線差不多了，但要用「重複 4 次」，不要抄 4 次積木。', st);
       if (M.needVars) {
         var all = ws.getAllBlocks(false), setN = {}, useN = {};
@@ -387,17 +388,17 @@
           if (b.type === 'f1_pause') { var v = b.getInputTargetBlock('MS'); if (v && v.type === 'variables_get') useN[v.getField('VAR').getText()] = 1; }
         });
         var nSet = Object.keys(setN).length, nUse = Object.keys(useN).filter(function (k) { return setN[k]; }).length;
-        if (nSet < 2 || nUse < 2) return finish('fail', '未用兩個變數', '在「當啟動時」最頂設定「前進時間」和「轉彎時間」兩個變數，再把它們放進直行和轉彎的「暫停」積木。之後只改這兩個數字就可以調整。', st);
+        if (nSet < 2 || nUse < 2) return finish('fail', '未用兩個變數', '在「當啟動時」最頂設定 forward 和 turn 兩個變數，再把它們放進直行和轉彎的「暫停」積木。之後只改這兩個數字就可以調整。', st);
       }
       var speeds = ws.getAllBlocks(false).filter(function (b) { return b.type === 'f1_mq_motor'; }).map(function (b) { var v = b.getInputTargetBlock('S'); return v && v.type === 'math_number' ? +v.getFieldValue('NUM') : NaN; });
       if (speeds.some(function (v) { return v !== 50; })) return finish('fail', '速度要用 50', '有馬達積木的速度不是 50（預設 100 太快，容易衝過頭和打滑）。把每塊馬達積木的速度都改成 50。', st);
-      var side = E.distance / 4, each = abs / 4, tips = [], FW = M.needVars ? '變數「前進時間」' : '直行的暫停時間', TW = M.needVars ? '變數「轉彎時間」' : '轉彎的暫停時間';
+      var side = E.distance / 4, each = abs / 4, tips = [], FW = M.needVars ? '變數 forward ' : '直行的暫停時間', TW = M.needVars ? '變數 turn ' : '轉彎的暫停時間', lo = T * 0.9, hi = T * 1.1;
       st.side = +side.toFixed(1); st.each = +each.toFixed(0);
-      if (side < 55) tips.push('每邊約 ' + side.toFixed(0) + ' cm，太短：' + FW + '要加大。');
-      else if (side > 65) tips.push('每邊約 ' + side.toFixed(0) + ' cm，太長：' + FW + '要減少。');
+      if (side < lo) tips.push('每邊約 ' + side.toFixed(0) + ' cm，太短：' + FW + '要加大。');
+      else if (side > hi) tips.push('每邊約 ' + side.toFixed(0) + ' cm，太長：' + FW + '要減少。');
       if (each < 86) tips.push('每次約轉 ' + each.toFixed(0) + '°，太少：' + TW + '要加大（例如 +50）。');
       else if (each > 94) tips.push('每次約轉 ' + each.toFixed(0) + '°，太多：' + TW + '要減少（例如 −50）。');
-      if (dist <= 15 && head <= 15 && side >= 55 && side <= 65) return finish('pass', '正方形完成！', '每邊約 ' + side.toFixed(0) + ' cm，回到起點附近（相差 ' + dist.toFixed(1) + ' cm），車頭偏差 ' + head.toFixed(0) + '°。記下你用的兩個數字。', st);
+      if (dist <= T * 0.27 && head <= 15 && side >= lo && side <= hi) return finish('pass', '正方形完成！', '每邊約 ' + side.toFixed(0) + ' cm，回到起點附近（相差 ' + dist.toFixed(1) + ' cm），車頭偏差 ' + head.toFixed(0) + '°。記下你用的兩個數字。', st);
       return finish('fail', '未走成一格地磚的正方形', '相差起點 ' + dist.toFixed(1) + ' cm，車頭偏差 ' + head.toFixed(0) + '°。' + (tips.join(' ') || '差少少：微調' + TW + '（±20）再試。') + ' 每次只改一個數字。', st);
     }
     if (M.check === 'lap' || M.check === 'tier') {

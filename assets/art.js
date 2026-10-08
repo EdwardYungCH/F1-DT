@@ -19,7 +19,7 @@
 
   /* ---------- 感應器讀數（由上望車頭，黑線穿過） ----------
      p = [L2, L1, M, R1, R2]，值為 0 / 1 / null（本課未使用） */
-  var SX = [-72, -32, 0, 32, 72], SN = ['L2', 'L1', 'M', 'R1', 'R2'];
+  var SX = [-92, -32, 0, 32, 92], SN = ['L2', 'L1', 'M', 'R1', 'R2'];
   function sensorView(p, o) {
     o = o || {};
     var W = 300, H = 150, cx = 150, s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="感應器讀數 ' + p.map(function (v) { return v == null ? '–' : v; }).join(' ') + '">';

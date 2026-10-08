@@ -28,7 +28,7 @@
     wheelR: 2.2,
     sensorAhead: 5.2,    // 巡線感應器在車軸前方的距離
     // 5 路感應器的橫向位置（正數 = 車的左邊）：L2 L1 M R1 R2
-    sensorLat: [3.6, 1.7, 0, -1.7, -3.6],
+    sensorLat: [4.4, 1.7, 0, -1.7, -4.4],   // L2、R2 在車身左右兩側
     names: ['L2', 'L1', 'M', 'R1', 'R2'],
     bodyFront: 7.6, bodyBack: -5.6, bodyHalfW: 4.2
   };
@@ -96,8 +96,8 @@
 
   var SCENES = {
     tiles: {
-      name: '地磚地面', kind: 'tiles', tile: 60,
-      view: { x0: -40, y0: -40, x1: 100, y1: 100 },
+      name: '地磚地面', kind: 'tiles', tile: 30,
+      view: { x0: -25, y0: -25, x1: 55, y1: 55 },
       start: { x: 0, y: 0, h: Math.PI / 2 }          // 車頭向上，放在地磚一角
     },
     oval: {

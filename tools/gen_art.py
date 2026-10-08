@@ -325,12 +325,12 @@ def car_under():
     cx, cy = 320, 160
     s += f'<rect x="{cx-200}" y="{cy-90}" width="400" height="190" rx="40" fill="#e8edf3" stroke="{INK}" stroke-width="3"/>'
     s += f'<rect x="{cx-230}" y="{cy-10}" width="30" height="90" rx="10" fill="#26323e"/><rect x="{cx+200}" y="{cy-10}" width="30" height="90" rx="10" fill="#26323e"/>'
-    s += f'<rect x="{cx-150}" y="{cy-80}" width="300" height="60" rx="10" fill="{PCB}"/>'
-    lats = [-110, -50, 0, 50, 110]
+    s += f'<rect x="{cx-80}" y="{cy-80}" width="160" height="60" rx="10" fill="{PCB}"/>'
+    s += f'<rect x="{cx-198}" y="{cy-80}" width="40" height="60" rx="10" fill="{PCB}"/><rect x="{cx+158}" y="{cy-80}" width="40" height="60" rx="10" fill="{PCB}"/>'
+    lats = [-178, -50, 0, 50, 178]   # L2、R2 在車身左右兩側
     for i, lat in enumerate(lats):
         s += f'<circle cx="{cx+lat}" cy="{cy-50}" r="13" fill="#1b1b1b" stroke="#bfe5cf" stroke-width="3"/><circle cx="{cx+lat}" cy="{cy-50}" r="4" fill="#ff5a4f"/>'
         s += t(cx + lat, cy - 2, ['L2', 'L1', 'M', 'R1', 'R2'][i], 16, INK, weight=800)
-    s += f'<circle cx="{cx+170}" cy="{cy+50}" r="11" fill="#fff" stroke="{INK}" stroke-width="2"/>' + t(cx + 170, cy + 80, '校準按鈕', 12, MUTED)
     s += f'<path d="M{cx-150} {cy-102} H{cx+150}" stroke="{BLUE}" stroke-width="2"/>' + t(cx, cy - 108, '↑ 車頭方向（左右以「由上望」為準）', 12.5, BLUE, weight=700)
     s += f'<path d="M{cx-50} {cy+20} v16 h50 v-16" fill="none" stroke="{ORANGE}" stroke-width="2"/>' + t(cx - 25, cy + 52, 'L1 與 M 之間有距離', 12, ORANGE)
     return svg(W, H, s, '車底 5 路巡線感應器位置')
@@ -380,7 +380,7 @@ def square_task():
         s += f'<circle cx="{x}" cy="{y}" r="12" fill="{ORANGE}"/>' + t(x, y + 5, f'{n}', 12, '#fff')
     s += '<g transform="translate(160 186)"><rect x="-18" y="-22" width="36" height="44" rx="8" fill="#fff" stroke="#2b3d52" stroke-width="2.5"/><rect x="-24" y="-8" width="7" height="18" rx="2" fill="#26323e"/><rect x="17" y="-8" width="7" height="18" rx="2" fill="#26323e"/><path d="M0 -18 l-5 7 h10 z" fill="#1e6fd9"/></g>'
     s += t(160, 238, '起點（車頭向上）', 13, INK)
-    s += t(230, 98, '一格地磚', 13, MUTED) + t(230, 116, '（約 60 cm）', 12, MUTED, weight=500)
+    s += t(230, 98, '一格地磚', 13, MUTED) + t(230, 116, '（30 cm）', 12, MUTED, weight=500)
     s += t(420, 70, '直行一邊', 14, BLUE, weight=800) + t(420, 92, '＋ 原地轉 90°', 14, ORANGE, weight=800) + t(420, 118, '× 4 次', 18, INK, weight=900)
     return svg(W, H, s, '走一格地磚正方形')
 
@@ -421,8 +421,8 @@ def observe_panels():
     W, H = 760, 230
     p = 'ob'
     s = defs(p) + f'<rect width="{W}" height="{H}" rx="16" fill="{PAPER}"/>'
-    cases = [('直行太短', 0.78, 90, '邊長要加長：直行暫停 ＋'), ('直行太長', 1.2, 90, '邊長要縮短：直行暫停 －'),
-             ('轉得太少', 1.0, 78, '轉彎暫停 ＋（例如 +50 ms）'), ('轉得太多', 1.0, 102, '轉彎暫停 －（例如 −50 ms）')]
+    cases = [('直行太短', 0.78, 90, '邊太短：forward 加大'), ('直行太長', 1.2, 90, '邊太長：forward 減少'),
+             ('轉得太少', 1.0, 78, '轉太少：turn 加 50'), ('轉得太多', 1.0, 102, '轉太多：turn 減 50')]
     for k, (title, f, ang, tip) in enumerate(cases):
         ox = 20 + k * 185; side = 74; x0, y0 = ox + 46, 160
         s += f'<rect x="{ox}" y="14" width="170" height="200" rx="12" fill="#fff" stroke="#d7e0ea"/>'
@@ -436,6 +436,27 @@ def observe_panels():
         s += t(ox + 85, 40, title, 16, RED if k else RED, weight=800)
         s += t(ox + 85, 202, tip, 11.5, INK, weight=600)
     return svg(W, H, s, '觀察小車走法：直行太短、直行太長、轉得太少、轉得太多')
+
+# ------------------------------------------------------------------ 小車實物相片（加標籤）
+def car_photo():
+    import base64
+    src = os.path.join(OUT, 'car-photo.jpg')
+    if not os.path.exists(src): return None
+    b64 = base64.b64encode(open(src, 'rb').read()).decode()
+    W, H = 960, 818
+    s = f'<image href="data:image/jpeg;base64,{b64}" x="0" y="0" width="{W}" height="{H}"/>'
+    # (點 x, 點 y, 標籤 x, 標籤 y, 文字)
+    labels = [(340, 400, 30, 300, 'micro:bit'), (560, 170, 600, 40, '電池盒'), (800, 520, 700, 300, '車輪及馬達（左右各一）'),
+              (110, 550, 20, 470, '前燈 LED'), (290, 662, 20, 470, None), (632, 668, 640, 760, '校準按鈕'),
+              (420, 745, 120, 790, '巡線感應器在車底（L2、R2 在左右兩側）')]
+    for (x, y, lx, ly, lab) in labels:
+        s += f'<circle cx="{x}" cy="{y}" r="7" fill="#ffd166" stroke="#14202b" stroke-width="2"/>'
+        s += f'<line x1="{x}" y1="{y}" x2="{lx + 10}" y2="{ly}" stroke="#ffd166" stroke-width="3"/>'
+        if lab:
+            w = 16 + 19 * len(lab) if not lab.isascii() else 16 + 11 * len(lab)
+            w = sum(19 if ord(ch) > 255 else 11 for ch in lab) + 20
+            s += f'<rect x="{lx}" y="{ly - 20}" width="{w}" height="34" rx="9" fill="#14202b" fill-opacity=".86"/>' + t(lx + w / 2, ly + 4, lab, 18, '#fff')
+    return svg(W, H, s, '麥昆 Plus V2 小車實物相片及各部分名稱')
 
 # ------------------------------------------------------------------ 課堂頁標題插圖
 def hero(n):
@@ -477,7 +498,7 @@ if __name__ == '__main__':
     files = {
         'q1-arm.svg': q1_arm(), 'q2-delivery.svg': q2_delivery(), 'q3-vacuum.svg': q3_vacuum(), 'q4-lift.svg': q4_lift(),
         'q5-door.svg': q5_door(), 'q6-rc.svg': q6_rc(), 'q7-fan.svg': q7_fan(), 'q8-claw.svg': q8_claw(), 'q9-ornament.svg': q9_ornament(),
-        'ipo.svg': ipo(), 'sda-loop.svg': sda_loop(), 'ir-principle.svg': ir_principle(), 'car-top.svg': car_top(), 'car-under.svg': car_under(),
+        'ipo.svg': ipo(), 'sda-loop.svg': sda_loop(), 'ir-principle.svg': ir_principle(), 'car-under.svg': car_under(),
         'ext-steps.svg': ext_steps(), 'square-task.svg': square_task(), 'dl-cycle.svg': dl_cycle(), 'observe.svg': observe_panels(),
         'hero-l1.svg': hero(0), 'hero-l2.svg': hero(1), 'hero-l3.svg': hero(2), 'hero-l4.svg': hero(3),
     }
@@ -485,6 +506,8 @@ if __name__ == '__main__':
         files[k + '.svg'] = part(defs('pm') + body, label)
     for k, (label, o) in SURF.items():
         files[k + '.svg'] = scene(o, label)
+    cp = car_photo()
+    if cp: files['car-photo.svg'] = cp
     for name, c in files.items():
         save(name, c)
     print(len(files), 'files written to', OUT)

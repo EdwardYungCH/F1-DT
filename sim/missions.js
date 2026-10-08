@@ -12,7 +12,7 @@
   function start(body, xpos, ypos) { return '<block type="f1_on_start" x="' + (xpos || 30) + '" y="' + (ypos || 30) + '"><statement name="DO">' + body + '</statement></block>'; }
   function forever(body, xpos, ypos) { return '<block type="f1_forever" x="' + (xpos || 30) + '" y="' + (ypos || 200) + '">' + (body ? '<statement name="DO">' + body + '</statement>' : '') + '</block>'; }
   // 變數：v = [名稱, id]
-  var VF = ['前進時間', 'v_fwd'], VT = ['轉彎時間', 'v_turn'];
+  var VF = ['forward', 'v_fwd'], VT = ['turn', 'v_turn'];
   function vdecl(list) { return '<variables>' + list.map(function (v) { return '<variable id="' + v[1] + '">' + v[0] + '</variable>'; }).join('') + '</variables>'; }
   function vget(v) { return '<block type="variables_get"><field name="VAR" id="' + v[1] + '">' + v[0] + '</field></block>'; }
   function setv(v, val, next) { return '<block type="variables_set"><field name="VAR" id="' + v[1] + '">' + v[0] + '</field><value name="VALUE">' + n(val) + '</value>' + (next ? '<next>' + next + '</next>' : '') + '</block>'; }
@@ -39,7 +39,7 @@
   var MISSIONS = {
     l2sq: {
       lesson: 2, level: 1, scene: 'tiles', title: '走一格地磚正方形',
-      goal: '程式開頭設定變數「前進時間」和「轉彎時間」，暫停積木用這兩個變數；速度 50，用「重複 4 次」走一格地磚（60 cm）的正方形：每邊 55–65 cm，回到起點 15 cm 內，車頭偏差 15° 內。',
+      goal: '程式開頭設定變數 forward 和 turn，暫停積木用這兩個變數；速度 50，用「重複 4 次」走一格地磚（30 cm）的正方形：每邊 27–33 cm，回到起點 8 cm 內，車頭偏差 15° 內。',
       check: 'square', needVars: true,
       starter: x(vdecl([VF, VT]) + start(init(pause(1000))))
     },

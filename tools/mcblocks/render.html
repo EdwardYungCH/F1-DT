@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>MakeCode 樣式積木圖</title>
+<style>
+html,body{margin:0;background:#fff}
+#ws{width:1400px;height:1300px}
+/* MakeCode 的字型及字色 */
+.blocklyText,.blocklyHtmlInput{font-family:"Segoe UI","Microsoft JhengHei","Noto Sans TC","Helvetica Neue",Helvetica,sans-serif!important}
+.blocklyMainBackground{stroke:none!important;fill:#fff!important}
+.blocklyGridPattern,.blocklyScrollbarHandle,.blocklyScrollbarBackground,.blocklyZoom,.blocklyTrash{display:none}
+</style>
+</head>
+<body>
+<div id="ws"></div>
+<script src="pxt-blockly/blockly_compressed.js"></script>
+<script src="pxt-blockly/blocks_compressed.js"></script>
+<script src="../../sim/blocks.js"></script>
+<script src="../../sim/missions.js"></script>
+<script>
+// MakeCode 的外形：數值積木是圓角，邏輯是六角形
+(function () {
+  function shape(t, s) { var b = Blockly.Blocks[t]; if (!b) return; var init = b.init; b.init = function () { init.call(this); if (this.setOutputShape) this.setOutputShape(s); }; }
+  shape('f1_mq_line', Blockly.OUTPUT_SHAPE_ROUND);
+  shape('variables_get', Blockly.OUTPUT_SHAPE_ROUND);
+  shape('math_number', Blockly.OUTPUT_SHAPE_ROUND);
+  ['logic_compare', 'logic_operation', 'logic_negation', 'logic_boolean'].forEach(function (t) { shape(t, Blockly.OUTPUT_SHAPE_HEXAGONAL); });
+})();
+window.ws = Blockly.inject('ws', { renderer: 'pxt', readOnly: false, trashcan: false, zoom: { startScale: 1 }, move: { scrollbars: false } });
+window.show = function (xml) {
+  ws.clear();
+  Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), ws);
+  var tops = ws.getTopBlocks(true), y = 10;
+  tops.forEach(function (b) { b.moveBy(10 - b.getRelativeToSurfaceXY().x, y - b.getRelativeToSurfaceXY().y); y += b.getHeightWidth().height + 20; });
+  ws.scroll(0, 0);
+};
+</script>
+</body>
+</html>

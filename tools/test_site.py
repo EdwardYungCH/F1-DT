@@ -26,7 +26,7 @@ with sync_playwright() as p:
     pg = ctx.new_page(); E = errs_of(pg)
 
     print('1. 每頁載入沒有錯誤')
-    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'project.html', 'teacher/index.html', 'teacher/summary.html']:
+    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'tools/mcblocks/render.html', 'project.html', 'teacher/index.html', 'teacher/summary.html']:
         E.clear(); pg.goto(U(page)); pg.wait_for_timeout(700)
         check(not E, page + ' 沒有錯誤 ' + (str(E) if E else ''))
 
@@ -117,17 +117,18 @@ with sync_playwright() as p:
     pg.fill('#f_cls', '1a'); pg.fill('#f_num', '12'); pg.fill('#f_name', '陳大文')
     pg.fill('#f_pnum', '5'); pg.fill('#f_pname', '李小明')
     check('陳大文＋李小明' in pg.inner_text('.topbar'), '頂部列顯示兩位組員')
-    pg.fill('#tile', '60')
+    check(pg.locator('.simcard, iframe').count() == 0, '第二堂沒有模擬器')
     r0 = pg.locator('#trials tr.r').nth(0)
-    r0.locator('input[data-k=f]').fill('5000'); r0.locator('input[data-k=d]').fill('50'); r0.locator('input[data-k=t]').fill('1000'); r0.locator('.pick').click(); pick_sheet(pg, '轉太少')
-    check('只改前進時間 → 6000' in r0.inner_text(), '記錄表建議只改前進時間 6000')
+    r0.locator('input[data-k=f]').fill('3000'); r0.locator('.pick').nth(0).click(); pick_sheet(pg, '太短')
+    r0.locator('input[data-k=t]').fill('1000'); r0.locator('.pick').nth(1).click(); pick_sheet(pg, '太少')
+    check('forward 改 3200' in r0.inner_text(), '記錄表建議 forward 改 3200')
     pg.locator('#trials .btn.go').click()
     r3 = pg.locator('#trials tr.r').nth(3)
-    check(r3.locator('input[data-k=f]').input_value() == '6000' and r3.locator('input[data-k=t]').input_value() == '1000', '新增一行自動帶入 6000／1000')
+    check(r3.locator('input[data-k=f]').input_value() == '3200' and r3.locator('input[data-k=t]').input_value() == '1000', '新增一行自動帶入 3200／1000')
     r1 = pg.locator('#trials tr.r').nth(1)
-    r1.locator('input[data-k=f]').fill('6000'); r1.locator('input[data-k=d]').fill('60'); r1.locator('input[data-k=t]').fill('1000'); r1.locator('.pick').click(); pick_sheet(pg, '轉太少')
-    check('只改轉彎時間 → 1050' in r1.inner_text(), '邊長準了才建議改轉彎時間 1050')
-    pg.evaluate("""localStorage.setItem('f1sim:res:l2sq', JSON.stringify({mission:'l2sq',pass:true,best:{stats:{closure:3.1}},attempts:[{t:Date.now(),pass:true,title:'正方形完成！',stats:{closure:3.1}}],ts:'maqueenPlusV2.I2CInit()'}))""")
+    r1.locator('input[data-k=f]').fill('3200'); r1.locator('.pick').nth(0).click(); pick_sheet(pg, '剛好')
+    r1.locator('input[data-k=t]').fill('1000'); r1.locator('.pick').nth(1).click(); pick_sheet(pg, '太少')
+    check('turn 改 1050' in r1.inner_text(), '邊長剛好才建議改 turn 1050')
     pg.locator('#verify .btn').click(); pg.fill('.modal input', 'wrong'); pg.locator('.modal .btn.primary').click()
     check('密碼不正確' in pg.inner_text('.modal'), '老師驗收：錯密碼被拒')
     pg.fill('.modal input', PIN); pg.locator('.modal .btn.primary').click()
@@ -135,8 +136,7 @@ with sync_playwright() as p:
     pg.locator('#mclink input').fill('https://makecode.com/_abcDEF123456')
     check('格式正確' in pg.inner_text('#mclink'), 'MakeCode 連結格式檢查')
     pg.reload(); pg.wait_for_timeout(600)
-    check('✔ 已過關' in pg.inner_text('#sim-sq'), '模擬器結果顯示已過關')
-    tot = pg.inner_text('.topbar .pill'); check(tot.startswith('36'), '第二堂分數（模擬器 12＋記錄 6＋驗收 18）：' + tot)
+    tot = pg.inner_text('.topbar .pill'); check(tot.startswith('35'), '第二堂分數（記錄 10＋驗收 25）：' + tot)
     check(pg.input_value('#f_pname') == '李小明', '組員二資料保留')
     with pg.expect_download() as dl2:
         pg.locator('#submitBtns .btn.go').click()
@@ -148,7 +148,7 @@ with sync_playwright() as p:
     sp.evaluate('t => F1Summary.addText(t, "pair.html")', html2); sp.wait_for_timeout(200)
     sp.locator('#tabs button', has_text='第二堂').click()
     t2 = sp.inner_text('#tbl')
-    check('陳大文' in t2 and '李小明' in t2 and t2.count('36') >= 2, '匯總工具為兩位組員各記一行')
+    check('陳大文' in t2 and '李小明' in t2 and t2.count('35 / 50') >= 2, '匯總工具為兩位組員各記一行')
     check(pg.locator('.toc, .tbtn.speak, .tbtn.fs, .lesson-nav').count() == 0, '沒有目錄、朗讀、字體大小、上下課連結')
     for page in ['L1', 'L2', 'L3', 'L4']:
         pg.goto(U(page + '/index.html')); pg.wait_for_timeout(300)
