@@ -12,8 +12,10 @@ PROGS = {
  'mc-init': "X.x(X.init())",
  'mc-motor': "X.x(X.motor('A','1',50))",
  'mc-stop': "X.x(X.stop('A'))",
- 'blocks-l2-full': "X.x(X.start(X.init(X.pause(1000))) + X.forever(X.follower('back'),30,170))",
- 'blocks-l2-stop': "X.x(X.forever(X.follower('stop'),30,30))",
+ 'blocks-line': "X.x(X.start(X.init(X.pause(1000))) + X.forever(X.follower('back'),30,170))",
+ 'mc-forever': "X.x(X.forever('', 10, 10))",
+ 'mc-if': "X.x('<block type=\"controls_if\"><mutation elseif=\"1\" else=\"1\"></mutation></block>')",
+ 'mc-line-eq': "X.x(X.cond(2))",
 }
 TIER = """(function(){var c=X.cond, m=X.motor, s=X.stop;
  var b='<block type="controls_if"><mutation elseif="4" else="1"></mutation>'+
@@ -24,7 +26,7 @@ TIER = """(function(){var c=X.cond, m=X.motor, s=X.stop;
  '<value name="IF4">'+c(4)+'</value><statement name="DO4">'+m('L','1',40,m('R','-1',20))+'</statement>'+
  '<statement name="ELSE">'+s('A')+'</statement></block>';
  return X.x(X.start(X.init(X.pause(1000))) + X.forever(b,30,170));})()"""
-PROGS['blocks-l3-tier'] = TIER
+PROGS['blocks-tier'] = TIER
 with sync_playwright() as p:
     b = p.chromium.launch()
     pg = b.new_page(viewport={'width': 1400, 'height': 1300}, device_scale_factor=2)
