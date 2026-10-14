@@ -35,7 +35,7 @@
       <li>用巡線程式令小車自己走完一圈，再逐步提速。</li>
     </ol>
   </div>
-  <p class="small muted">本課滿分 50 分：讀 1 定 0 練習 10、提速記錄 15、老師驗收 20、自我檢查 5。</p>
+  <p class="small muted">本課滿分 50 分：讀 1 定 0 練習 10、提速記錄 15、老師驗收 25（圓滿完成 25／部分完成 15／未完成 5）。</p>
 </section>
 
 <section class="card" id="s1" data-short="巡線感應器">
@@ -96,9 +96,10 @@
   <figure class="fig narrow zoomable"><div class="art" id="map"></div><figcaption>O 形（圓形）巡線圖：小車沿圓圈一直轉彎</figcaption></figure>
 </section>
 
-<section class="card" id="s4" data-short="提速記錄">
-  <header><span class="num">4</span><h2>走得完之後：提速</h2><span class="marks">15 分</span></header>
-  <p>小車走得完一圈後，試試令它走快一點。<b>每次只改一樣</b>，再記錄結果。</p>
+<section class="card" id="s4" data-short="10 秒挑戰">
+  <header><span class="num">4</span><h2>走得完之後：10 秒內走完一圈</h2><span class="marks">15 分</span></header>
+  <div class="callout key"><span class="ttl">目標：10 秒內走完一圈</span>小車走得完一圈後，逐步提速，直至可以在 <b>10 秒內</b>走完一整圈而不脫線。</div>
+  <p>同組一人開電源，另一人用手機計時：由小車起步開始，到回到起點為止。<b>每次只改一樣</b>，再記錄結果。</p>
   <ul>
     <li><b>直行速度：</b>程式中所有的 <b>20</b>，每次一齊加 10。</li>
     <li><b>後退速度：</b>程式中的 <b>10</b>，改成直行速度的一半。</li>
@@ -120,14 +121,12 @@
 </section>
 
 <section class="card" id="s5" data-short="老師驗收">
-  <header><span class="num">5</span><h2>老師驗收及自我檢查</h2><span class="marks">25 分</span></header>
-  <p>小車可以自己走完一整圈，就請老師來看。</p>
+  <header><span class="num">5</span><h2>老師驗收</h2><span class="marks">25 分</span></header>
+  <p>達到目標（或已盡力）後，請老師來看一次，老師會揀選結果。</p>
   <div id="verify"></div>
   <div id="mclink" style="margin-top:12px"></div>
-  <h3>自我檢查<span class="tag">5 分</span></h3>
-  <div id="checks"></div>
   <h3>挑戰（做得快的組別）</h3>
-  <p>在不脫線的情況下，找出最快的直行速度。</p>
+  <p>在不脫線的情況下，看看你們最快可以幾秒走完一圈。</p>
 </section>
 
 <section class="card" id="s6" data-short="學習日誌">
@@ -138,7 +137,7 @@
     <li>巡線程式放在「重複無限次」內，令小車不停看、不停修正。</li>
   </ol>
   <h3>學習日誌（不計分）</h3>
-  <p class="small muted">最快不脫線的直行速度是多少？</p>
+  <p class="small muted">你們最快幾秒走完一圈？用了什麼速度？</p>
   <div id="log"></div>
   <div class="callout key"><span class="ttl">下一課預告</span>流程圖：先畫圖，再寫程式，令小車轉得更順。</div>
 </section>
@@ -173,27 +172,27 @@ F1.choice('#q-surf', { key: 'surf', label: '1. 讀 1 定 0', sec: 's1', max: 10,
 
 document.getElementById('map').innerHTML = F1Art.trackMap('oval');
 
-var SP = [{ v: 'ok', t: '順利走完一圈 ✔' }, { v: 'out', t: '彎位衝出黑線' }, { v: 'swing', t: '左右擺得很厲害' }, { v: 'stop', t: '不動／打轉' }];
+var SP = [{ v: 'ok', t: '走完一圈 ✔' }, { v: 'out', t: '彎位衝出黑線' }, { v: 'swing', t: '左右擺得很厲害' }, { v: 'stop', t: '不動／打轉' }];
 F1.trials('#speedlog', { key: 'speed', label: '2. 提速記錄', max: 15, sec: 's4', minRows: 3,
   cols: [{ k: 'sp', label: '直行速度', type: 'number', ph: '20', w: '6em' }, { k: 'back', label: '後退速度', type: 'number', ph: '10', w: '6em' },
-    { k: 'jd', label: '結果', type: 'select', options: SP, w: '11em' }],
-  example: ['20', '10', '順利走完一圈 ✔', '直行 30、後退 15'],
+    { k: 'jd', label: '結果', type: 'select', options: SP, w: '10em' }, { k: 'sec', label: '一圈用了幾秒', type: 'number', ph: '例：18', w: '7em' }],
+  example: ['20', '10', '走完一圈 ✔', '18', '未夠快：直行 30、後退 15'],
   next: function (r) {
-    var sp = parseFloat(r.sp); if (!(sp > 0) || !r.jd) return '';
-    if (r.jd === 'ok') return '直行 <b>' + (sp + 10) + '</b>、後退 <b>' + Math.round((sp + 10) / 2) + '</b>';
-    if (r.jd === 'out') return '直行減到 <b>' + Math.max(10, sp - 10) + '</b>（已是最快）';
+    var sp = parseFloat(r.sp), t = parseFloat(r.sec); if (!(sp > 0) || !r.jd) return '';
+    if (r.jd === 'ok') {
+      if (!(t > 0)) return '<span style="color:var(--amber)">↑ 請填秒數</span>';
+      if (t <= 10) return '<b style="color:var(--ok)">✔ 達標！請老師驗收</b>';
+      return '未夠快：直行 <b>' + (sp + 10) + '</b>、後退 <b>' + Math.round((sp + 10) / 2) + '</b>';
+    }
+    if (r.jd === 'out') return '太快：直行減到 <b>' + Math.max(10, sp - 10) + '</b>';
     if (r.jd === 'swing') return '直行不變，<b>後退減 5</b>';
     return '<b>檢查放車位置及程式</b>';
   },
-  carry: function (last, nr) { var sp = parseFloat(last.sp); if (sp > 0 && last.jd === 'ok') { nr.sp = String(sp + 10); nr.back = String(Math.round((sp + 10) / 2)); } },
-  complete: function (r) { return String(r.sp || '').trim() && r.jd; } });
+  carry: function (last, nr) { var sp = parseFloat(last.sp), t = parseFloat(last.sec); if (sp > 0 && last.jd === 'ok' && t > 10) { nr.sp = String(sp + 10); nr.back = String(Math.round((sp + 10) / 2)); } },
+  complete: function (r) { return String(r.sp || '').trim() && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
 
-F1.verify('#verify', { key: 'real', label: '3. 真車巡線一圈（老師驗收）', what: '真車在 O 形巡線圖上自己走完一整圈', max: 20, sec: 's5' });
+F1.verify('#verify', { key: 'real', label: '3. 真車巡線（老師驗收）', what: '真車在 O 形巡線圖上自己走一圈', max: 25, sec: 's5', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '10 秒內走完一圈' }, { v: 'part', t: '部分完成', s: 15, d: '走完一圈，但超過 10 秒' }, { v: 'none', t: '未完成', s: 5, d: '未能走完一圈（參與分）' }] });
 F1.mclink('#mclink', { key: 'link', sec: 's5' });
-F1.checklist('#checks', { key: 'checks', label: '4. 自我檢查', max: 5, sec: 's5', items: [
-  '巡線程式放在「重複無限次」內',
-  '測試前校準了感應器',
-  '提速時每次只改一樣，並記錄結果'] });
 F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 5, sec: 's6', placeholder: '例：直行 40 還可以，50 就會在彎位衝出黑線。' });
 
 function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_linebot'; }); }

@@ -35,7 +35,7 @@
       <li>把程式下載到 micro:bit，用「測試 → 觀察 → 調整」令小車走得準。</li>
     </ol>
   </div>
-  <p class="small muted">本課滿分 50 分：真車試驗記錄 20、老師驗收 25、自我檢查 5。資料會自動儲存在這部電腦。</p>
+  <p class="small muted">本課滿分 50 分：真車試驗記錄 20、老師驗收 30（圓滿完成 30／部分完成 18／未完成 6）。資料會自動儲存在這部電腦。</p>
 </section>
 
 <section class="card" id="s1" data-short="準備">
@@ -154,12 +154,10 @@
 </section>
 
 <section class="card" id="s5" data-short="老師驗收">
-  <header><span class="num">5</span><h2>老師驗收及自我檢查</h2><span class="marks">30 分</span></header>
-  <p>小車走得準了，就請老師來看一次完整的正方形。</p>
+  <header><span class="num">5</span><h2>老師驗收</h2><span class="marks">30 分</span></header>
+  <p>小車走得準了（或已盡力），就請老師來看一次完整的正方形，老師會揀選結果。</p>
   <div id="verify"></div>
   <div id="mclink" style="margin-top:12px"></div>
-  <h3>自我檢查<span class="tag">5 分</span></h3>
-  <div id="checks"></div>
   <h3>挑戰（做得快的組別）</h3>
   <p>走 2 × 2 格地磚的大正方形：只改<b>一個</b>數字，應該改哪一個？</p>
 </section>
@@ -222,12 +220,8 @@ F1.start({ id: 'L2', key: 'f1dt:L2', theme: 'l2', title: '第二堂：小車走�
 })();
 
 /* ---- 5 驗收 ---- */
-F1.verify('#verify', { key: 'real', label: '2. 真車走正方形（老師驗收）', what: '真車走完一格地磚正方形，大致回到起點', max: 25, sec: 's5' });
+F1.verify('#verify', { key: 'real', label: '2. 真車走正方形（老師驗收）', what: '真車走一格地磚正方形', max: 30, sec: 's5', levels: [{ v: 'full', t: '圓滿完成', s: 30, d: '走完正方形，回到起點附近' }, { v: 'part', t: '部分完成', s: 18, d: '走完四條邊，但偏差明顯' }, { v: 'none', t: '未完成', s: 6, d: '未能走完正方形（參與分）' }] });
 F1.mclink('#mclink', { key: 'link', sec: 's5' });
-F1.checklist('#checks', { key: 'checks', label: '3. 自我檢查', max: 5, sec: 's5', items: [
-  '程式最頂有 forward 和 turn 兩個變數',
-  '每塊馬達積木的速度都是 50',
-  '我們每次只改一個數字'] });
 
 /* ---- 6 學習日誌（不計分） ---- */
 F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 10, sec: 's6', placeholder: '例：我們試了 4 次，最後 forward 是 3400，turn 是 1050。' });

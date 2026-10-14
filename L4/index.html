@@ -39,7 +39,7 @@
       <li>照流程圖砌出「分層修正」程式，令小車轉得更順。</li>
     </ol>
   </div>
-  <p class="small muted">本課滿分 50 分：符號練習 10、測試記錄 15、老師驗收 20、自我檢查 5。</p>
+  <p class="small muted">本課滿分 50 分：符號練習 10、測試記錄 15、老師驗收 25（圓滿完成 25／部分完成 15／未完成 5）。</p>
 </section>
 
 <section class="card" id="s1" data-short="流程圖的符號">
@@ -109,12 +109,10 @@
 </section>
 
 <section class="card" id="s5" data-short="老師驗收">
-  <header><span class="num">5</span><h2>老師驗收及自我檢查</h2><span class="marks">25 分</span></header>
-  <p>小車走完一圈，而且轉彎比上一課順，就請老師來看。</p>
+  <header><span class="num">5</span><h2>老師驗收</h2><span class="marks">25 分</span></header>
+  <p>小車走完一圈，而且轉彎比上一課順（或已盡力），就請老師來看，老師會揀選結果。</p>
   <div id="verify"></div>
   <div id="mclink" style="margin-top:12px"></div>
-  <h3>自我檢查<span class="tag">5 分</span></h3>
-  <div id="checks"></div>
   <h3>挑戰（做得快的組別）</h3>
   <p>在巡線圖貼一條橫線做「車站」：L1、M、R1 都 ＝ 1 時停車 3 秒，再繼續。這個菱形要放在第幾個？</p>
 </section>
@@ -220,12 +218,8 @@ F1.trials('#tierlog', { key: 'tierlog', label: '2. 分層修正測試記錄', ma
   carry: function (last, nr) { var sp = parseFloat(last.sp), bk = parseFloat(last.back); if (sp > 0) { nr.sp = String(last.jd === 'stuck' || last.jd === 'ok' ? sp + 10 : sp); nr.back = String(last.jd === 'out' && bk > 0 ? bk + 5 : (bk || 20)); } },
   complete: function (r) { return String(r.sp || '').trim() && r.jd; } });
 
-F1.verify('#verify', { key: 'real', label: '3. 真車分層修正（老師驗收）', what: '真車用分層修正程式走完巡線圖一圈，轉彎比上一課順', max: 20, sec: 's5' });
+F1.verify('#verify', { key: 'real', label: '3. 真車分層修正（老師驗收）', what: '真車用分層修正程式走巡線圖一圈', max: 25, sec: 's5', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '走完一圈，轉彎比上一課順' }, { v: 'part', t: '部分完成', s: 15, d: '走完一圈，但仍左右急擺' }, { v: 'none', t: '未完成', s: 5, d: '未能走完一圈（參與分）' }] });
 F1.mclink('#mclink', { key: 'link', sec: 's5' });
-F1.checklist('#checks', { key: 'checks', label: '4. 自我檢查', max: 5, sec: 's5', items: [
-  '程式有 5 個判斷：M、L1、R1、L2、R2',
-  'L1／R1 用「一邊停止」，L2／R2 用「一邊後退」',
-  '測試前校準了感應器'] });
 F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 5, sec: 's6', placeholder: '例：分層修正轉彎時車身比較穩，不會左右急擺。' });
 
 function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_flowbot'; }); }

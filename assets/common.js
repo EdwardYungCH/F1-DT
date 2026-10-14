@@ -431,19 +431,30 @@
   F1.statText = statText;
 
   /* ---- 老師驗收（真車） ---- */
-  F1.verify = function (el, o) {   // o: {key,label,what,max}
+  F1.verify = function (el, o) {   // o: {key,label,what,max, levels:[{v,t,d,s}]}
     el = typeof el === 'string' ? $(el) : el;
-    var st = F1.state(o.key, { t: 0 });
+    var st = F1.state(o.key, { t: 0, lv: '' });
+    var LV = o.levels || [
+      { v: 'full', t: '圓滿完成', s: o.max },
+      { v: 'part', t: '部分完成', s: Math.round(o.max * 0.6) },
+      { v: 'none', t: '未完成', s: Math.round(o.max * 0.2) }];
+    function cur() { if (!st.t) return null; return LV.filter(function (l) { return l.v === (st.lv || 'full'); })[0] || LV[0]; }
     function paint() {
-      el.className = 'verify' + (st.t ? ' ok' : '');
-      el.innerHTML = '<div class="vt"><b>' + (st.t ? '✔ 老師已驗收' : '請老師驗收：' + o.what) + '</b><span class="small muted">' + (st.t ? fmtTime(st.t) : '真車完成後，舉手請老師在這部電腦輸入密碼。') + '</span></div>' +
-        (st.t ? '' : '<button type="button" class="btn">老師驗收</button>');
-      var b = $('button', el);
-      if (b) b.onclick = function () { askPin('老師驗收：' + o.what).then(function (ok) { if (ok) { st.t = Date.now(); paint(); save(); toast('老師已驗收 ✓'); } }); };
+      var c = cur();
+      el.className = 'verify' + (c ? ' ok' : '');
+      el.innerHTML = '<div class="vt"><b>' + (c ? '✔ 老師已驗收：' + c.t + '（' + c.s + ' 分）' : '請老師驗收：' + o.what) + '</b><span class="small muted">' +
+        (c ? fmtTime(st.t) : '完成後舉手，請老師揀選結果並輸入密碼。') + '</span></div>' +
+        '<div class="vlv">' + LV.map(function (l) { return '<button type="button" class="btn' + (c && c.v === l.v ? ' primary' : '') + '" data-v="' + l.v + '">' + l.t + '<small>' + l.s + ' 分' + (l.d ? '｜' + esc(l.d) : '') + '</small></button>'; }).join('') + '</div>';
+      $$('.vlv button', el).forEach(function (b) {
+        b.onclick = function () {
+          var l = LV.filter(function (x) { return x.v === b.getAttribute('data-v'); })[0];
+          askPin('老師驗收：' + l.t + '（' + l.s + ' 分）').then(function (ok) { if (ok) { st.t = Date.now(); st.lv = l.v; paint(); save(); toast('老師已驗收：' + l.t); } });
+        };
+      });
     }
     paint();
-    return reg({ key: o.key, label: o.label, max: o.max, sec: o.sec, score: function () { return st.t ? o.max : 0; }, done: function () { return !!st.t; },
-      report: function () { return { type: 'verify', q: o.what, ok: !!st.t, t: st.t ? fmtTime(st.t) : '' }; } });
+    return reg({ key: o.key, label: o.label, max: o.max, sec: o.sec, score: function () { var c = cur(); return c ? c.s : 0; }, done: function () { return !!st.t; },
+      report: function () { var c = cur(); return { type: 'verify', q: o.what, ok: !!c, lv: c ? c.t : '', t: st.t ? fmtTime(st.t) : '' }; } });
   };
 
   /* ---- MakeCode 分享連結 ---- */
@@ -648,7 +659,7 @@
       } else if (x.type === 'sim') {
         h += '<p>' + (x.pass ? '✔ 已過關' : '未過關') + '（試了 ' + x.attempts + ' 次）' + (x.best ? '｜最佳：' + e(x.best) : '') + '</p>' + (x.code ? '<details><summary>學生程式（MakeCode JavaScript）</summary><pre>' + e(x.code) + '</pre></details>' : '');
       } else if (x.type === 'verify') {
-        h += '<p>' + (x.ok ? '✔ 老師已驗收（' + e(x.t) + '）' : '未驗收') + '：' + e(x.q) + '</p>';
+        h += '<p>' + (x.ok ? '✔ 老師已驗收' + (x.lv ? '：<b>' + e(x.lv) + '</b>' : '') + '（' + e(x.t) + '）' : '未驗收') + '：' + e(x.q) + '</p>';
       } else if (x.type === 'link') {
         h += '<p>' + (x.a ? '<a href="' + e(x.a) + '">' + e(x.a) + '</a>' + (x.ok ? '' : '（格式可能不正確）') : '（未提供）') + '</p>';
       } else if (x.type === 'kv') {
