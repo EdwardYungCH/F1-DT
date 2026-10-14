@@ -327,3 +327,7 @@ body.teacher .topbar{border-bottom:3px solid #e0b25c}
 .blktbl td{vertical-align:middle}
 .blktbl img{display:block;max-width:100%;height:auto}
 .vchip{display:inline-block;background:#dc143c;color:#fff;border-radius:999px;padding:0 10px;font-size:.9em;font-weight:700;white-space:nowrap;font-family:Consolas,monospace}
+
+/* 可複製的連結 */
+.copybox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#f6f8fb;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:8px 0}
+.copybox code{flex:1;min-width:0;word-break:break-all;font-size:.9rem;background:none}

@@ -511,6 +511,23 @@
     });
   }
 
+  /* ---------- 可複製的連結（<div class="copybox" data-copy="…">） ---------- */
+  function buildCopy() {
+    $$('.copybox[data-copy]').forEach(function (box) {
+      var txt = box.getAttribute('data-copy');
+      box.innerHTML = '<code>' + esc(txt) + '</code><button type="button" class="btn sm primary">📋 複製</button>';
+      var btn = $('button', box);
+      btn.onclick = function () {
+        function ok() { btn.textContent = '✔ 已複製'; toast('已複製，去 MakeCode 按 Ctrl＋V 貼上'); setTimeout(function () { btn.textContent = '📋 複製'; }, 2500); }
+        function fallback() {
+          var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (e) { toast('請手動選取並複製'); } ta.remove();
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, fallback); else fallback();
+      };
+    });
+  }
+
   /* ---------- 放大圖、表格捲動提示、圖片 ---------- */
   function enhance() {
     $$('figure.zoomable .art').forEach(function (a) {
@@ -721,7 +738,7 @@
     D.items = D.items || {};
     STU = get('f1dt:student') || {};
     F1.stu = STU;
-    buildTop(); buildSections(); bindStudent(); bindSubmit(); enhance();
+    buildTop(); buildSections(); buildCopy(); bindStudent(); bindSubmit(); enhance();
     return F1;
   };
   F1.ready = function () {     // 課堂頁建立所有元件後呼叫

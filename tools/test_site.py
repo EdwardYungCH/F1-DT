@@ -22,7 +22,7 @@ def pick_sheet(pg, text):
 
 with sync_playwright() as p:
     b = p.chromium.launch()
-    ctx = b.new_context(viewport={'width': 1366, 'height': 900}, accept_downloads=True)
+    ctx = b.new_context(viewport={'width': 1366, 'height': 900}, accept_downloads=True, permissions=['clipboard-read', 'clipboard-write'])
     pg = ctx.new_page(); E = errs_of(pg)
 
     print('1. 每頁載入沒有錯誤')
@@ -150,6 +150,9 @@ with sync_playwright() as p:
     t2 = sp.inner_text('#tbl')
     check('陳大文' in t2 and '李小明' in t2 and t2.count('35 / 50') >= 2, '匯總工具為兩位組員各記一行')
     check(pg.locator('.toc, .tbtn.speak, .tbtn.fs, .lesson-nav').count() == 0, '沒有目錄、朗讀、字體大小、上下課連結')
+    for page in ['L2', 'L3', 'L4']:
+        pg.goto(U(page + '/index.html')); pg.wait_for_timeout(300)
+        check(pg.locator('.copybox code', has_text='pxt-DFRobot_MaqueenPlus_v20').count() == 1, page + ' 有擴展連結複製框')
     for page in ['L1', 'L2', 'L3', 'L4']:
         pg.goto(U(page + '/index.html')); pg.wait_for_timeout(300)
         hrefs = pg.eval_on_selector_all('a[href]', 'as => as.map(a => a.getAttribute("href"))')
@@ -159,6 +162,9 @@ with sync_playwright() as p:
     print('8. 第三、四堂主要互動')
     pg.goto(U('L3/index.html')); pg.wait_for_timeout(400)
     check(pg.locator('iframe').count() == 0, '第三堂沒有模擬器')
+    pg.locator('.copybox .btn').click(); pg.wait_for_timeout(300)
+    check('已複製' in pg.inner_text('.copybox'), '擴展連結可複製')
+    check(pg.evaluate('navigator.clipboard.readText()') == 'https://github.com/DFRobot/pxt-DFRobot_MaqueenPlus_v20', '剪貼簿內容是擴展連結')
     check(pg.locator('#f_pname').count() == 1, '第三堂可填組員二')
     card = pg.locator('#q-surf .qcard', has_text='黑色膠帶'); card.locator('.opt', has_text='讀到 1').click()
     check('答對' in card.inner_text(), '讀 1 定 0：黑色膠帶 → 1')
