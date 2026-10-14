@@ -165,7 +165,7 @@ with sync_playwright() as p:
     r0 = pg.locator('#speedlog tr.r').nth(0)
     r0.locator('input[data-k=sp]').fill('20'); r0.locator('input[data-k=back]').fill('10'); r0.locator('.pick').click(); pick_sheet(pg, '順利走完')
     check('直行 30' in r0.inner_text() and '後退 15' in r0.inner_text(), '提速記錄建議 30／15')
-    check(pg.locator('#map svg').count() == 1, '0 字巡線圖')
+    check(pg.locator('#map svg').count() == 1, 'O 形巡線圖')
     pg.goto(U('L4/index.html')); pg.wait_for_timeout(400)
     check(pg.locator('iframe').count() == 0, '第四堂沒有模擬器')
     check('左側 後退 10' in pg.inner_text('#flow') and '左側 後退 20' in pg.inner_text('#tier'), '兩個完整流程圖')

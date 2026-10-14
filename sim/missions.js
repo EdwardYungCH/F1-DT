@@ -43,15 +43,9 @@
       check: 'square', needVars: true,
       starter: x(vdecl([VF, VT]) + start(init(pause(1000))))
     },
-    l3poe: {
-      lesson: 3, level: 2, scene: 'oval', title: '比較轉彎方式：② 一邊停 對 ③ 一邊後退',
-      goal: '先執行這個「一邊停」版本，觀察結果；再把修正改成「一邊後退 10、一邊前進 20」，比較一次。',
-      check: 'lap', lapPass: true,
-      starter: x(start(init(pause(1000))) + forever(follower('stop'), 30, 170))
-    },
     l3lap: {
       lesson: 3, level: 2, scene: 'oval', title: '巡線一圈',
-      goal: '用 L1、M、R1 三個感應器，令小車在 0 字巡線圖上自己走完一整圈。',
+      goal: '用 L1、M、R1 三個感應器，令小車在 O 形巡線圖上自己走完一整圈。',
       check: 'lap',
       starter: x(start(init(pause(1000))) + forever('', 30, 170))
     },

@@ -23,18 +23,16 @@ if __name__ == '__main__':
         errs = []
         pg.on('pageerror', lambda e: errs.append(str(e)))
         pg.on('console', lambda m: errs.append('console:' + m.text) if m.type == 'error' else None)
-        pg.goto(url('l3poe')); pg.wait_for_timeout(1500)
+        pg.goto(url('l3lap')); pg.wait_for_timeout(1500)
         pg.screenshot(path='/tmp/claude-0/-home-claude/5be7f1f4-bc47-523c-8ed9-8064bc377622/scratchpad/sim_l2poe.png')
         print('errors after load:', errs)
-        res = run_case(pg, 'l3poe', None)
+        res = run_case(pg, 'l3lap', None)
         print('l2poe starter (stop):', res)
         b.close()
 
 TIER = open(os.path.join(ROOT,'tools','render_blocks.py')).read().split("TIER = \"\"\"")[1].split('\"\"\"')[0].replace('X.', 'F1Xml.').replace('var c=X', 'var c=F1Xml')
 CASES = {
   # mission: [(label, js-expression-building-xml or None, expect)]
-  'l3poe': [('stop (starter)', None, 'fail'),
-            ('back', "F1Xml.x(F1Xml.start(F1Xml.init(F1Xml.pause(1000))) + F1Xml.forever(F1Xml.follower('back'),30,170))", 'pass')],
   'l2sq': [('variables 3000/1020', "F1Xml.squareV(3000, 1020)", 'pass'),
           ('too short 2400/1020', "F1Xml.squareV(2400, 1020)", 'fail'),
           ('speed 100', "F1Xml.squareV(1400, 490, 100)", 'fail'),

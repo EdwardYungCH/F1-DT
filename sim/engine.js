@@ -100,11 +100,11 @@
       view: { x0: -25, y0: -25, x1: 55, y1: 55 },
       start: { x: 0, y: 0, h: Math.PI / 2 }          // 車頭向上，放在地磚一角
     },
-    oval: {
-      name: '0 字巡線圖', kind: 'track', width: 2.0,
-      paper: { x0: -24, y0: -44, x1: 24, y1: 44 },
-      build: function () { return turtle(6.5, -28, 90, [['S', 56], ['L', 180, 6.5], ['S', 56], ['L', 180, 6.5]]); },
-      startIndex: 0.12                               // 右邊直路，向上行（逆時針）
+    oval: {                                          // 內部名稱保留 oval；實際是正圓 O 形巡線圖
+      name: 'O 形巡線圖', kind: 'track', width: 2.0, radius: 15,
+      paper: { x0: -27, y0: -27, x1: 27, y1: 27 },
+      build: function () { return turtle(15, 0, 90, [['L', 360, 15]]); },
+      startIndex: 0.05                               // 右邊，向上行（逆時針）
     },
     sharp: {
       name: '急彎挑戰圖', kind: 'track', width: 2.0,
@@ -385,6 +385,6 @@
   };
   Runner.prototype.stop = function () { this.stopped = true; };
 
-  var API = { PHYS: PHYS, Engine: Engine, Runner: Runner, CAR: CAR, SCENES: SCENES, buildScene: buildScene, hashStr: hashStr, mulberry32: mulberry32, COST: COST };
+  var API = { PHYS: PHYS, Engine: Engine, Runner: Runner, CAR: CAR, SCENES: SCENES, buildScene: buildScene, turtle: turtle, hashStr: hashStr, mulberry32: mulberry32, COST: COST };
   if (typeof module !== 'undefined' && module.exports) module.exports = API; else root.F1Sim = API;
 })(this);
