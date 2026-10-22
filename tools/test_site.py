@@ -26,13 +26,13 @@ with sync_playwright() as p:
     pg = ctx.new_page(); E = errs_of(pg)
 
     print('1. 每頁載入沒有錯誤')
-    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'tools/mcblocks/render.html', 'project.html', 'teacher/index.html', 'teacher/summary.html']:
+    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'tools/mcblocks/render.html', 'PJ/index.html', 'teacher/index.html', 'teacher/summary.html']:
         E.clear(); pg.goto(U(page)); pg.wait_for_timeout(700)
         check(not E, page + ' 沒有錯誤 ' + (str(E) if E else ''))
 
     print('2. 手機版沒有左右捲動')
     m = b.new_context(viewport={'width': 390, 'height': 844}); mp = m.new_page()
-    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'project.html']:
+    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'PJ/index.html']:
         mp.goto(U(page)); mp.wait_for_timeout(600)
         w = mp.evaluate('document.documentElement.scrollWidth')
         check(w <= 392, page + f' 手機闊度 {w}px')
@@ -150,10 +150,10 @@ with sync_playwright() as p:
     t2 = sp.inner_text('#tbl')
     check('陳大文' in t2 and '李小明' in t2 and t2.count('40 / 50') >= 2, '匯總工具為兩位組員各記一行')
     check(pg.locator('.toc, .tbtn.speak, .tbtn.fs, .lesson-nav').count() == 0, '沒有目錄、朗讀、字體大小、上下課連結')
-    for page in ['L2', 'L3', 'L4']:
+    for page in ['L2', 'L3', 'L4', 'PJ']:
         pg.goto(U(page + '/index.html')); pg.wait_for_timeout(300)
         check(pg.locator('.copybox code', has_text='pxt-DFRobot_MaqueenPlus_v20').count() == 1, page + ' 有擴展連結複製框')
-    for page in ['L1', 'L2', 'L3', 'L4']:
+    for page in ['L1', 'L2', 'L3', 'L4', 'PJ']:
         pg.goto(U(page + '/index.html')); pg.wait_for_timeout(300)
         hrefs = pg.eval_on_selector_all('a[href]', 'as => as.map(a => a.getAttribute("href"))')
         bad = [h for h in hrefs if not h.startswith('../sim/') and (re.search(r'(^|/)(L\d|index\.html)', h) or h.startswith('../'))]
@@ -213,6 +213,40 @@ with sync_playwright() as p:
     check('後退減到 10' in r0.inner_text(), '回不到黑線 → 後退減到 10')
     hd = pg.inner_text('#tierlog thead')
     check(all(w in hd for w in ['轉彎方法', '慢的一邊', '快的一邊', '直行', '後退']), '記錄表有轉彎方法、兩邊速度、前進及後退速度')
+
+    print('8b. 單元專題')
+    pg.goto(U('PJ/index.html')); pg.wait_for_timeout(500)
+    check(pg.locator('#mapP svg').count() == 1 and 'FINISH' in pg.inner_text('#mapP'), '專題地圖有 START／FINISH')
+    check(pg.locator('#carB image').count() == 1 and 'L2' in pg.inner_text('#carB'), '車底相片標示 L2、R2')
+    check(pg.locator('#f_pname').count() == 1, '專題可填組員二')
+    for t, a in [('長橫線穿過', '5 個'), ('U 形彎有幾個', '4 個'), ('同時見到幾多次', '6 次'), ('到十字路口', '直行穿過'), ('最好用哪種', '② 或 ③')]:
+        card = pg.locator('#q-map .qcard', has_text=t); card.locator('.opt', has_text=a).first.click()
+        check('答對' in card.inner_text(), '看地圖：' + t + ' → ' + a)
+    ans = ['count ＝ 6', '全部馬達 停止', 'L2 ＝ 1 且 R2 ＝ 1', '全部馬達 前進 40', 'count 改變 1']
+    rows = pg.locator('#q-flow tbody tr')
+    for i, w in enumerate(ans): rows.nth(i).locator('.pick').click(); pick_sheet(pg, w)
+    pg.locator('#s3 .btnrow .btn.primary').first.click()
+    check('5 / 5' in pg.inner_text('#s3'), '專題流程圖全對')
+    check('count = 6' in pg.inner_text('#flow'), '流程圖即時顯示')
+    r0 = pg.locator('#plog tr.r').nth(0)
+    r0.locator('.pick').nth(0).click(); pick_sheet(pg, '② 一邊停')
+    r0.locator('input[data-k=sp]').fill('40'); r0.locator('input[data-k=ps]').fill('300')
+    r0.locator('.pick').nth(1).click(); pick_sheet(pg, '但不停車'); r0.locator('input[data-k=n]').fill('5')
+    check('數字只到 5' in r0.inner_text(), '不停車、數字 5 → FINISH 橫線未數到')
+    r0.locator('.pick').nth(1).click(); pick_sheet(pg, '未到 FINISH')
+    check('暫停改 500' in r0.inner_text(), '提早停 → 暫停加 200')
+    r0.locator('.pick').nth(1).click(); pick_sheet(pg, '自動停車')
+    check('完成' in r0.inner_text(), '自動停車 → 完成')
+    check(pg.locator('details.hint img[src*="blocks-finish"]').count() == 1, '有「做不到才看」參考程式')
+    pg.fill('#f_cls', '1A'); pg.fill('#f_num', '12'); pg.fill('#f_name', '陳大文'); pg.fill('#f_pnum', '5'); pg.fill('#f_pname', '李小明')
+    with pg.expect_download() as dl3:
+        pg.locator('#submitBtns .btn.go').click()
+    html3 = open(dl3.value.path(), encoding='utf-8-sig').read()
+    check('_finish' not in dl3.value.suggested_filename and 'PJ' in dl3.value.suggested_filename, '專題報告檔名 ' + dl3.value.suggested_filename)
+    sp2 = ctx.new_page(); sp2.goto(U('teacher/summary.html')); sp2.wait_for_timeout(300)
+    sp2.evaluate('t => F1Summary.addText(t, "pj.html")', html3); sp2.wait_for_timeout(200)
+    check(sp2.locator('#tabs button', has_text='單元專題').count() == 1, '匯總工具有「單元專題」分頁')
+    sp2.close()
 
     print('9. 老師區密碼')
     tp = ctx.new_page(); tp.goto(U('teacher/index.html'))

@@ -14,7 +14,7 @@
 | 第三堂：巡線機械人 | `…/L3/` |
 | 第四堂：流程圖與巡線優化 | `…/L4/` |
 | 麥昆小車模擬器 | `…/sim/` |
-| 單元小專題 | `…/project.html` |
+| 單元專題：由 START 走到 FINISH | `…/PJ/` |
 | 老師區（要密碼） | `…/teacher/` |
 
 ## 結構
@@ -22,7 +22,7 @@
 ```
 index.html          單元首頁（顯示每課進度及徽章）
 L1/ L2/ L3/ L4/     四課課堂頁（每頁獨立，沒有連往其他課的連結）
-project.html        單元小專題：課室送遞機械人（附評分準則）
+PJ/                單元專題：由 START 走到 FINISH（L2、R2 數橫線，到 FINISH 自動停車）
 sim/                麥昆小車模擬器（Blockly 7 已放在 sim/blockly，可離線）
   engine.js         物理引擎及程式執行器（瀏覽器及 Node 都可運行）
   blocks.js         積木定義（字眼照繁體 MakeCode）及 MakeCode 程式碼匯出

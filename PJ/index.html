@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>單元專題：由 START 走到 FINISH｜中一 DT 自動化與機械人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+.fcwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fcwrap svg{display:block;min-width:620px;width:100%;height:auto}
+.hero .art svg{display:block;width:100%;height:auto;border-radius:12px}
+details.hint{border:1px dashed var(--t-mid);border-radius:12px;padding:10px 14px;margin:14px 0;background:#fffdf9}
+details.hint summary{cursor:pointer;font-weight:700;color:var(--t-d)}
+</style>
+</head>
+<body data-theme="pj">
+
+<header class="hero">
+  <div class="in">
+    <div>
+      <div class="kicker">F1 DT · UNIT PROJECT</div>
+      <h1>單元專題：由 START 走到 FINISH</h1>
+      <p>運用四課所學，<b>自己設計程式</b>：小車由 START 出發，穿過 5 個十字路口、4 個 U 形彎，到 <b>FINISH 自動停車</b>。</p>
+    </div>
+    <div class="art" id="heroMap"></div>
+  </div>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="card" id="student-sec">
+  <header><span class="num">0</span><h2>開始之前</h2></header>
+  <p>1–2 人一組，<b>每組用一部電腦、交一份報告</b>。兩人一組的話，在「組員二」填另一位同學。</p>
+  <div id="student"></div>
+  <div class="goals" style="margin-top:14px">
+    <b>完成專題後，你能夠：</b>
+    <ol>
+      <li>看懂地圖，找出難點：十字路口、U 形彎、FINISH 停車。</li>
+      <li>用 L2、R2 和變數 count 數橫線，設計「到 FINISH 自動停車」的流程圖及程式。</li>
+      <li>測試、觀察、修改，直至小車由 START 走到 FINISH 並自動停車。</li>
+    </ol>
+  </div>
+  <p class="small muted">滿分 50 分：看地圖 5、設計流程圖 10、測試記錄 10、老師驗收 25（圓滿完成 25／部分完成 15／未完成 5）。</p>
+</section>
+
+<section class="card" id="s1">
+  <header><span class="num">1</span><h2>看地圖：找出難點</h2><span class="marks">5 分</span></header>
+  <p>這是專題用的地圖。小車由 <b>START</b> 出發，沿黑線走到 <b>FINISH</b>。用手指沿黑線走一次，數一數。</p>
+  <figure class="fig zoomable"><div class="art" id="mapP"></div><figcaption>專題地圖：一條長橫線穿過 5 條直路；START 和 FINISH 各有一條短橫線</figcaption></figure>
+  <div id="q-map"></div>
+</section>
+
+<section class="card" id="s2">
+  <header><span class="num">2</span><h2>新工具：用 L2、R2 數橫線</h2></header>
+  <p>小車怎樣知道自己到了 FINISH？答案是<b>數橫線</b>。</p>
+  <figure class="fig narrow zoomable"><div class="art" id="carB"></div><figcaption>車底的 5 個巡線感應器（左右已反轉，等於由車頂望落去）</figcaption></figure>
+  <ul>
+    <li>黑線只有約 2.5 cm 闊，但 <b>L2 和 R2 相距約 9 cm</b>。平時巡線時，L2、R2 都在黑線外面 → 讀到 <b>0</b>。</li>
+    <li>只有經過<b>橫線</b>（十字路口或 FINISH）時，<b>L2 和 R2 會同時讀到 1</b>。</li>
+    <li>每經過一條橫線，就把變數 <span class="vchip">count</span> 加 1。5 個十字路口 ＋ FINISH ＝ 第 <b>6</b> 條 → 停車！</li>
+  </ul>
+  <h3>今次會用到的新積木</h3>
+  <div class="tbl-wrap"><table class="blktbl">
+    <thead><tr><th style="width:52%">積木</th><th>在哪裏找</th><th>用來做什麼</th></tr></thead>
+    <tbody>
+      <tr><td><img src="../assets/img/mc-set-count.png" alt="變數 count 設為 0" style="max-width:150px"></td><td>變數</td><td>開始時，count 由 0 開始數</td></tr>
+      <tr><td><img src="../assets/img/mc-and.png" alt="L2 狀態 = 1 且 R2 狀態 = 1" style="max-width:100%"></td><td>邏輯（且）＋ 麥昆Plus</td><td>L2 <b>和</b> R2 都是 1 ＝ 見到橫線</td></tr>
+      <tr><td><img src="../assets/img/mc-change.png" alt="變數 count 改變 1" style="max-width:150px"></td><td>變數</td><td>count 加 1（數多一條）</td></tr>
+      <tr><td><img src="../assets/img/mc-shownum.png" alt="顯示數字 count" style="max-width:125px"></td><td>基本</td><td>在 micro:bit 顯示數到第幾條，方便你觀察</td></tr>
+      <tr><td><img src="../assets/img/mc-count-eq.png" alt="count = 6" style="max-width:160px"></td><td>邏輯（＝）＋ 變數</td><td>數夠 6 條了嗎？</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout tip"><span class="ttl">建立變數 count</span>和第二堂一樣：按「變數」→「建立一個變數…」→ 輸入 <b>count</b> → 確定。</div>
+</section>
+
+<section class="card" id="s3">
+  <header><span class="num">3</span><h2>設計：完成程式的流程圖</h2><span class="marks">10 分</span></header>
+  <p>下面是專題程式的流程圖。下半部（M、L1、R1）是第四堂已做好的巡線部分；<b>上半部要你設計</b>。在表格為每個空格揀選內容，流程圖會即時顯示。</p>
+  <figure class="fig zoomable"><div class="art fcwrap" id="flow"></div><figcaption>專題程式的流程圖（你的答案會即時顯示）</figcaption></figure>
+  <div id="q-flow"></div>
+  <div class="callout key"><span class="ttl">次序很重要</span>先問「數夠 6 條未？」，再問「見到橫線未？」，最後才巡線（M → L1 → R1）。如果 L1 放在 M 前面，小車在十字路口會轉入橫線！</div>
+</section>
+
+<section class="card" id="s4">
+  <header><span class="num">4</span><h2>砌程式、下載、測試</h2></header>
+  <div class="step"><h4><span class="sn">1</span>打開第四堂的程式</h4>
+    <ol><li>開啟 <a href="https://makecode.microbit.org/" target="_blank" rel="noopener"><b>makecode.microbit.org</b></a>，打開第四堂的專案（已有 M、L1、R1 巡線部分）。如果要開新專案（名稱：<code class="pname">班別_學號_finish</code>），先按「<b>擴展</b>」，按下面的「複製」，在搜尋欄按 <b>Ctrl＋V</b> 貼上，按 Enter，選 <b>maqueenPlusV2</b>。<div class="copybox" data-copy="https://github.com/DFRobot/pxt-DFRobot_MaqueenPlus_v20"></div></li>
+      <li>建立變數 <span class="vchip">count</span>，在「當啟動時」加「變數 count 設為 0」。</li>
+      <li>照你的流程圖，在「如果」積木按 ⊕ 加多兩格「否則如果」，放在 M 的前面。</li></ol></div>
+  <div class="step"><h4><span class="sn">2</span>校準、下載、放車</h4>
+    <p>校準 → 下載 → 把小車放在 START 後面的直路上，黑線在車底正中。<b>L2、R2 要越過 START 橫線</b>（車頭再向前推一點），否則一開始就會數多 1。</p></div>
+  <div class="step"><h4><span class="sn">3</span>看 micro:bit 的數字</h4>
+    <p>每過一條橫線，數字應該加 1：1、2、3、4、5，到 FINISH 顯示 <b>6</b> 並停車。數字不對，就看下一節的記錄表提示。</p></div>
+  <details class="hint"><summary>💡 真的做不到？按這裏看參考程式</summary>
+    <p class="small muted">先自己試！參考程式用 ② 轉彎；顯示數字之後暫停 300 ms，讓小車衝過橫線，避免同一條線數兩次。</p>
+    <figure class="fig zoomable" style="margin:8px 0 0"><div class="art"><img src="../assets/img/blocks-finish.png" alt="參考程式：如果 count = 6 停止；否則如果 L2=1 且 R2=1 前進40、count 改變 1、顯示 count、暫停300；否則如果 M=1 前進40；否則如果 L1=1 左停右進40；否則如果 R1=1 左進40右停；否則後退20"></div><figcaption>參考程式</figcaption></figure>
+  </details>
+  <div class="callout safe">在地面測試；懸空會令感應器讀到 1，小車會繼續向前。</div>
+</section>
+
+<section class="card" id="s5">
+  <header><span class="num">5</span><h2>測試記錄</h2><span class="marks">10 分</span></header>
+  <p>每試一次填一行，最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。</p>
+  <p class="small muted">轉彎方法：① 慢快＝一邊慢、一邊快；② 停行＝一邊停、一邊行；③ 退進＝一邊後退、一邊前進。「最後數字」＝小車停下時 micro:bit 顯示的數字。</p>
+  <div id="plog"></div>
+  <h3>出了問題？</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:34%">現象</th><th>檢查</th></tr></thead>
+    <tbody>
+      <tr><td>一開始已顯示 1</td><td>放車時 L2、R2 壓住了 START 橫線：車頭向前推一點</td></tr>
+      <tr><td>數字一次跳 2（例：3 → 5）</td><td>同一條線數了兩次：顯示數字後的暫停加長</td></tr>
+      <tr><td>到了 FINISH 不停車，數字是 5</td><td>L2、R2 未同時見到 FINISH 橫線：放車要正；請老師檢查 FINISH 橫線夠不夠長</td></tr>
+      <tr><td>在十字路口轉錯路</td><td>次序：count ＝ 6 → L2 且 R2 → M → L1 → R1</td></tr>
+      <tr><td>U 形彎衝出黑線</td><td>改用 ② 或 ③；或直行減 10</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="card" id="s6">
+  <header><span class="num">6</span><h2>老師驗收</h2><span class="marks">25 分</span></header>
+  <p>完成（或已盡力）後，請老師來看一次，由 START 走到 FINISH。</p>
+  <div id="verify"></div>
+  <div id="mclink" style="margin-top:12px"></div>
+  <h3>挑戰（做得快的組別）</h3>
+  <p>不脫線、自動停車之餘，最快幾秒由 START 走到 FINISH？</p>
+</section>
+
+<section class="card" id="s7">
+  <header><span class="num">7</span><h2>評鑑（不計分）</h2></header>
+  <p class="small muted">你們的設計哪裏做得好？遇到什麼問題、怎樣解決？如果地圖多一個十字路口，程式要改哪裏？</p>
+  <div id="log"></div>
+</section>
+
+<section class="card" id="submit" data-nonext>
+  <header><span class="num">✓</span><h2>成績及交功課</h2></header>
+  <div id="scoretable"></div>
+  <div class="btnrow" id="submitBtns"></div>
+  <p class="small muted">每組下載<b>一份</b>成績報告（兩人一組時檔名有兩個名字），上傳到 Google Classroom／eClass。</p>
+</section>
+
+<footer class="foot">中一設計與科技｜自動化與機械人｜單元專題</footer>
+</main>
+</div>
+
+<script src="../assets/config.js"></script>
+<script src="../assets/sha.js"></script>
+<script src="../sim/engine.js"></script>
+<script src="../assets/art.js"></script>
+<script src="../assets/common.js"></script>
+<script>
+F1.start({ id: 'PJ', key: 'f1dt:PJ', theme: 'pj', title: '單元專題：由 START 走到 FINISH', short: '單元專題', pair: true });
+var A = F1Art;
+
+/* ---- 地圖 ---- */
+document.getElementById('heroMap').innerHTML = A.trackMap('snake');
+document.getElementById('mapP').innerHTML = A.trackMap('snake');
+
+/* ---- 1 看地圖 ---- */
+F1.choice('#q-map', { key: 'map', label: '1. 看地圖', sec: 's1', max: 5, items: [
+  { id: 'm1', title: '十字路口（長橫線穿過直路）有幾個？', options: [{ v: '3', t: '3 個' }, { v: '4', t: '4 個' }, { v: '5', t: '5 個' }, { v: '6', t: '6 個' }], answer: '5', why: '長橫線穿過 5 條直路，所以有 5 個十字路口。' },
+  { id: 'm2', title: 'U 形彎有幾個？', options: [{ v: '3', t: '3 個' }, { v: '4', t: '4 個' }, { v: '5', t: '5 個' }], answer: '4', why: '5 條直路之間有 4 個 U 形彎，一左一右交替。' },
+  { id: 'm3', title: '由 START 到 FINISH，L2 和 R2 會同時見到幾多次橫線？（START 橫線不計）', options: [{ v: '5', t: '5 次' }, { v: '6', t: '6 次' }, { v: '7', t: '7 次' }], answer: '6', why: '5 個十字路口，加上 FINISH 橫線，一共 6 次。' },
+  { id: 'm4', title: '小車到十字路口，應該怎樣做？', options: [{ v: 'go', t: '直行穿過' }, { v: 'left', t: '轉入橫線' }, { v: 'stop', t: '停車' }], answer: 'go', why: '十字路口要直行，繼續沿原來的直路走。' },
+  { id: 'm5', title: 'U 形彎很急，最好用哪種轉彎方法？', options: [{ v: '1', t: '① 一邊慢、一邊快' }, { v: '23', t: '② 或 ③' }, { v: '0', t: '不用轉彎' }], answer: '23', why: '① 轉得最輕，過不到急彎；② 一邊停或 ③ 一邊後退才轉得夠急。' }] });
+
+/* ---- 2 車底圖 ---- */
+(function () {
+  var L = [['L2', 92, 252], ['L1', 248, 136], ['M', 292, 136], ['R1', 336, 136], ['R2', 494, 252]];
+  var s = '<svg viewBox="0 0 600 512" xmlns="http://www.w3.org/2000/svg"><image href="../assets/img/car-bottom.jpg" x="0" y="0" width="600" height="512"/>';
+  s += '<line x1="92" y1="300" x2="494" y2="300" stroke="#d63a3a" stroke-width="3" stroke-dasharray="8 6"/>' + A.text(293, 330, 'L2 至 R2 約 9 cm', 20, '#d63a3a', 'middle', 900);
+  L.forEach(function (q, i) {
+    var up = i > 0 && i < 4, ty = up ? q[2] - 34 : q[2] - 38;
+    s += '<circle cx="' + q[1] + '" cy="' + q[2] + '" r="17" fill="none" stroke="#ffd60a" stroke-width="4"/>';
+    s += '<rect x="' + (q[1] - 24) + '" y="' + (ty - 19) + '" width="48" height="26" rx="7" fill="#1d1f22" opacity=".85"/>' + A.text(q[1], ty, q[0], 18, '#fff', 'middle', 900);
+  });
+  s += A.text(300, 40, '車頭 ↑', 20, '#fff', 'middle', 900);
+  document.getElementById('carB').innerHTML = s + '</svg>';
+})();
+
+/* ---- 3 設計流程圖 ---- */
+var FLOW = [
+  { kind: 'dec', t: 'count ＝ 6 ？', d: ['count = 6 ？'] },
+  { kind: 'proc', t: '全部馬達 停止', d: ['全部馬達 停止'] },
+  { kind: 'dec', t: 'L2 ＝ 1 且 R2 ＝ 1 ？', d: ['L2 = 1 且', 'R2 = 1 ？'] },
+  { kind: 'proc', t: '全部馬達 前進 40', d: ['全部馬達', '前進 40'] },
+  { kind: 'proc', t: 'count 改變 1、顯示 count、暫停 300', d: ['count 改變 1', '顯示 count', '暫停 300'] }];
+var FEX = [{ t: 'L2 ＝ 1 或 R2 ＝ 1 ？', d: ['L2 = 1 或', 'R2 = 1 ？'] }, { t: 'count ＝ 5 ？', d: ['count = 5 ？'] }, { t: '全部馬達 後退 20', d: ['全部馬達', '後退 20'] }];
+var FALL = FLOW.concat(FEX);
+var KN = { proc: '長方形（動作）', dec: '菱形（判斷）' };
+var POS = [[200, 352, 230, 82], [470, 352, 190, 50], [200, 470, 250, 96], [470, 470, 180, 54], [710, 470, 210, 78]];
+function drawFlow(picked, marks) {
+  var p = 'pf' + A.uid() + '_', s = '<svg viewBox="0 0 900 1000" xmlns="http://www.w3.org/2000/svg">' + A.markers(p);
+  s += A.fcArrow(p, '200,53 200,76') + A.fcArrow(p, '200,124 200,144') + A.fcArrow(p, '200,192 200,226') + A.fcArrow(p, '200,282 200,311');
+  s += A.fcArrow(p, '315,352 375,352', '是', 322, 343) + A.fcLine('565,352 860,352');
+  s += A.fcArrow(p, '325,470 380,470', '是', 330, 461) + A.fcArrow(p, '560,470 605,470') + A.fcLine('815,470 860,470');
+  [588, 700, 812].forEach(function (y) { s += A.fcArrow(p, '315,' + y + ' 375,' + y, '是', 322, y - 9) + A.fcLine('580,' + y + ' 860,' + y); });
+  s += A.fcArrow(p, '200,393 200,422', '否', 209, 412) + A.fcArrow(p, '200,518 200,547', '否', 209, 538) + A.fcArrow(p, '200,629 200,659', '否', 209, 650) + A.fcArrow(p, '200,741 200,771', '否', 209, 762) + A.fcArrow(p, '200,853 200,886', '否', 209, 876);
+  s += A.fcLine('200,934 200,962') + A.fcArrow(p, '860,352 860,962 40,962 40,254 82,254');
+  s += A.fcShape('term', 200, 32, 200, 42, ['開始']) + A.fcShape('proc', 200, 100, 220, 48, ['初始化麥昆Plus']) + A.fcShape('proc', 200, 168, 220, 48, ['count 設為 0', '顯示 count']);
+  s += A.fcShape('io', 200, 254, 260, 56, ['讀取 L2、R2、L1、M、R1']);
+  s += A.fcShape('dec', 200, 588, 230, 82, ['M = 1 ？']) + A.fcShape('proc', 478, 588, 205, 50, ['全部馬達 前進 40']);
+  s += A.fcShape('dec', 200, 700, 230, 82, ['L1 = 1 ？']) + A.fcShape('proc', 478, 700, 205, 50, ['左側 停止', '右側 前進 40']);
+  s += A.fcShape('dec', 200, 812, 230, 82, ['R1 = 1 ？']) + A.fcShape('proc', 478, 812, 205, 50, ['左側 前進 40', '右側 停止']);
+  s += A.fcShape('proc', 200, 910, 220, 48, ['全部馬達 後退 20']);
+  s += '<rect x="20" y="560" width="680" height="380" rx="14" fill="none" stroke="#9aa7b5" stroke-dasharray="6 6"/>' + A.text(690, 936, '第四堂已做好的巡線部分', 13, '#5f6f82', 'end', 700);
+  s += A.text(450, 990, '↑ 回到「讀取」：重複無限次', 13, '#5f6f82', 'middle', 600);
+  POS.forEach(function (q, i) {
+    var v = picked && picked[i], o = {}, lines;
+    if (v !== undefined && v !== '') lines = FALL[+v].d; else { lines = ['(' + (i + 1) + ')']; o = { fill: '#f7f9fc', stroke: '#a9b8cc', dash: true, size: 17, tcolor: '#7b8a9c' }; }
+    if (marks && marks[i] === true) o.stroke = '#1f9d55';
+    if (marks && marks[i] === false) { o.stroke = '#d63a3a'; o.fill = '#fdeaea'; }
+    s += A.fcShape(FLOW[i].kind, q[0], q[1], q[2], q[3], lines, o) + A.fcNum(q[0] + q[2] / 2 - 4, q[1] - q[3] / 2 + 4, i + 1);
+  });
+  document.getElementById('flow').innerHTML = s + '</svg>';
+}
+F1.match('#q-flow', { key: 'flow', label: '2. 設計流程圖', sec: 's3', max: 10, head: ['空格（形狀）', '內容'],
+  hint: '先看形狀（菱形＝問題），再想次序：先問數夠未，再問見到橫線未。',
+  rows: FLOW.map(function (f, i) { return { html: '<b>(' + (i + 1) + ')</b> ' + KN[f.kind], label: '空格 (' + (i + 1) + ')：' + KN[f.kind], answer: String(i) }; }),
+  options: FALL.map(function (f, i) { return { v: String(i), t: f.t }; }),
+  onChange: drawFlow });
+
+/* ---- 5 測試記錄 ---- */
+var MT = [{ v: '1', t: '① 一邊慢、一邊快', s: '① 慢快' }, { v: '2', t: '② 一邊停、一邊行', s: '② 停行' }, { v: '3', t: '③ 一邊後退、一邊前進', s: '③ 退進' }];
+var TR = [{ v: 'ok', t: '到 FINISH 自動停車 ✔', s: '停車 ✔' }, { v: 'nostop', t: '到了 FINISH 但不停車', s: '不停車' }, { v: 'early', t: '未到 FINISH 就停了', s: '提早停' },
+  { v: 'cross', t: '在十字路口轉錯路', s: '十字轉錯' }, { v: 'uturn', t: 'U 形彎衝出黑線', s: 'U彎出界' }, { v: 'lost', t: '脫線後退，回不到黑線', s: '回不到線' }];
+F1.trials('#plog', { key: 'plog', label: '3. 專題測試記錄', max: 10, sec: 's5', minRows: 3,
+  cols: [{ k: 'm', label: '轉彎方法', type: 'select', options: MT, w: '7em' }, { k: 'sp', label: '直行速度', type: 'number', ph: '40', w: '5em' },
+    { k: 'ps', label: '暫停 (ms)', type: 'number', ph: '300', w: '5em' }, { k: 'jd', label: '結果', type: 'select', options: TR, w: '7.5em' },
+    { k: 'n', label: '最後數字', type: 'number', ph: '5', w: '5em' }],
+  example: ['② 停行', '40', '300', '不停車', '5', '數字只到 5：FINISH 橫線未數到'],
+  next: function (r) {
+    var sp = parseFloat(r.sp), ps = parseFloat(r.ps), n = parseFloat(r.n);
+    if (!r.m || !(sp > 0) || !(ps >= 0) || !r.jd) return '';
+    if (r.jd === 'ok') return '<b style="color:var(--ok)">✔ 完成！請老師驗收</b>（挑戰：直行 ' + (sp + 10) + '）';
+    if (r.jd === 'nostop') {
+      if (!(n >= 0)) return '<span style="color:var(--amber)">↑ 請填最後數字</span>';
+      if (n < 6) return '數字只到 ' + n + '：FINISH 橫線未數到。放車要正；用「且」；請老師檢查 FINISH 橫線';
+      return '數到 6 仍不停：「count ＝ 6 → 停止」要放第一個';
+    }
+    if (r.jd === 'early') return '數字跳得太快：暫停改 <b>' + (ps + 200) + '</b>；放車時 L2、R2 要越過 START 橫線';
+    if (r.jd === 'cross') return '次序：count＝6 → L2 且 R2 → <b>M</b> → L1 → R1';
+    if (r.jd === 'uturn') return r.m === '1' ? '① 轉得太輕：改用 <b>②</b> 或 <b>③</b>' : '太快：直行減到 <b>' + Math.max(20, sp - 10) + '</b>，或改用 <b>③</b>';
+    return '後退減到 10；放車時黑線要在車底正中';
+  },
+  carry: function (last, nr) {
+    ['m', 'sp', 'ps'].forEach(function (k) { if (last[k] !== undefined && last[k] !== '') nr[k] = last[k]; });
+    if (last.jd === 'early' && parseFloat(last.ps) >= 0) nr.ps = String(parseFloat(last.ps) + 200);
+  },
+  complete: function (r) { return r.m && String(r.sp || '').trim() && String(r.ps || '').trim() && r.jd && (r.jd !== 'nostop' || String(r.n || '').trim()); } });
+
+F1.verify('#verify', { key: 'real', label: '4. 真車由 START 走到 FINISH（老師驗收）', what: '真車由 START 走到 FINISH', max: 25, sec: 's6', levels: [
+  { v: 'full', t: '圓滿完成', s: 25, d: '由 START 走到 FINISH，並自動停車' },
+  { v: 'part', t: '部分完成', s: 15, d: '走到 FINISH，但沒有自動停車（或中途扶了一次）' },
+  { v: 'none', t: '未完成', s: 5, d: '未能走到 FINISH（參與分）' }] });
+F1.mclink('#mclink', { key: 'link', sec: 's6' });
+F1.text('#log', { key: 'log', label: '評鑑', max: 0, min: 5, sec: 's7', placeholder: '例：我們用 ② 轉彎，直行 40。最初數字一次跳 2，把暫停加到 500 就解決了。' });
+
+function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_finish'; }); }
+pname(); document.addEventListener('input', function (e) { if (e.target.id === 'f_cls' || e.target.id === 'f_num') pname(); });
+F1.ready();
+</script>
+</body>
+</html>

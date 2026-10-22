@@ -35,6 +35,15 @@ OPT = """(function(){var c=X.cond, m=X.motor, s=X.stop;
  '<statement name="ELSE">'+m('A','-1',20)+'</statement></block>';
  return X.x(X.start(X.init(X.pause(1000))) + X.forever(b,30,170));})()"""
 PROGS['blocks-opt'] = OPT
+# 單元專題：數橫線，到 FINISH 停車
+PROGS.update({
+ 'blocks-finish': "X.finishProg(40, 2, 300)",
+ 'mc-and': "X.x(X.and2(X.cond(0), X.cond(4)))",
+ 'mc-set-count': "X.x(X.vdecl([X.VC]) + X.setv(X.VC, 0))",
+ 'mc-change': "X.x(X.vdecl([X.VC]) + X.chg(X.VC, 1))",
+ 'mc-shownum': "X.x(X.vdecl([X.VC]) + X.shownum(X.VC))",
+ 'mc-count-eq': "X.x(X.vdecl([X.VC]) + X.veq(X.VC, 6))",
+})
 with sync_playwright() as p:
     b = p.chromium.launch()
     pg = b.new_page(viewport={'width': 1400, 'height': 1300}, device_scale_factor=2)

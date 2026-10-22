@@ -15,6 +15,7 @@
 body[data-theme="l2"]{--t:#b4235a;--t-d:#8a1a44;--t-soft:#fbe9f0;--t-mid:#efb3c9}
 body[data-theme="l3"]{--t:#0e7d6a;--t-d:#0a5c4e;--t-soft:#e2f3ef;--t-mid:#a8dacd}
 body[data-theme="l4"]{--t:#5644b8;--t-d:#3e3090;--t-soft:#eeebfb;--t-mid:#cbc3f0}
+body[data-theme="pj"]{--t:#b45309;--t-d:#8a3f06;--t-soft:#fdf0e3;--t-mid:#f3c99c}
 html{font-size:17px;scroll-padding-top:calc(var(--top) + 12px)}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
