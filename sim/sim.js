@@ -181,8 +181,8 @@
     for (var k = 0; k < 5; k++) {
       var lat = CAR.sensorLat[k], on = E.lastRead[k];
       ctx.fillStyle = on ? '#ff3b30' : 'rgba(46,139,87,.85)';
-      ctx.beginPath(); ctx.arc(-lat, -CAR.sensorAhead, 0.55, 0, 7); ctx.fill();
-      if (on) { ctx.fillStyle = 'rgba(255,59,48,.28)'; ctx.beginPath(); ctx.arc(-lat, -CAR.sensorAhead, 1.2, 0, 7); ctx.fill(); }
+      ctx.beginPath(); ctx.arc(-lat, -CAR.sensorFwd[k], 0.55, 0, 7); ctx.fill();
+      if (on) { ctx.fillStyle = 'rgba(255,59,48,.28)'; ctx.beginPath(); ctx.arc(-lat, -CAR.sensorFwd[k], 1.2, 0, 7); ctx.fill(); }
     }
     ctx.restore();
   }

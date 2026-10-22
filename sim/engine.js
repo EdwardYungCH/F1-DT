@@ -26,9 +26,11 @@
   var CAR = {
     track: 9.2,          // 左右輪中心距離
     wheelR: 2.2,
-    sensorAhead: 5.2,    // 巡線感應器在車軸前方的距離
-    // 5 路感應器的橫向位置（正數 = 車的左邊）：L2 L1 M R1 R2
-    sensorLat: [4.4, 1.7, 0, -1.7, -4.4],   // L2、R2 在車身左右兩側
+    sensorAhead: 5.2,    // L1、M、R1 在車軸前方的距離
+    // 5 路感應器（L2 L1 M R1 R2）：橫向位置（正數 = 車的左邊）及在車軸前方的距離
+    // 按老師的車底相片：L1、M、R1 在車頭並排（相距約 1 cm）；L2、R2 在車身兩側，比 L1、M、R1 後約 2.6 cm
+    sensorLat: [4.4, 1.0, 0, -1.0, -4.4],
+    sensorFwd: [2.6, 5.2, 5.2, 5.2, 2.6],
     names: ['L2', 'L1', 'M', 'R1', 'R2'],
     bodyFront: 7.6, bodyBack: -5.6, bodyHalfW: 4.2
   };
@@ -106,11 +108,17 @@
       build: function () { return turtle(15, 0, 90, [['L', 360, 15]]); },
       startIndex: 0.05                               // 右邊，向上行（逆時針）
     },
-    eight: {                                         // 8 字巡線圖：兩個半徑 15 cm 的圓圈，中間交叉
-      name: '8 字巡線圖', kind: 'track', width: 2.0,
-      paper: { x0: -27, y0: -48, x1: 27, y1: 48 },
-      build: function () { return turtle(0, 0, 45, [['S', 15], ['L', 270, 15], ['S', 30], ['R', 270, 15], ['S', 15]]); },
-      startIndex: 0.03
+    eight: {                                         // 8 字巡線圖：按老師的實物相片（約 A2 紙，橫放的「∞」，中間交叉）
+      name: '8 字巡線圖', kind: 'track', width: 2.6,
+      paper: { x0: -30, y0: -21, x1: 30, y1: 21 },
+      build: function () {
+        var R = [[3.6, 6.4], [8.4, 12.3], [14.6, 14.2], [20.9, 12.8], [25, 8], [26, 0], [25, -8], [20.9, -12.8], [14.6, -14.2], [8.4, -12.3], [3.6, -6.4]];
+        var ctrl = [[0, 0]].concat(R);                                                       // 右圈：順時針
+        ctrl.push([0, 0]);
+        R.forEach(function (q) { ctrl.push([-q[0], q[1]]); });                               // 左圈：逆時針
+        return catmull(ctrl, 14);
+      },
+      startIndex: 0.13
     },
     sharp: {
       name: '急彎挑戰圖', kind: 'track', width: 2.0,
@@ -249,8 +257,8 @@
     if (which === 'R' || which === 'A') this.cmd.R = 0;
   };
   Engine.prototype.sensorPos = function (i) {
-    var c = this.car, ch = Math.cos(c.h), sh = Math.sin(c.h), lat = CAR.sensorLat[i];
-    return [c.x + CAR.sensorAhead * ch - lat * sh, c.y + CAR.sensorAhead * sh + lat * ch];
+    var c = this.car, ch = Math.cos(c.h), sh = Math.sin(c.h), lat = CAR.sensorLat[i], fw = CAR.sensorFwd[i];
+    return [c.x + fw * ch - lat * sh, c.y + fw * sh + lat * ch];
   };
   Engine.prototype.readLine = function (i) {
     if (this.scene.kind !== 'track') { this.lastRead[i] = 0; return 0; }
