@@ -121,12 +121,15 @@
     s += '<rect width="' + W + '" height="' + H + '" fill="#d9dee4"/>';
     var pp = sc.paper;
     s += '<rect x="' + X(pp.x0) + '" y="' + Y(pp.y1) + '" width="' + ((pp.x1 - pp.x0) * sx) + '" height="' + ((pp.y1 - pp.y0) * sx) + '" fill="#fdfdfb" stroke="#c5ccd4"/>';
-    var d = sc.pts.map(function (q, i) { return (i ? 'L' : 'M') + X(q[0]) + ' ' + Y(q[1]); }).join(' ') + ' Z';
-    s += '<path d="' + d + '" fill="none" stroke="#1d1f22" stroke-width="' + (sc.width * sx) + '" stroke-linejoin="round"/>';
+    var d = sc.pts.map(function (q, i) { return (i ? 'L' : 'M') + X(q[0]) + ' ' + Y(q[1]); }).join(' ') + (sc.open ? '' : ' Z');
+    s += '<path d="' + d + '" fill="none" stroke="#1d1f22" stroke-width="' + (sc.width * sx) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+    (sc.bars || []).forEach(function (b) { s += '<line x1="' + X(b[0][0]) + '" y1="' + Y(b[0][1]) + '" x2="' + X(b[1][0]) + '" y2="' + Y(b[1][1]) + '" stroke="#1d1f22" stroke-width="' + (sc.width * sx) + '" stroke-linecap="round"/>'; });
+    (sc.labels || []).forEach(function (l) { s += t(X(l[0]), Y(l[1]), l[2], 17, INK, 'middle', 900); });
+    (o.marks || []).forEach(function (m) { s += '<circle cx="' + X(m[0]) + '" cy="' + Y(m[1]) + '" r="11" fill="' + (m[3] || '#d63a3a') + '" stroke="#fff" stroke-width="2"/>' + t(X(m[0]), (+Y(m[1]) + 4.5).toFixed(1), m[2], 13, '#fff', 'middle', 800); });
     var N = sc.pts.length, s0 = sc.pts[sc.startIndex], s1 = sc.pts[(sc.startIndex + 6) % N];
     var a = Math.atan2(s1[1] - s0[1], s1[0] - s0[0]), nx = -Math.sin(a), ny = Math.cos(a);
-    s += '<line x1="' + X(s0[0] + nx * 5) + '" y1="' + Y(s0[1] + ny * 5) + '" x2="' + X(s0[0] - nx * 5) + '" y2="' + Y(s0[1] - ny * 5) + '" stroke="' + GREEN + '" stroke-width="6"/>';
-    s += t(X(s0[0] - nx * 9), Y(s0[1] - ny * 9 - 1.2), '起點', 15, GREEN, nx < 0 ? 'start' : 'end');
+    if (!sc.open) s += '<line x1="' + X(s0[0] + nx * 5) + '" y1="' + Y(s0[1] + ny * 5) + '" x2="' + X(s0[0] - nx * 5) + '" y2="' + Y(s0[1] - ny * 5) + '" stroke="' + GREEN + '" stroke-width="6"/>';
+    if (!sc.open) s += t(X(s0[0] - nx * 9), Y(s0[1] - ny * 9 - 1.2), '起點', 15, GREEN, nx < 0 ? 'start' : 'end');
     // 方向：黑線上的白色小箭咀
     for (var f = 0.08; f < 1; f += 0.16) {
       var i = Math.floor(N * f + sc.startIndex) % N, q = sc.pts[i], q2 = sc.pts[(i + 3) % N];

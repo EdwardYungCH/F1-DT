@@ -24,6 +24,26 @@
     return x(vdecl([VF, VT]) + start(setv(VF, f, setv(VT, t, init(pause(1000, repeat(4,
       motor('A', '1', spd, pausev(VF, stop('A', pause(500, motor('L', '1', spd, motor('R', '-1', spd, pausev(VT, stop('A', pause(500))))))))))))))));
   }
+  // 專題：數橫線（count）
+  var VC = ['count', 'v_count'];
+  function chg(v, d, next) { return '<block type="math_change"><field name="VAR" id="' + v[1] + '">' + v[0] + '</field><value name="DELTA">' + n(d) + '</value>' + (next ? '<next>' + next + '</next>' : '') + '</block>'; }
+  function shownum(v, next) { return '<block type="f1_show_number"><value name="N">' + n(0) + vget(v) + '</value>' + (next ? '<next>' + next + '</next>' : '') + '</block>'; }
+  function and2(a, b) { return '<block type="logic_operation"><field name="OP">AND</field><value name="A">' + a + '</value><value name="B">' + b + '</value></block>'; }
+  function veq(v, k) { return '<block type="logic_compare"><field name="OP">EQ</field><value name="A">' + n(0) + vget(v) + '</value><value name="B">' + n(k) + '</value></block>'; }
+  // 專題參考程式：sp 直行；turn 轉彎方法 1/2/3；extraPause 顯示數字後再暫停（ms）
+  function finishProg(sp, turn, extraPause) {
+    var t = turn || 2, slow = t === 1 ? motor('L', '1', Math.round(sp / 2), motor('R', '1', sp)) : t === 2 ? stop('L', motor('R', '1', sp)) : motor('L', '-1', Math.round(sp / 2), motor('R', '1', sp));
+    var slowR = t === 1 ? motor('L', '1', sp, motor('R', '1', Math.round(sp / 2))) : t === 2 ? motor('L', '1', sp, stop('R')) : motor('L', '1', sp, motor('R', '-1', Math.round(sp / 2)));
+    var after = extraPause ? pause(extraPause) : '';
+    var b = '<block type="controls_if"><mutation elseif="4" else="1"></mutation>' +
+      '<value name="IF0">' + veq(VC, 6) + '</value><statement name="DO0">' + stop('A') + '</statement>' +
+      '<value name="IF1">' + and2(cond(0), cond(4)) + '</value><statement name="DO1">' + motor('A', '1', sp, chg(VC, 1, shownum(VC, after))) + '</statement>' +
+      '<value name="IF2">' + cond(2) + '</value><statement name="DO2">' + motor('A', '1', sp) + '</statement>' +
+      '<value name="IF3">' + cond(1) + '</value><statement name="DO3">' + slow + '</statement>' +
+      '<value name="IF4">' + cond(3) + '</value><statement name="DO4">' + slowR + '</statement>' +
+      '<statement name="ELSE">' + motor('A', '-1', 20) + '</statement></block>';
+    return x(vdecl([VC]) + start(init(setv(VC, 0, shownum(VC, pause(1000))))) + forever(b, 30, 230));
+  }
   function cond(s) { return '<block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="f1_mq_line"><field name="S">' + s + '</field></block></value><value name="B">' + n(1) + '</value></block>'; }
   // 起步版巡線程式；corr = 'stop'（一邊停）或 'back'（一邊後退）
   function follower(corr) {
@@ -69,5 +89,5 @@
   };
   window.F1Missions = MISSIONS;
   window.F1Xml = { x: x, n: n, motor: motor, stop: stop, pause: pause, init: init, start: start, forever: forever, cond: cond, follower: follower,
-    VF: VF, VT: VT, vdecl: vdecl, vget: vget, setv: setv, pausev: pausev, repeat: repeat, squareV: squareV };
+    VF: VF, VT: VT, VC: VC, chg: chg, shownum: shownum, and2: and2, veq: veq, finishProg: finishProg, vdecl: vdecl, vget: vget, setv: setv, pausev: pausev, repeat: repeat, squareV: squareV };
 })();

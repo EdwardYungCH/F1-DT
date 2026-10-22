@@ -141,6 +141,7 @@
       <tr><td>後退</td><td>脫線時「全部馬達 後退」的速度</td></tr>
     </tbody>
   </table></div>
+  <p class="small muted">轉彎方法：① 慢快＝一邊慢、一邊快；② 停行＝一邊停、一邊行；③ 退進＝一邊後退、一邊前進。</p>
   <div id="tierlog"></div>
   <h3>出了問題？</h3>
   <div class="tbl-wrap"><table>
@@ -278,14 +279,14 @@ document.getElementById('tp3').innerHTML = A.turnPanel(3);
 })();
 
 /* ---- 4 測試記錄 ---- */
-var MT = [{ v: '1', t: '① 一邊慢、一邊快' }, { v: '2', t: '② 一邊停、一邊行' }, { v: '3', t: '③ 一邊後退、一邊前進' }];
-var TR = [{ v: 'ok', t: '走完一圈 ✔' }, { v: 'stuck', t: '轉彎時推不動' }, { v: 'out', t: '彎位衝出黑線' }, { v: 'cross', t: '在交叉位轉錯路' }, { v: 'swing', t: '左右急擺' }, { v: 'lost', t: '脫線後退，回不到黑線' }];
+var MT = [{ v: '1', t: '① 一邊慢、一邊快', s: '① 慢快' }, { v: '2', t: '② 一邊停、一邊行', s: '② 停行' }, { v: '3', t: '③ 一邊後退、一邊前進', s: '③ 退進' }];
+var TR = [{ v: 'ok', t: '走完一圈 ✔', s: '走完 ✔' }, { v: 'stuck', t: '轉彎時推不動', s: '推不動' }, { v: 'out', t: '彎位衝出黑線', s: '衝出線' }, { v: 'cross', t: '在交叉位轉錯路', s: '交叉轉錯' }, { v: 'swing', t: '左右急擺', s: '急擺' }, { v: 'lost', t: '脫線後退，回不到黑線', s: '回不到線' }];
 F1.trials('#tierlog', { key: 'tierlog', label: '3. 8 字線測試記錄', max: 10, sec: 's5', minRows: 3,
-  cols: [{ k: 'm', label: '轉彎方法', type: 'select', options: MT, w: '11em' },
+  cols: [{ k: 'm', label: '轉彎方法', type: 'select', options: MT, w: '7em' },
     { k: 'sl', label: '慢的一邊', type: 'number', ph: '0', w: '5em' }, { k: 'sf', label: '快的一邊', type: 'number', ph: '40', w: '5em' },
     { k: 'sp', label: '直行', type: 'number', ph: '40', w: '5em' }, { k: 'bk', label: '後退', type: 'number', ph: '20', w: '5em' },
-    { k: 'jd', label: '結果', type: 'select', options: TR, w: '10em' }, { k: 'sec', label: '秒數', type: 'number', ph: '15', w: '5em' }],
-  example: ['② 一邊停、一邊行', '0', '40', '40', '20', '走完一圈 ✔', '15', '未夠快：直行、快的一邊加到 50'],
+    { k: 'jd', label: '結果', type: 'select', options: TR, w: '7.5em' }, { k: 'sec', label: '秒數', type: 'number', ph: '15', w: '5em' }],
+  example: ['② 停行', '0', '40', '40', '20', '走完 ✔', '15', '未夠快：直行、快的一邊加到 50'],
   next: function (r) {
     var sp = parseFloat(r.sp), sf = parseFloat(r.sf), sl = parseFloat(r.sl), bk = parseFloat(r.bk), t = parseFloat(r.sec);
     if (!r.m || !(sp > 0) || !(sf > 0) || isNaN(sl) || !(bk >= 0) || !r.jd) return '';

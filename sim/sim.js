@@ -138,7 +138,14 @@
     ctx.strokeStyle = '#1d1f22'; ctx.lineWidth = sc.width * V.s; ctx.lineJoin = 'round';
     ctx.beginPath();
     sc.pts.forEach(function (q, i) { if (i) ctx.lineTo(V.tx(q[0]), V.ty(q[1])); else ctx.moveTo(V.tx(q[0]), V.ty(q[1])); });
-    ctx.closePath(); ctx.stroke();
+    if (!sc.open) ctx.closePath();
+    ctx.lineCap = 'round'; ctx.stroke();
+    (sc.bars || []).forEach(function (b) { ctx.beginPath(); ctx.moveTo(V.tx(b[0][0]), V.ty(b[0][1])); ctx.lineTo(V.tx(b[1][0]), V.ty(b[1][1])); ctx.stroke(); });
+    ctx.lineCap = 'butt';
+    ctx.fillStyle = '#1d1f22'; ctx.font = 'bold ' + Math.round(2.6 * V.s) + 'px sans-serif'; ctx.textAlign = 'center';
+    (sc.labels || []).forEach(function (l) { ctx.fillText(l[2], V.tx(l[0]), V.ty(l[1])); });
+    ctx.textAlign = 'start';
+    if (sc.open) return;
     // 起點標記
     var s0 = sc.pts[sc.startIndex], s1 = sc.pts[(sc.startIndex + 2) % sc.pts.length];
     var a = Math.atan2(s1[1] - s0[1], s1[0] - s0[0]), nx = -Math.sin(a), ny = Math.cos(a);

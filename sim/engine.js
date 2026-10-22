@@ -80,10 +80,10 @@
     pts.pop();                               // 最後一點與起點重疊
     return pts;
   }
-  function resample(pts, step) {           // 每隔 step 厘米取一點，方便計算進度
+  function resample(pts, step, open) {     // 每隔 step 厘米取一點，方便計算進度；open = 有頭有尾（不閉合）
     var out = [], n = pts.length, acc = 0, i;
     out.push(pts[0].slice());
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < (open ? n - 1 : n); i++) {
       var a = pts[i], b = pts[(i + 1) % n];
       var dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy), pos = 0;
       while (acc + (d - pos) >= step) {
@@ -92,6 +92,7 @@
       }
       acc += d - pos;
     }
+    if (open) { out.push(pts[n - 1].slice()); return out; }
     if (Math.hypot(out[out.length - 1][0] - out[0][0], out[out.length - 1][1] - out[0][1]) < step * 0.5) out.pop();
     return out;
   }
@@ -120,6 +121,19 @@
       },
       startIndex: 0.13
     },
+    snake: {                                         // 單元專題：START → FINISH（按老師相片估計，約 100 × 63 cm；黑線約 2.5 cm）
+      name: '專題：START → FINISH', kind: 'track', width: 2.5, open: true,
+      paper: { x0: -50, y0: -31.5, x1: 50, y1: 31.5 },
+      build: function () {                           // 5 條直路（相距 17.6 cm）＋ 4 個 U 形彎（半徑 8.8 cm）
+        var r = 8.8, L = 23.4;
+        return turtle(-35.2, -17, 90, [['S', 28.7], ['R', 180, r], ['S', L], ['L', 180, r], ['S', L], ['R', 180, r], ['S', L], ['L', 180, r], ['S', 29.1]]);
+      },
+      // 橫線（兩端圓頭，半闊 1.25 cm）：十字路口的長橫線、START 橫線、FINISH 橫線
+      // FINISH 橫線在相片中向外只伸出約 4 cm，L2／R2 可能剛好碰不到；這裏假設老師已用黑膠紙向外加長約 1–2 cm
+      bars: [[[-40, 1.6], [40, 1.6]], [[-41.8, -17], [-28.5, -17]], [[26.9, 16.6], [39.3, 16.6]]],
+      labels: [[-35.2, -23.5, 'START'], [33, 22.5, 'FINISH']],
+      startAt: 6                                     // M 在 START 橫線前 6 cm：L2、R2 已越過 START 橫線
+    },
     sharp: {
       name: '急彎挑戰圖', kind: 'track', width: 2.0,
       paper: { x0: -40, y0: -42, x1: 14, y1: 38 },
@@ -136,10 +150,10 @@
     if (sc.kind === 'tiles') {
       S.tile = sc.tile; S.view = sc.view; S.start = sc.start; return S;
     }
-    S.width = sc.width; S.paper = sc.paper;
+    S.width = sc.width; S.paper = sc.paper; S.open = !!sc.open; S.bars = sc.bars || []; S.labels = sc.labels || [];
     S.raw = sc.build();
-    S.pts = resample(S.raw, 0.5);
-    var N = S.pts.length, i0 = Math.floor(N * sc.startIndex) % N;
+    S.pts = resample(S.raw, 0.5, S.open);
+    var N = S.pts.length, i0 = sc.startAt !== undefined ? Math.round(sc.startAt / 0.5) : Math.floor(N * sc.startIndex) % N;
     var a = S.pts[i0], b = S.pts[(i0 + 4) % N];
     var h = Math.atan2(b[1] - a[1], b[0] - a[0]);
     // 把小車放好：M 感應器對正黑線
@@ -149,7 +163,7 @@
     var p = sc.paper; S.view = { x0: p.x0 - 6, y0: p.y0 - 6, x1: p.x1 + 6, y1: p.y1 + 6 };
     // 空間格子，加快「離黑線多遠」的計算
     S.grid = {}; S.cell = 4;
-    for (var i = 0; i < N; i++) {
+    for (var i = 0; i < (S.open ? N - 1 : N); i++) {
       var q = S.pts[i], q2 = S.pts[(i + 1) % N];
       var cx0 = Math.floor(Math.min(q[0], q2[0]) / S.cell) - 1, cx1 = Math.floor(Math.max(q[0], q2[0]) / S.cell) + 1;
       var cy0 = Math.floor(Math.min(q[1], q2[1]) / S.cell) - 1, cy1 = Math.floor(Math.max(q[1], q2[1]) / S.cell) + 1;
@@ -270,6 +284,7 @@
     var n = nearest(sc, p[0], p[1]);
     var edge = sc.width / 2 + (this.realism ? (this.rand() - 0.5) * 0.25 : 0);
     var v = n.d <= edge ? 1 : 0;
+    for (var bi = 0; !v && bi < sc.bars.length; bi++) if (segDist(p[0], p[1], sc.bars[bi][0], sc.bars[bi][1]) <= edge) v = 1;
     this.lastRead[i] = v;
     return v;
   };

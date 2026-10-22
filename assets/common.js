@@ -353,7 +353,7 @@
         o.cols.forEach(function (c) {
           if (c.type === 'select') {
             var b = $('.pick[data-k="' + c.k + '"]', tr);
-            var paint = function () { var op = c.options.filter(function (x) { return x.v === row[c.k]; })[0]; b.innerHTML = op ? op.t : '— 選擇 —'; b.classList.toggle('empty', !op); };
+            var paint = function () { var op = c.options.filter(function (x) { return x.v === row[c.k]; })[0]; b.innerHTML = op ? (op.s || op.t) : '— 選擇 —'; b.classList.toggle('empty', !op); };
             b.onclick = function () { sheet(c.label, c.options, row[c.k]).then(function (v) { if (v === undefined) return; row[c.k] = v; paint(); upd(); }); };
             paint();
           } else {

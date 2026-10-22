@@ -222,6 +222,10 @@ label.fld{display:block;font-size:.85rem;color:var(--ink-3);margin-bottom:2px}
 
 /* ---------- 試驗記錄表 ---------- */
 table.trials input,table.trials .pick{min-height:40px;font-size:.9rem}
+table.trials th,table.trials td{padding-left:6px;padding-right:6px}
+table.trials input[type=number]{min-width:4.2em;padding-left:6px;padding-right:4px;-moz-appearance:textfield}
+table.trials input[type=number]::-webkit-inner-spin-button,table.trials input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+table.trials .pick{min-width:6.6em;white-space:nowrap}
 table.trials td{vertical-align:middle}
 table.trials tr.eg td{background:#f3f7fd;color:var(--t-d);font-size:.9rem}
 table.trials td.next{background:#f6fbf8;font-size:.9rem}
