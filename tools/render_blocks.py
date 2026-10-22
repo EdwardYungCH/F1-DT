@@ -24,7 +24,7 @@ TIER = """(function(){var c=X.cond, m=X.motor, s=X.stop;
  '<value name="IF2">'+c(3)+'</value><statement name="DO2">'+m('L','1',40,s('R'))+'</statement>'+
  '<value name="IF3">'+c(0)+'</value><statement name="DO3">'+m('L','-1',20,m('R','1',40))+'</statement>'+
  '<value name="IF4">'+c(4)+'</value><statement name="DO4">'+m('L','1',40,m('R','-1',20))+'</statement>'+
- '<statement name="ELSE">'+s('A')+'</statement></block>';
+ '<statement name="ELSE">'+m('A','-1',20)+'</statement></block>';
  return X.x(X.start(X.init(X.pause(1000))) + X.forever(b,30,170));})()"""
 PROGS['blocks-tier'] = TIER
 with sync_playwright() as p:
