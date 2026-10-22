@@ -179,6 +179,111 @@
   };
 
   /* ---- 配對：每行按「選擇」→ 底部選單；按「檢查答案」 ---- */
+  /* ---------- 流程圖拖放練習 ----------
+     o: {key,label,sec,max, vb:[W,H], slots:[{x,y,w,h,answer,label}], cards:[{v,t}], draw(picked,marks)->svg 字串,
+         side: 左欄 HTML（例如程式圖）, sideTitle, hint, onFirst()}
+     學生把上面的卡拖到流程圖的空格（或先按卡、再按空格）。按已填的空格可把卡拿走。 */
+  F1.flowdrag = function (el, o) {
+    el = typeof el === 'string' ? $(el) : el;
+    var st = F1.state(o.key, { picked: {}, first: null });
+    var cards = shuffle(o.cards, o.key + 'x'), sel = null, W = o.vb[0], H = o.vb[1];
+    var wrap = document.createElement('div'); wrap.className = 'fd-wrap' + (o.side ? '' : ' noside');
+    wrap.innerHTML = (o.side ? '<details class="fd-side" open><summary>' + (o.sideTitle || '程式') + '</summary><div class="fd-sidein">' + o.side + '</div></details>' : '') +
+      '<div class="fd-main"><div class="fd-pal"><div class="fd-tip">把卡<b>拖</b>到流程圖的空格（或先按卡，再按空格）。按已填的空格可以拿走。</div><div class="fd-cards"></div></div>' +
+      '<div class="fd-scroll"><div class="fd-stage"><div class="fd-svg"></div></div></div><div class="btnrow"><button type="button" class="btn primary">檢查答案</button><button type="button" class="btn">清除重做</button></div><div class="res"></div></div>';
+    el.appendChild(wrap);
+    if (o.side && window.matchMedia && window.matchMedia('(max-width:760px)').matches) $('.fd-side', wrap).removeAttribute('open');
+    var pal = $('.fd-cards', wrap), stage = $('.fd-stage', wrap), svgBox = $('.fd-svg', wrap), res = $('.res', wrap), marks = null;
+    var zones = o.slots.map(function (sl, i) {
+      var z = document.createElement('button'); z.type = 'button'; z.className = 'fd-slot'; z.setAttribute('data-i', i);
+      z.setAttribute('aria-label', '空格 ' + (i + 1) + (sl.label ? '：' + sl.label : ''));
+      z.style.left = ((sl.x - sl.w / 2) / W * 100) + '%'; z.style.top = ((sl.y - sl.h / 2) / H * 100) + '%';
+      z.style.width = (sl.w / W * 100) + '%'; z.style.height = (sl.h / H * 100) + '%';
+      z.onclick = function () {
+        if (sel !== null) { place(i, sel); return; }
+        if (st.picked[i] !== undefined) { delete st.picked[i]; marks = null; paint(); save(true); }
+      };
+      stage.appendChild(z); return z;
+    });
+    function used(v) { for (var k in st.picked) if (String(st.picked[k]) === String(v)) return true; return false; }
+    function place(i, v) {
+      for (var k in st.picked) if (String(st.picked[k]) === String(v)) delete st.picked[k];
+      st.picked[i] = v; sel = null; marks = null; paint(); save(true);
+    }
+    function paint() {
+      svgBox.innerHTML = o.draw(st.picked, marks);
+      pal.innerHTML = '';
+      cards.forEach(function (c) {
+        if (used(c.v)) return;
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'fd-card' + (String(sel) === String(c.v) ? ' sel' : ''); b.textContent = c.t; b.setAttribute('data-v', c.v);
+        b.addEventListener('pointerdown', function (e) { startDrag(e, c, b); });
+        pal.appendChild(b);
+      });
+      if (!pal.children.length) pal.innerHTML = '<span class="small muted">卡已用完。可以按「檢查答案」。</span>';
+      zones.forEach(function (z, i) { z.classList.toggle('filled', st.picked[i] !== undefined); z.classList.toggle('want', sel !== null); });
+    }
+    function startDrag(e, c, b) {
+      if (e.button !== undefined && e.button !== 0) return;
+      var sx = e.clientX, sy = e.clientY, ghost = null, over = null, moved = false;
+      try { b.setPointerCapture(e.pointerId); } catch (err) {}
+      function mv(ev) {
+        if (!moved && Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) < 6) return;
+        if (!moved) { moved = true; ghost = document.createElement('div'); ghost.className = 'fd-ghost'; ghost.textContent = c.t; document.body.appendChild(ghost); b.classList.add('dragging'); }
+        ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
+        var t = document.elementFromPoint(ev.clientX, ev.clientY), z = t && t.closest ? t.closest('.fd-slot') : null;
+        if (z && !stage.contains(z)) z = null;
+        if (over && over !== z) over.classList.remove('over');
+        over = z; if (z) z.classList.add('over');
+        ev.preventDefault();
+      }
+      function up() {
+        b.removeEventListener('pointermove', mv); b.removeEventListener('pointerup', up); b.removeEventListener('pointercancel', up);
+        if (ghost) ghost.remove(); b.classList.remove('dragging');
+        if (over) { over.classList.remove('over'); place(+over.getAttribute('data-i'), c.v); return; }
+        if (!moved) { sel = String(sel) === String(c.v) ? null : c.v; paint(); }
+      }
+      b.addEventListener('pointermove', mv); b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+    }
+    function check(silent) {
+      var c = 0, blank = 0; marks = [];
+      o.slots.forEach(function (sl, i) {
+        var v = st.picked[i];
+        if (v === undefined) { blank++; marks[i] = null; return; }
+        marks[i] = String(v) === String(sl.answer); if (marks[i]) c++;
+      });
+      paint();
+      if (blank) { res.className = 'res'; res.textContent = '還有 ' + blank + ' 個空格未填。'; return; }
+      var firstNow = st.first === null && !silent;
+      if (firstNow) st.first = c;
+      res.className = 'res' + (c === o.slots.length ? ' good' : '');
+      res.innerHTML = '成績（以第一次檢查計）：' + (st.first === null ? c : st.first) + ' / ' + o.slots.length + '　今次答對 ' + c + ' / ' + o.slots.length + (c === o.slots.length ? '　全對！' : (o.hint ? '<br><span style="font-weight:500">' + o.hint + '</span>' : ''));
+      if (!silent) save();
+      if (firstNow && o.onFirst) o.onFirst();
+    }
+    var bs = $$('.btnrow .btn', wrap);
+    bs[0].onclick = function () { check(false); };
+    bs[1].onclick = function () { st.picked = {}; sel = null; marks = null; res.textContent = ''; paint(); save(true); };
+    paint();
+    if (st.first !== null) { check(true); if (o.onFirst) o.onFirst(); }
+    return reg({
+      key: o.key, label: o.label, max: o.max || o.slots.length, sec: o.sec,
+      score: function () { return st.first === null ? 0 : (o.max ? st.first / o.slots.length * o.max : st.first); },
+      done: function () { return st.first !== null; },
+      report: function () {
+        return { type: 'match', first: st.first, rows: o.slots.map(function (sl, i) {
+          var p = o.cards.filter(function (x) { return String(x.v) === String(st.picked[i]); })[0], a = o.cards.filter(function (x) { return String(x.v) === String(sl.answer); })[0];
+          return { q: sl.label || ('空格 ' + (i + 1)), a: p ? p.t : '', ans: a ? a.t : '', ok: p ? String(st.picked[i]) === String(sl.answer) : null };
+        }) };
+      }
+    });
+  };
+  /* 未完成某一題前把內容鎖住（避免先看答案） */
+  F1.lock = function (el, msg) {
+    el = typeof el === 'string' ? $(el) : el;
+    var ph = document.createElement('div'); ph.className = 'locked'; ph.innerHTML = '🔒 ' + msg;
+    el.parentNode.insertBefore(ph, el); el.hidden = true;
+    return function () { el.hidden = false; ph.remove(); };
+  };
   F1.match = function (el, o) {   // o: {key,label,head:[a,b], rows:[{html, answer:'value'}], options:[{v,t}], max}
     el = typeof el === 'string' ? $(el) : el;
     var st = F1.state(o.key, { picked: {}, first: null });
@@ -595,7 +700,7 @@
     var bar = $('.topbar .bar i'); if (bar) bar.style.width = t.prog + '%';
     var pct = $('.topbar .pct'); if (pct) pct.textContent = t.prog + '%';
     var who = $('.topbar .who'); if (who) who.textContent = stuOK() ? STU.cls + ' ' + STU.num + ' ' + STU.name + (partner() ? '＋' + partner().name : '') : '未填姓名';
-    var m = $('.stmsg'); if (m) m.textContent = stuOK() ? '✔ 資料已填妥。（四課共用；換同學用這部電腦時，系統會先問你是誰）' : '⚠️ 請先填寫班別、學號及姓名，否則不能輸出功課。';
+    var m = $('.stmsg'); if (m) m.textContent = stuOK() ? '✔ 資料已填妥。（各課共用）' : '⚠️ 請先填寫班別、學號及姓名，否則不能輸出功課。';
     F1.comps.forEach(function (c) { if (c.refresh) c.refresh(); });
     // 小節完成
     $$('main > section.card').forEach(function (s) {
@@ -701,8 +806,8 @@
     var pp = partner();
     download('DT_F1_' + L.id + '_' + STU.cls + '_' + STU.num + '_' + STU.name + (pp ? '_' + (pp.num || '') + '_' + pp.name : '') + '.html', r.html);
     D.exported = Date.now(); save(true);
-    dialog({ title: '已下載成績報告', html: '<p>檔案在「下載」資料夾，請上傳到 Google Classroom／eClass。</p><p>驗證碼：<b>' + (r.sig.slice(0, 4) + '-' + r.sig.slice(4, 8) + '-' + r.sig.slice(8, 12)).toUpperCase() + '</b></p><p><b>如果這是共用電腦</b>，請清除這部電腦上的資料，下一位同學才不會看到你的答案。</p>',
-      buttons: [{ t: '保留資料' }, { t: '清除這部電腦的資料', kind: 'primary', f: function () { clearAll(); setTimeout(function () { location.reload(); }, 50); } }] });
+    dialog({ title: '已下載成績報告', html: '<p>檔案在「下載」資料夾，請上傳到 Google Classroom／eClass。</p><p>驗證碼：<b>' + (r.sig.slice(0, 4) + '-' + r.sig.slice(4, 8) + '-' + r.sig.slice(8, 12)).toUpperCase() + '</b></p><p>你的答案會保留在這部電腦，下次可以繼續。</p>',
+      buttons: [{ t: '好', kind: 'primary' }] });
   }
   function printReport() {
     if (!stuOK()) { exportReport(); return; }
@@ -711,20 +816,9 @@
   }
   function bindSubmit() {
     var b = $('#submitBtns'); if (!b) return;
-    b.innerHTML = '<button type="button" class="btn go">📥 下載成績報告（交給老師）</button><button type="button" class="btn">🖨️ 列印／存成 PDF</button><button type="button" class="btn ghost">清除這部電腦的資料</button>';
+    b.innerHTML = '<button type="button" class="btn go">📥 下載成績報告（交給老師）</button><button type="button" class="btn">🖨️ 列印／存成 PDF</button>';
     var bs = $$('.btn', b);
     bs[0].onclick = exportReport; bs[1].onclick = printReport;
-    bs[2].onclick = function () { dialog({ title: '清除資料？', html: '<p>會刪除這部電腦上本單元所有課堂的答案、模擬器程式及學生資料，不能復原。已下載的報告不受影響。</p>', buttons: [{ t: '取消' }, { t: '清除', kind: 'primary', f: function () { clearAll(); setTimeout(function () { location.reload(); }, 50); } }] }); };
-  }
-
-  /* ---------- 身份確認（共用電腦） ---------- */
-  function identityCheck() {
-    var last = 0;
-    try { Object.keys(localStorage).forEach(function (k) { if (/^f1dt:L/.test(k)) { var x = get(k); if (x && x.lastActive > last) last = x.lastActive; } }); } catch (e) {}
-    var idle = (Date.now() - last) / 60000;
-    if (!stuOK() || !last || idle < (CFG.IDLE_MINUTES || 20)) return;
-    dialog({ title: '你是 ' + STU.cls + ' ' + STU.num + ' ' + STU.name + ' 嗎？', html: '<p>這部電腦上已經有這位同學的答案。</p>',
-      buttons: [{ t: '不是，我是另一位同學', f: function () { clearAll(); setTimeout(function () { location.reload(); }, 50); } }, { t: '是，繼續', kind: 'primary' }] });
   }
 
   /* ---------- 老師模式 ---------- */
@@ -754,7 +848,7 @@
   };
   F1.ready = function () {     // 課堂頁建立所有元件後呼叫
     refresh(); booted = true;
-    identityCheck(); teacherMode();
+    teacherMode();
     if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(function () { t.scrollIntoView(); }, 50); }
   };
   F1.renderReport = renderReport;

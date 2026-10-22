@@ -129,7 +129,11 @@
     var N = sc.pts.length, s0 = sc.pts[sc.startIndex], s1 = sc.pts[(sc.startIndex + 6) % N];
     var a = Math.atan2(s1[1] - s0[1], s1[0] - s0[0]), nx = -Math.sin(a), ny = Math.cos(a);
     if (!sc.open) s += '<line x1="' + X(s0[0] + nx * 5) + '" y1="' + Y(s0[1] + ny * 5) + '" x2="' + X(s0[0] - nx * 5) + '" y2="' + Y(s0[1] - ny * 5) + '" stroke="' + GREEN + '" stroke-width="6"/>';
-    if (!sc.open) s += t(X(s0[0] - nx * 9), Y(s0[1] - ny * 9 - 1.2), '起點', 15, GREEN, nx < 0 ? 'start' : 'end');
+    if (!sc.open) {
+      var sg = -1, lx = s0[0] + sg * nx * 9, ly = s0[1] + sg * ny * 9;
+      if (lx < pp.x0 + 6 || lx > pp.x1 - 6 || ly < pp.y0 + 3 || ly > pp.y1 - 3) { sg = 1; lx = s0[0] + nx * 9; ly = s0[1] + ny * 9; }
+      s += t(X(lx), Y(ly - 1.2), '起點', 15, GREEN, (sg * nx) < 0 ? 'end' : 'start');
+    }
     // 方向：黑線上的白色小箭咀
     for (var f = 0.08; f < 1; f += 0.16) {
       var i = Math.floor(N * f + sc.startIndex) % N, q = sc.pts[i], q2 = sc.pts[(i + 3) % N];

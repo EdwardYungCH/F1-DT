@@ -30,14 +30,14 @@ TIER = """(function(){var c=X.cond, m=X.motor, s=X.stop;
 OPT = """(function(){var c=X.cond, m=X.motor, s=X.stop;
  var b='<block type="controls_if"><mutation elseif="2" else="1"></mutation>'+
  '<value name="IF0">'+c(2)+'</value><statement name="DO0">'+m('A','1',40)+'</statement>'+
- '<value name="IF1">'+c(1)+'</value><statement name="DO1">'+s('L',m('R','1',40))+'</statement>'+
- '<value name="IF2">'+c(3)+'</value><statement name="DO2">'+m('L','1',40,s('R'))+'</statement>'+
+ '<value name="IF1">'+c(1)+'</value><statement name="DO1">'+m('L','-1',20,m('R','1',40))+'</statement>'+
+ '<value name="IF2">'+c(3)+'</value><statement name="DO2">'+m('L','1',40,m('R','-1',20))+'</statement>'+
  '<statement name="ELSE">'+m('A','-1',20)+'</statement></block>';
  return X.x(X.start(X.init(X.pause(1000))) + X.forever(b,30,170));})()"""
 PROGS['blocks-opt'] = OPT
 # 單元專題：數橫線，到 FINISH 停車
 PROGS.update({
- 'blocks-finish': "X.finishProg(40, 2, 300)",
+ 'blocks-finish': "X.finishProg(40, 3, 300)",
  'mc-and': "X.x(X.and2(X.cond(0), X.cond(4)))",
  'mc-set-count': "X.x(X.vdecl([X.VC]) + X.setv(X.VC, 0))",
  'mc-change': "X.x(X.vdecl([X.VC]) + X.chg(X.VC, 1))",

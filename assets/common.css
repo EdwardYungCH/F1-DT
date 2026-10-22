@@ -341,3 +341,25 @@ body.teacher .topbar{border-bottom:3px solid #e0b25c}
 .verify .vlv{flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .verify .vlv .btn{flex-direction:column;align-items:flex-start;line-height:1.3;text-align:left}
 .verify .vlv .btn small{font-weight:500;opacity:.85}
+
+/* 流程圖拖放練習 */
+.fd-wrap{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:16px;align-items:start;margin-top:10px}
+.fd-wrap.noside{grid-template-columns:minmax(0,1fr)}
+.fd-side{border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px 10px;position:sticky;top:68px}
+.fd-side summary{cursor:pointer;font-weight:700;color:var(--t-d);font-size:.92rem}
+.fd-sidein{margin-top:8px;max-height:calc(100vh - 140px);overflow:auto}
+.fd-sidein img{display:block;width:100%;height:auto}
+.fd-pal{position:sticky;top:60px;z-index:6;background:var(--t-soft);border:1px solid var(--t-mid);border-radius:12px;padding:8px 10px;margin-bottom:10px;box-shadow:0 4px 12px rgba(20,32,43,.08)}
+.fd-tip{font-size:.82rem;color:var(--muted,#5f6f82);margin-bottom:6px}
+.fd-cards{display:flex;flex-wrap:wrap;gap:6px}
+.fd-card{font:inherit;font-size:.86rem;font-weight:700;padding:7px 10px;border-radius:9px;border:2px solid #1e6fd9;background:#fff;color:#14509e;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;line-height:1.3}
+.fd-card.sel{background:#1e6fd9;color:#fff}
+.fd-card.dragging{opacity:.4}
+.fd-ghost{position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-60%);background:#1e6fd9;color:#fff;font-weight:700;font-size:.86rem;padding:7px 10px;border-radius:9px;box-shadow:0 8px 20px rgba(0,0,0,.25);white-space:nowrap}
+.fd-stage{position:relative;overflow:hidden}
+.fd-svg svg{display:block;width:100%;height:auto}
+.fd-slot{position:absolute;background:transparent;border:0;border-radius:10px;cursor:pointer;padding:0}
+.fd-slot.want{outline:3px dashed rgba(30,111,217,.55);outline-offset:-2px;background:rgba(30,111,217,.06)}
+.fd-slot.over{background:rgba(30,111,217,.18);outline:3px solid #1e6fd9}
+.locked{border:2px dashed var(--t-mid);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fafbfd;color:var(--t-d);font-weight:700}
+@media (max-width:760px){.fd-wrap{grid-template-columns:minmax(0,1fr)}.fd-side{position:static}.fd-sidein{max-height:none}.fd-tip{display:none}.fd-cards{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.fd-card{white-space:nowrap;flex:0 0 auto}.fd-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}.fd-stage{min-width:560px}}

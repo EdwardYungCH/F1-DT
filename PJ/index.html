@@ -78,8 +78,7 @@ details.hint summary{cursor:pointer;font-weight:700;color:var(--t-d)}
 
 <section class="card" id="s3">
   <header><span class="num">3</span><h2>設計：完成程式的流程圖</h2><span class="marks">10 分</span></header>
-  <p>下面是專題程式的流程圖。下半部（M、L1、R1）是第四堂已做好的巡線部分；<b>上半部要你設計</b>。在表格為每個空格揀選內容，流程圖會即時顯示。</p>
-  <figure class="fig zoomable"><div class="art fcwrap" id="flow"></div><figcaption>專題程式的流程圖（你的答案會即時顯示）</figcaption></figure>
+  <p>下面是專題程式的流程圖。虛線框內（M、L1、R1）是第四堂已做好的巡線部分；<b>上半部要你設計</b>：把卡<b>拖</b>到空格（或先按卡，再按空格），再按「檢查答案」。</p>
   <div id="q-flow"></div>
   <div class="callout key"><span class="ttl">次序很重要</span>先問「數夠 6 條未？」，再問「見到橫線未？」，最後才巡線（M → L1 → R1）。如果 L1 放在 M 前面，小車在十字路口會轉入橫線！</div>
 </section>
@@ -94,10 +93,10 @@ details.hint summary{cursor:pointer;font-weight:700;color:var(--t-d)}
     <p>校準 → 下載 → 把小車放在 START 後面的直路上，黑線在車底正中。<b>L2、R2 要越過 START 橫線</b>（車頭再向前推一點），否則一開始就會數多 1。</p></div>
   <div class="step"><h4><span class="sn">3</span>看 micro:bit 的數字</h4>
     <p>每過一條橫線，數字應該加 1：1、2、3、4、5，到 FINISH 顯示 <b>6</b> 並停車。數字不對，就看下一節的記錄表提示。</p></div>
-  <details class="hint"><summary>💡 真的做不到？按這裏看參考程式</summary>
-    <p class="small muted">先自己試！參考程式用 ② 轉彎；顯示數字之後暫停 300 ms，讓小車衝過橫線，避免同一條線數兩次。</p>
-    <figure class="fig zoomable" style="margin:8px 0 0"><div class="art"><img src="../assets/img/blocks-finish.png" alt="參考程式：如果 count = 6 停止；否則如果 L2=1 且 R2=1 前進40、count 改變 1、顯示 count、暫停300；否則如果 M=1 前進40；否則如果 L1=1 左停右進40；否則如果 R1=1 左進40右停；否則後退20"></div><figcaption>參考程式</figcaption></figure>
-  </details>
+  <div id="hintBox"><details class="hint"><summary>💡 真的做不到？按這裏看參考程式</summary>
+    <p class="small muted">先自己試！參考程式用 ③ 轉彎；顯示數字之後暫停 300 ms，讓小車衝過橫線，避免同一條線數兩次。</p>
+    <figure class="fig zoomable" style="margin:8px 0 0"><div class="art"><img src="../assets/img/blocks-finish.png" alt="參考程式：如果 count = 6 停止；否則如果 L2=1 且 R2=1 前進40、count 改變 1、顯示 count、暫停300；否則如果 M=1 前進40；否則如果 L1=1 左後退20右前進40；否則如果 R1=1 左前進40右後退20；否則後退20"></div><figcaption>參考程式</figcaption></figure>
+  </details></div>
   <div class="callout safe">在地面測試；懸空會令感應器讀到 1，小車會繼續向前。</div>
 </section>
 
@@ -202,8 +201,8 @@ function drawFlow(picked, marks) {
   s += A.fcShape('term', 200, 32, 200, 42, ['開始']) + A.fcShape('proc', 200, 100, 220, 48, ['初始化麥昆Plus']) + A.fcShape('proc', 200, 168, 220, 48, ['count 設為 0', '顯示 count']);
   s += A.fcShape('io', 200, 254, 260, 56, ['讀取 L2、R2、L1、M、R1']);
   s += A.fcShape('dec', 200, 588, 230, 82, ['M = 1 ？']) + A.fcShape('proc', 478, 588, 205, 50, ['全部馬達 前進 40']);
-  s += A.fcShape('dec', 200, 700, 230, 82, ['L1 = 1 ？']) + A.fcShape('proc', 478, 700, 205, 50, ['左側 停止', '右側 前進 40']);
-  s += A.fcShape('dec', 200, 812, 230, 82, ['R1 = 1 ？']) + A.fcShape('proc', 478, 812, 205, 50, ['左側 前進 40', '右側 停止']);
+  s += A.fcShape('dec', 200, 700, 230, 82, ['L1 = 1 ？']) + A.fcShape('proc', 478, 700, 205, 50, ['左側 後退 20', '右側 前進 40']);
+  s += A.fcShape('dec', 200, 812, 230, 82, ['R1 = 1 ？']) + A.fcShape('proc', 478, 812, 205, 50, ['左側 前進 40', '右側 後退 20']);
   s += A.fcShape('proc', 200, 910, 220, 48, ['全部馬達 後退 20']);
   s += '<rect x="20" y="560" width="680" height="380" rx="14" fill="none" stroke="#9aa7b5" stroke-dasharray="6 6"/>' + A.text(690, 936, '第四堂已做好的巡線部分', 13, '#5f6f82', 'end', 700);
   s += A.text(450, 990, '↑ 回到「讀取」：重複無限次', 13, '#5f6f82', 'middle', 600);
@@ -214,13 +213,14 @@ function drawFlow(picked, marks) {
     if (marks && marks[i] === false) { o.stroke = '#d63a3a'; o.fill = '#fdeaea'; }
     s += A.fcShape(FLOW[i].kind, q[0], q[1], q[2], q[3], lines, o) + A.fcNum(q[0] + q[2] / 2 - 4, q[1] - q[3] / 2 + 4, i + 1);
   });
-  document.getElementById('flow').innerHTML = s + '</svg>';
+  return s + '</svg>';
 }
-F1.match('#q-flow', { key: 'flow', label: '2. 設計流程圖', sec: 's3', max: 10, head: ['空格（形狀）', '內容'],
+var unlockHint = F1.lock('#hintBox', '完成第 3 節的流程圖並按「檢查答案」後，這裏會有參考程式（做不到才看）。');
+F1.flowdrag('#q-flow', { key: 'flow', label: '2. 設計流程圖', sec: 's3', max: 10, vb: [900, 1000],
   hint: '先看形狀（菱形＝問題），再想次序：先問數夠未，再問見到橫線未。',
-  rows: FLOW.map(function (f, i) { return { html: '<b>(' + (i + 1) + ')</b> ' + KN[f.kind], label: '空格 (' + (i + 1) + ')：' + KN[f.kind], answer: String(i) }; }),
-  options: FALL.map(function (f, i) { return { v: String(i), t: f.t }; }),
-  onChange: drawFlow });
+  slots: POS.map(function (q, i) { return { x: q[0], y: q[1], w: q[2], h: q[3], answer: String(i), label: '空格 (' + (i + 1) + ')' }; }),
+  cards: FALL.map(function (f, i) { return { v: String(i), t: f.t }; }),
+  draw: drawFlow, onFirst: unlockHint });
 
 /* ---- 5 測試記錄 ---- */
 var MT = [{ v: '1', t: '① 一邊慢、一邊快', s: '① 慢快' }, { v: '2', t: '② 一邊停、一邊行', s: '② 停行' }, { v: '3', t: '③ 一邊後退、一邊前進', s: '③ 退進' }];
@@ -230,7 +230,7 @@ F1.trials('#plog', { key: 'plog', label: '3. 專題測試記錄', max: 10, sec: 
   cols: [{ k: 'm', label: '轉彎方法', type: 'select', options: MT, w: '7em' }, { k: 'sp', label: '直行速度', type: 'number', ph: '40', w: '5em' },
     { k: 'ps', label: '暫停 (ms)', type: 'number', ph: '300', w: '5em' }, { k: 'jd', label: '結果', type: 'select', options: TR, w: '7.5em' },
     { k: 'n', label: '最後數字', type: 'number', ph: '5', w: '5em' }],
-  example: ['② 停行', '40', '300', '不停車', '5', '數字只到 5：FINISH 橫線未數到'],
+  example: ['③ 退進', '40', '300', '不停車', '5', '數字只到 5：FINISH 橫線未數到'],
   next: function (r) {
     var sp = parseFloat(r.sp), ps = parseFloat(r.ps), n = parseFloat(r.n);
     if (!r.m || !(sp > 0) || !(ps >= 0) || !r.jd) return '';
