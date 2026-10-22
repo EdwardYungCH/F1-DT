@@ -363,3 +363,16 @@ body.teacher .topbar{border-bottom:3px solid #e0b25c}
 .fd-slot.over{background:rgba(30,111,217,.18);outline:3px solid #1e6fd9}
 .locked{border:2px dashed var(--t-mid);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fafbfd;color:var(--t-d);font-weight:700}
 @media (max-width:760px){.fd-wrap{grid-template-columns:minmax(0,1fr)}.fd-side{position:static}.fd-sidein{max-height:none}.fd-tip{display:none}.fd-cards{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.fd-card{white-space:nowrap;flex:0 0 auto}.fd-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}.fd-stage{min-width:560px}}
+
+/* 計時器 */
+.sw{border:2px solid var(--t-mid);border-radius:14px;background:#fff;padding:12px 16px;margin:12px 0;max-width:460px}
+.sw-head{font-weight:800;color:var(--t-d);display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.sw-goal{font-size:.85rem;font-weight:700;background:var(--t-soft);color:var(--t-d);border-radius:999px;padding:2px 10px}
+.sw-disp{font-family:"Chakra Petch",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:3rem;font-weight:700;line-height:1.1;margin:6px 0 4px;color:#1d2b3a}
+.sw-disp small{font-size:1.1rem;font-weight:700;color:#5f6f82}
+.sw-disp.run{color:var(--t)}
+.sw-disp.good{color:#1f9d55}.sw-disp.over{color:#d97706}
+.sw .btnrow{margin:6px 0}
+.sw .sw-go{min-width:8.5em;font-size:1.05rem}
+.sw-hist{min-height:1.2em}
+table.trials tr.sw-flash td{background:#e6f7ee!important;transition:background .3s}

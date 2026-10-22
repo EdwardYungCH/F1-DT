@@ -5,5 +5,5 @@ window.F1CONFIG = {
   TEACHER_PIN: 'dt2026',             // 老師驗收及老師區密碼（與中二單元相同；請自行更改）
   SIGN_KEY: ['F1', 'Robot', 'DT', 'maqueen', '8Kp', '2026'].join('~'),   // 成績報告驗證密鑰（改了之後舊報告會驗證失敗）
   APP: 'F1-DT-Robotics',
-  VERSION: '2.10.0'
+  VERSION: '2.11.0'
 };

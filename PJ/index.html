@@ -124,7 +124,8 @@ details.hint summary{cursor:pointer;font-weight:700;color:var(--t-d)}
   <div id="verify"></div>
   <div id="mclink" style="margin-top:12px"></div>
   <h3>挑戰（做得快的組別）</h3>
-  <p>不脫線、自動停車之餘，最快幾秒由 START 走到 FINISH？</p>
+  <p>不脫線、自動停車之餘，最快幾秒由 START 走到 FINISH？用下面的計時器：小車起步按「開始」，停在 FINISH 按「停止」。</p>
+  <div id="sw"></div>
 </section>
 
 <section class="card" id="s7">
@@ -251,6 +252,7 @@ F1.trials('#plog', { key: 'plog', label: '3. 專題測試記錄', max: 10, sec: 
   },
   complete: function (r) { return r.m && String(r.sp || '').trim() && String(r.ps || '').trim() && r.jd && (r.jd !== 'nostop' || String(r.n || '').trim()); } });
 
+F1.stopwatch('#sw', { label: '計時器：START 到 FINISH 用幾秒？' });
 F1.verify('#verify', { key: 'real', label: '4. 真車由 START 走到 FINISH（老師驗收）', what: '真車由 START 走到 FINISH', max: 25, sec: 's6', levels: [
   { v: 'full', t: '圓滿完成', s: 25, d: '由 START 走到 FINISH，並自動停車' },
   { v: 'part', t: '部分完成', s: 15, d: '走到 FINISH，但沒有自動停車（或中途扶了一次）' },

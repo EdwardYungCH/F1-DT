@@ -99,7 +99,7 @@
 <section class="card" id="s4" data-short="10 秒挑戰">
   <header><span class="num">4</span><h2>走得完之後：10 秒內走完一圈</h2><span class="marks">15 分</span></header>
   <div class="callout key"><span class="ttl">目標：10 秒內走完一圈</span>小車走得完一圈後，逐步提速，直至可以在 <b>10 秒內</b>走完一整圈而不脫線。</div>
-  <p>同組一人開電源，另一人用手機計時：由小車起步開始，到回到起點為止。<b>每次只改一樣</b>，再記錄結果。</p>
+  <p>同組一人開電源，另一人用<b>下面的計時器</b>計時：小車起步就按「開始」，回到起點就按「停止」，再按「填入記錄表」。<b>每次只改一樣</b>，再記錄結果。</p>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:30%">記錄表的欄</th><th>程式裏哪個數字</th><th style="width:22%">起步數字</th></tr></thead>
     <tbody>
@@ -111,6 +111,7 @@
   <p><b>提速方法：</b>直行和前進的一邊每次一齊加 10；後退的一邊改成前進的一邊的一半。</p>
   <h3>提速記錄表<span class="tag">15 分</span></h3>
   <p>每試一次填一行，最後一欄會告訴你下一次試什麼。至少記錄 <b>3 次</b>。</p>
+  <div id="sw"></div>
   <div id="speedlog"></div>
   <h3>出了問題？</h3>
   <div class="tbl-wrap"><table>
@@ -202,6 +203,7 @@ F1.trials('#speedlog', { key: 'speed', label: '2. 提速記錄', max: 15, sec: '
   },
   complete: function (r) { return ['sp', 'tb', 'tf'].every(function (k) { return String(r[k] || '').trim(); }) && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
 
+F1.stopwatch('#sw', { label: '計時器：走一圈用幾秒？', target: 10, fill: '#speedlog' });
 F1.verify('#verify', { key: 'real', label: '3. 真車巡線（老師驗收）', what: '真車在 O 形巡線圖上自己走一圈', max: 25, sec: 's5', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '10 秒內走完一圈' }, { v: 'part', t: '部分完成', s: 15, d: '走完一圈，但超過 10 秒' }, { v: 'none', t: '未完成', s: 5, d: '未能走完一圈（參與分）' }] });
 F1.mclink('#mclink', { key: 'link', sec: 's5' });
 F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 5, sec: 's6', placeholder: '例：直行 40 還可以，50 就會在彎位衝出黑線。' });

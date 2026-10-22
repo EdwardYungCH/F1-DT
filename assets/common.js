@@ -277,6 +277,45 @@
       }
     });
   };
+  /* ---------- 計時器（學生自己計時） ----------
+     o: {target: 秒, label, fill: 記錄表選擇器（填入第一個未填「秒數」的行）, key: 欄名（預設 sec）} */
+  F1.stopwatch = function (el, o) {
+    el = typeof el === 'string' ? $(el) : el; o = o || {};
+    var box = document.createElement('div'); box.className = 'sw';
+    box.innerHTML = '<div class="sw-head">⏱️ ' + esc(o.label || '計時器') + (o.target ? '<span class="sw-goal">目標：' + o.target + ' 秒或以內</span>' : '') + '</div>' +
+      '<div class="sw-disp" aria-live="off">0.0<small> 秒</small></div>' +
+      '<div class="btnrow"><button type="button" class="btn go sw-go">▶ 開始</button><button type="button" class="btn sw-reset">重設</button>' +
+      (o.fill ? '<button type="button" class="btn ghost sw-fill" disabled>填入記錄表</button>' : '') + '</div>' +
+      '<div class="sw-hist small muted"></div>';
+    el.appendChild(box);
+    var disp = $('.sw-disp', box), go = $('.sw-go', box), fill = $('.sw-fill', box), hist = $('.sw-hist', box);
+    var t0 = 0, run = false, last = null, raf = 0, list = [];
+    function show(sec, final) {
+      disp.innerHTML = sec.toFixed(1) + '<small> 秒</small>';
+      disp.className = 'sw-disp' + (final && o.target ? (sec <= o.target ? ' good' : ' over') : '') + (run ? ' run' : '');
+    }
+    function tick() { if (!run) return; show((performance.now() - t0) / 1000); raf = requestAnimationFrame(tick); }
+    function stop() {
+      run = false; cancelAnimationFrame(raf);
+      last = Math.round((performance.now() - t0) / 100) / 10; show(last, true);
+      go.textContent = '▶ 再計一次'; if (fill) fill.disabled = false;
+      list.unshift(last); list = list.slice(0, 5);
+      hist.innerHTML = '最近：' + list.map(function (x) { return x.toFixed(1) + ' 秒'; }).join('、') + (o.target ? '　' + (last <= o.target ? '✔ 達標！' : '未夠快，再提速試試。') : '');
+    }
+    go.onclick = function () {
+      if (run) { stop(); return; }
+      t0 = performance.now(); run = true; last = null; go.textContent = '■ 停止'; if (fill) fill.disabled = true; tick();
+    };
+    $('.sw-reset', box).onclick = function () { run = false; cancelAnimationFrame(raf); last = null; show(0); go.textContent = '▶ 開始'; if (fill) fill.disabled = true; };
+    if (fill) fill.onclick = function () {
+      if (last === null) return;
+      var k = o.key || 'sec', inp = $$(o.fill + ' tr.r input[data-k="' + k + '"]').filter(function (x) { return !String(x.value).trim(); })[0];
+      if (!inp) { toast('記錄表的秒數已填滿，請先按「＋ 新增一行」'); return; }
+      inp.value = last.toFixed(1); inp.dispatchEvent(new Event('input', { bubbles: true }));
+      inp.closest('tr').classList.add('sw-flash'); setTimeout(function () { inp.closest('tr').classList.remove('sw-flash'); }, 1200);
+      toast('已把 ' + last.toFixed(1) + ' 秒填入記錄表'); fill.disabled = true;
+    };
+  };
   /* 未完成某一題前把內容鎖住（避免先看答案） */
   F1.lock = function (el, msg) {
     el = typeof el === 'string' ? $(el) : el;

@@ -123,7 +123,7 @@
       <li>轉彎：後退的一邊改成 <b>20</b>，前進的一邊改成 <b>40</b>。</li>
       <li>「否則」改成「全部馬達 後退 20」。</li></ol></div>
   <div class="step"><h4><span class="sn">2</span>校準、下載、測試</h4>
-    <p>和上一課一樣：校準 → 下載 → 放在 8 字線的起點（黑線在車底正中）→ 開電源。同組一人用手機計時，由起步到回到起點。</p></div>
+    <p>和上一課一樣：校準 → 下載 → 放在 8 字線的起點（黑線在車底正中）→ 開電源。同組一人用第 5 節的<b>計時器</b>計時，由起步到回到起點。</p></div>
   <div class="step"><h4><span class="sn">3</span>逐步提速，目標 20 秒</h4>
     <p>走得完之後，<b>直行</b>和轉彎時<b>前進的一邊</b>每次一齊加 10；轉彎時<b>後退的一邊</b>保持大約是一半。左右擺得厲害，就把後退的一邊減 10。<b>每次只改一樣</b>，並記錄秒數。</p></div>
   </div>
@@ -132,7 +132,7 @@
 
 <section class="card" id="s5" data-short="測試記錄">
   <header><span class="num">5</span><h2>測試記錄：目標 20 秒</h2><span class="marks">10 分</span></header>
-  <p>每試一次填一行，把程式裏的數字<b>全部</b>照填，最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。</p>
+  <p>每試一次填一行，把程式裏的數字<b>全部</b>照填，最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。計時：小車起步按「開始」，回到起點按「停止」，再按「填入記錄表」。</p>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:30%">欄</th><th>填什麼</th></tr></thead>
     <tbody>
@@ -142,6 +142,7 @@
       <tr><td>否則後退</td><td>脫線時「全部馬達 後退」的速度</td></tr>
     </tbody>
   </table></div>
+  <div id="sw"></div>
   <div id="tierlog"></div>
   <h3>出了問題？</h3>
   <div class="tbl-wrap"><table>
@@ -307,6 +308,7 @@ F1.trials('#tierlog', { key: 'log20', label: '3. 8 字線測試記錄', max: 10,
   },
   complete: function (r) { return ['sp', 'tb', 'tf', 'bk'].every(function (k) { return String(r[k] || '').trim(); }) && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
 
+F1.stopwatch('#sw', { label: '計時器：走一圈 8 字線用幾秒？', target: 20, fill: '#tierlog' });
 F1.verify('#verify', { key: 'real', label: '4. 真車走 8 字線（老師驗收）', what: '真車用優化後的巡線程式走 8 字線一圈', max: 25, sec: 's6', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '20 秒內走完 8 字線' }, { v: 'part', t: '部分完成', s: 15, d: '走完 8 字線，但超過 20 秒' }, { v: 'none', t: '未完成', s: 5, d: '未能走完 8 字線（參與分）' }] });
 F1.mclink('#mclink', { key: 'link', sec: 's6' });
 F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 5, sec: 's7', placeholder: '例：直行 60、前進的一邊 60、後退的一邊 30，18 秒走完。' });
