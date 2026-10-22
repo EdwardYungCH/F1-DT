@@ -102,10 +102,10 @@
       view: { x0: -25, y0: -25, x1: 55, y1: 55 },
       start: { x: 0, y: 0, h: Math.PI / 2 }          // 車頭向上，放在地磚一角
     },
-    oval: {                                          // 內部名稱保留 oval；實際是正圓 O 形巡線圖
-      name: 'O 形巡線圖', kind: 'track', width: 2.0, radius: 15,
-      paper: { x0: -27, y0: -27, x1: 27, y1: 27 },
-      build: function () { return turtle(15, 0, 90, [['L', 360, 15]]); },
+    oval: {                                          // 內部名稱保留 oval；實際是正圓 O 形巡線圖（按老師相片：DFRobot Track Map V1.2）
+      name: 'O 形巡線圖', kind: 'track', width: 2.0, radius: 19.5,
+      paper: { x0: -25, y0: -25, x1: 25, y1: 25 },
+      build: function () { return turtle(19.5, 0, 90, [['L', 360, 19.5]]); },
       startIndex: 0.05                               // 右邊，向上行（逆時針）
     },
     eight: {                                         // 8 字巡線圖：按老師的實物相片（約 A2 紙，橫放的「∞」，中間交叉）

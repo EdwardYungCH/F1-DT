@@ -131,13 +131,22 @@
 
 <section class="card" id="s5" data-short="測試記錄">
   <header><span class="num">5</span><h2>測試記錄：目標 8 秒</h2><span class="marks">10 分</span></header>
-  <p>每試一次填一行，最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。</p>
+  <p>每試一次填一行，把程式裏的數字<b>全部</b>照填，最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:30%">欄</th><th>填什麼</th></tr></thead>
+    <tbody>
+      <tr><td>慢的一邊</td><td>轉彎時內側馬達的速度（向左轉＝左側）。① 填前進的速度；② 停止填 <b>0</b>；③ 填後退的速度</td></tr>
+      <tr><td>快的一邊</td><td>轉彎時外側馬達前進的速度（向左轉＝右側）</td></tr>
+      <tr><td>直行</td><td>M ＝ 1 時「全部馬達 前進」的速度</td></tr>
+      <tr><td>後退</td><td>脫線時「全部馬達 後退」的速度</td></tr>
+    </tbody>
+  </table></div>
   <div id="tierlog"></div>
   <h3>出了問題？</h3>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:32%">現象</th><th>檢查</th></tr></thead>
     <tbody>
-      <tr><td>用 ② 時轉彎推不動</td><td>直行速度加到 50</td></tr>
+      <tr><td>用 ② 時轉彎推不動</td><td>快的一邊加到 50</td></tr>
       <tr><td>在交叉位轉錯路</td><td>第一個判斷要是「M ＝ 1 → 前進」</td></tr>
       <tr><td>彎位衝出黑線</td><td>速度減 10，或改用 ③；左右有沒有調轉？</td></tr>
       <tr><td>脫線後一直後退，回不到黑線</td><td>後退速度減到 10；放車時黑線要在車底正中</td></tr>
@@ -270,25 +279,35 @@ document.getElementById('tp3').innerHTML = A.turnPanel(3);
 
 /* ---- 4 測試記錄 ---- */
 var MT = [{ v: '1', t: '① 一邊慢、一邊快' }, { v: '2', t: '② 一邊停、一邊行' }, { v: '3', t: '③ 一邊後退、一邊前進' }];
-var TR = [{ v: 'ok', t: '走完一圈 ✔' }, { v: 'stuck', t: '轉彎時推不動' }, { v: 'out', t: '彎位衝出黑線' }, { v: 'cross', t: '在交叉位轉錯路' }, { v: 'swing', t: '左右急擺' }];
+var TR = [{ v: 'ok', t: '走完一圈 ✔' }, { v: 'stuck', t: '轉彎時推不動' }, { v: 'out', t: '彎位衝出黑線' }, { v: 'cross', t: '在交叉位轉錯路' }, { v: 'swing', t: '左右急擺' }, { v: 'lost', t: '脫線後退，回不到黑線' }];
 F1.trials('#tierlog', { key: 'tierlog', label: '3. 8 字線測試記錄', max: 10, sec: 's5', minRows: 3,
-  cols: [{ k: 'm', label: '轉彎方法', type: 'select', options: MT, w: '11em' }, { k: 'sp', label: '直行速度', type: 'number', ph: '40', w: '6em' },
-    { k: 'jd', label: '結果', type: 'select', options: TR, w: '10em' }, { k: 'sec', label: '一圈用了幾秒', type: 'number', ph: '例：15', w: '7em' }],
-  example: ['② 一邊停、一邊行', '40', '走完一圈 ✔', '15', '未夠快：直行 50'],
+  cols: [{ k: 'm', label: '轉彎方法', type: 'select', options: MT, w: '11em' },
+    { k: 'sl', label: '慢的一邊', type: 'number', ph: '0', w: '5em' }, { k: 'sf', label: '快的一邊', type: 'number', ph: '40', w: '5em' },
+    { k: 'sp', label: '直行', type: 'number', ph: '40', w: '5em' }, { k: 'bk', label: '後退', type: 'number', ph: '20', w: '5em' },
+    { k: 'jd', label: '結果', type: 'select', options: TR, w: '10em' }, { k: 'sec', label: '秒數', type: 'number', ph: '15', w: '5em' }],
+  example: ['② 一邊停、一邊行', '0', '40', '40', '20', '走完一圈 ✔', '15', '未夠快：直行、快的一邊加到 50'],
   next: function (r) {
-    var sp = parseFloat(r.sp), t = parseFloat(r.sec); if (!(sp > 0) || !r.jd) return '';
+    var sp = parseFloat(r.sp), sf = parseFloat(r.sf), sl = parseFloat(r.sl), bk = parseFloat(r.bk), t = parseFloat(r.sec);
+    if (!r.m || !(sp > 0) || !(sf > 0) || isNaN(sl) || !(bk >= 0) || !r.jd) return '';
+    if (r.m === '2' && sl !== 0) return '<span style="color:var(--amber)">② 慢的一邊是「停止」，請填 0</span>';
     if (r.jd === 'ok') {
       if (!(t > 0)) return '<span style="color:var(--amber)">↑ 請填秒數</span>';
       if (t <= 8) return '<b style="color:var(--ok)">✔ 達標！請老師驗收</b>';
-      return '未夠快：直行 <b>' + (sp + 10) + '</b>';
+      return '未夠快：直行改 <b>' + (sp + 10) + '</b>、快的一邊改 <b>' + (sf + 10) + '</b>';
     }
-    if (r.jd === 'stuck') return '直行改 <b>' + (sp + 10) + '</b>';
+    if (r.jd === 'stuck') return '快的一邊改 <b>' + (sf + 10) + '</b>';
     if (r.jd === 'out') return '太快：直行減到 <b>' + Math.max(20, sp - 10) + '</b>，或改用 <b>③</b>';
     if (r.jd === 'cross') return '把「M ＝ 1 → 前進」放在第一個';
+    if (r.jd === 'lost') return '後退減到 <b>' + Math.max(10, bk - 10) + '</b>；放車時黑線要在車底正中';
     return '改用 <b>②</b> 或 <b>①</b>，轉得順一點';
   },
-  carry: function (last, nr) { var sp = parseFloat(last.sp), t = parseFloat(last.sec); if (last.m) nr.m = last.m; if (sp > 0) nr.sp = String(last.jd === 'stuck' || (last.jd === 'ok' && t > 8) ? sp + 10 : sp); },
-  complete: function (r) { return r.m && String(r.sp || '').trim() && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
+  carry: function (last, nr) {
+    var t = parseFloat(last.sec), up = last.jd === 'ok' && t > 8;
+    ['m', 'sl', 'sf', 'sp', 'bk'].forEach(function (k) { if (last[k] !== undefined && last[k] !== '') nr[k] = last[k]; });
+    if (up && parseFloat(last.sp) > 0) nr.sp = String(parseFloat(last.sp) + 10);
+    if ((up || last.jd === 'stuck') && parseFloat(last.sf) > 0) nr.sf = String(parseFloat(last.sf) + 10);
+  },
+  complete: function (r) { return r.m && ['sl', 'sf', 'sp', 'bk'].every(function (k) { return String(r[k] || '').trim(); }) && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
 
 F1.verify('#verify', { key: 'real', label: '4. 真車走 8 字線（老師驗收）', what: '真車用優化後的巡線程式走 8 字線一圈', max: 25, sec: 's6', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '8 秒內走完 8 字線' }, { v: 'part', t: '部分完成', s: 15, d: '走完 8 字線，但超過 8 秒' }, { v: 'none', t: '未完成', s: 5, d: '未能走完 8 字線（參與分）' }] });
 F1.mclink('#mclink', { key: 'link', sec: 's6' });
