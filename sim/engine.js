@@ -106,6 +106,12 @@
       build: function () { return turtle(15, 0, 90, [['L', 360, 15]]); },
       startIndex: 0.05                               // 右邊，向上行（逆時針）
     },
+    eight: {                                         // 8 字巡線圖：兩個半徑 15 cm 的圓圈，中間交叉
+      name: '8 字巡線圖', kind: 'track', width: 2.0,
+      paper: { x0: -27, y0: -48, x1: 27, y1: 48 },
+      build: function () { return turtle(0, 0, 45, [['S', 15], ['L', 270, 15], ['S', 30], ['R', 270, 15], ['S', 15]]); },
+      startIndex: 0.03
+    },
     sharp: {
       name: '急彎挑戰圖', kind: 'track', width: 2.0,
       paper: { x0: -40, y0: -42, x1: 14, y1: 38 },

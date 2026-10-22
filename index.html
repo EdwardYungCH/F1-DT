@@ -92,7 +92,7 @@ h2.lab{font-size:.85rem;letter-spacing:.12em;color:var(--ink-3);margin:30px 0 12
     { n: 1, id: 'L1', href: 'L1/', c: '#1d63c9', title: '認識機械人', desc: '感知、決定、動作；機械人、自動化系統還是都不是；用輸入→處理→輸出拆解機械人。' },
     { n: 2, id: 'L2', href: 'L2/', c: '#b4235a', title: '小車走正方形', desc: '拆解程式（直行、停頓、轉彎、重複），下載到 micro:bit，用測試→觀察→調整的循環令小車走一格地磚正方形。' },
     { n: 3, id: 'L3', href: 'L3/', c: '#0e7d6a', title: '巡線機械人', desc: '黑線 ＝ 1、白色 ＝ 0；照圖砌巡線程式，令小車自己沿黑線走完一圈，再逐步提速。' },
-    { n: 4, id: 'L4', href: 'L4/', c: '#5644b8', title: '流程圖與分層修正', desc: '認識流程圖 4 個符號，看懂巡線程式的流程圖；用 5 個感應器的分層修正令小車轉得更順。' }
+    { n: 4, id: 'L4', href: 'L4/', c: '#5644b8', title: '流程圖與分層修正', desc: '流程圖 4 個符號，完成巡線程式的流程圖；學轉彎 3 種方法及分層修正，令小車 8 秒內走完 8 字線。' }
   ];
   function get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }

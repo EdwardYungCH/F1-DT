@@ -182,6 +182,7 @@ with sync_playwright() as p:
     pg.goto(U('L4/index.html')); pg.wait_for_timeout(400)
     check(pg.locator('iframe').count() == 0, '第四堂沒有模擬器')
     check('溫度' in pg.inner_text('#fan'), '流程圖示範：自動風扇')
+    check(pg.locator('#map8 svg').count() == 1, '8 字巡線圖')
     check(pg.locator('#tp1 svg, #tp2 svg, #tp3 svg').count() == 3, '轉彎 3 種方法圖')
     check('後退 20' in pg.inner_text('#tier') and pg.inner_text('#tier').count('全部馬達') >= 2, '分層修正流程圖：否則改為後退')
     ans = ['讀取 L1、M、R1', 'M ＝ 1', '全部馬達 前進 20', 'L1 ＝ 1', '左側 後退 10、右側 前進 20', 'R1 ＝ 1', '左側 前進 20、右側 後退 10', '全部馬達 停止']
@@ -194,6 +195,10 @@ with sync_playwright() as p:
     check(len(card.locator('.fbx').inner_text().strip()) > 0, '符號練習可作答')
     r0 = pg.locator('#tierlog tr.r').nth(0)
     r0.locator('input[data-k=sp]').fill('40'); r0.locator('input[data-k=back]').fill('20'); r0.locator('.pick').click(); pick_sheet(pg, '推不動')
+    check('直行改 50' in r0.inner_text(), '推不動 → 直行 50')
+    r0.locator('.pick').click(); pick_sheet(pg, '走完一圈'); r0.locator('input[data-k=sec]').fill('7')
+    check('達標' in r0.inner_text(), '7 秒走完 8 字線 → 達標')
+    r0.locator('.pick').click(); pick_sheet(pg, '推不動')
     check('直行改 50' in r0.inner_text(), '分層記錄建議直行 50')
 
     print('9. 老師區密碼')
