@@ -56,7 +56,7 @@
       starter: x(start('', 30, 30) + forever('', 30, 150))
     },
     l4tier: {
-      lesson: 4, level: 2, scene: 'sharp', title: '分層修正：急彎挑戰圖',
+      lesson: 0, level: 2, scene: 'sharp', title: '挑戰：分層修正（L2、R2）急彎圖',
       goal: '加入 L2、R2：輕微偏離用「一邊停」，大幅偏離才用「一邊後退」。直行速度至少 40，走完一圈而且「急轉次數」不多於 50 次。',
       check: 'tier', minSpeed: 40, maxSharp: 50,
       starter: x(start(init(pause(1000))) + forever(follower('back'), 30, 170)),

@@ -26,7 +26,15 @@ TIER = """(function(){var c=X.cond, m=X.motor, s=X.stop;
  '<value name="IF4">'+c(4)+'</value><statement name="DO4">'+m('L','1',40,m('R','-1',20))+'</statement>'+
  '<statement name="ELSE">'+m('A','-1',20)+'</statement></block>';
  return X.x(X.start(X.init(X.pause(1000))) + X.forever(b,30,170));})()"""
-PROGS['blocks-tier'] = TIER
+# TIER（L2／R2 分層修正）只供 tools/test_sim.py 測試模擬器，課堂頁已不用
+OPT = """(function(){var c=X.cond, m=X.motor, s=X.stop;
+ var b='<block type="controls_if"><mutation elseif="2" else="1"></mutation>'+
+ '<value name="IF0">'+c(2)+'</value><statement name="DO0">'+m('A','1',40)+'</statement>'+
+ '<value name="IF1">'+c(1)+'</value><statement name="DO1">'+s('L',m('R','1',40))+'</statement>'+
+ '<value name="IF2">'+c(3)+'</value><statement name="DO2">'+m('L','1',40,s('R'))+'</statement>'+
+ '<statement name="ELSE">'+m('A','-1',20)+'</statement></block>';
+ return X.x(X.start(X.init(X.pause(1000))) + X.forever(b,30,170));})()"""
+PROGS['blocks-opt'] = OPT
 with sync_playwright() as p:
     b = p.chromium.launch()
     pg = b.new_page(viewport={'width': 1400, 'height': 1300}, device_scale_factor=2)
