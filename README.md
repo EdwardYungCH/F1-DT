@@ -34,6 +34,7 @@ assets/
   img/              插圖（SVG）及積木圖（PNG）
 teacher/
   index.html        老師區：課堂流程、分組及器材、答案、教學提示
+  collector.html    成績收集器：分多次上傳報告、同一課取最高分、學生名單、欠交名單、豁免／老師輸入、匯出 CSV、備份
   summary.html      成績匯總工具：核對驗證碼、匯出 CSV、題目分析
 tools/              產生插圖、積木圖、單一檔案版本及測試的程式
   mcblocks/         MakeCode 外觀的積木繪圖（pxt-blockly）

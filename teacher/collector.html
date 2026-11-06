@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>成績收集器｜中一 DT 自動化與機械人</title>
+<link rel="stylesheet" href="../assets/common.css">
+<style>
+body{background:#f4f6f9}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 16px 60px}
+.gate{max-width:420px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:14px 0}
+.panel h2{font-size:1.1rem;margin:0 0 8px}
+.drop{border:3px dashed var(--t-mid);border-radius:16px;background:#fff;padding:24px;text-align:center}
+.drop.over{background:var(--t-soft)}
+.msg{margin-top:10px;font-weight:700}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.tabs button{min-height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-weight:700;padding:4px 14px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--t);border-color:var(--t);color:#fff}
+.opts{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:.92rem}
+.opts label{display:inline-flex;gap:5px;align-items:center;cursor:pointer}
+table.g{font-size:.88rem;border-collapse:collapse;width:100%}
+table.g th,table.g td{padding:6px 8px;border-bottom:1px solid #e6ebf1;white-space:nowrap;text-align:center}
+table.g th{background:#f7f9fc;position:sticky;top:0;z-index:1}
+table.g td.l,table.g th.l{text-align:left}
+table.g td.cell{cursor:pointer;min-width:84px}
+table.g td.cell:hover{background:#eef5ff}
+.sc{font-weight:800;font-size:1rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:800;border-radius:6px;padding:0 5px;margin-left:3px;vertical-align:middle}
+.t-miss{background:#fdeaea;color:#b42318}.t-ex{background:#eef2ff;color:#3e3090}.t-man{background:#fff4d6;color:#8a5a00}
+.t-dup{background:#e7f1fb;color:#1e5aa8}.t-bad{background:#fdeaea;color:#b42318}.t-gap{background:#fff1e0;color:#a14d00}
+.none{color:#b42318;font-weight:800}
+.st-ok{color:#1f7a44;font-weight:800}.st-no{color:#b42318;font-weight:800}
+.modal .box{max-width:720px}
+.ups{width:100%;font-size:.86rem;border-collapse:collapse}.ups td,.ups th{border-bottom:1px solid #e6ebf1;padding:5px 6px;text-align:left}
+.ups tr.use td{background:#e9f7ef}
+.mkopts label{display:flex;gap:8px;align-items:center;padding:4px 0;cursor:pointer}
+textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;border-radius:10px;padding:8px 10px}
+.small{font-size:.86rem}
+.legend span{margin-right:10px}
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <h2 style="margin-bottom:8px">成績收集器</h2>
+  <p class="small muted">請輸入老師密碼。</p>
+  <input class="inp" id="pin" type="password" placeholder="密碼" autocomplete="off">
+  <p class="small" id="err" style="color:var(--no);min-height:1.2em"></p>
+  <button class="btn primary" id="go" type="button">進入</button>
+</div>
+
+<div class="wrap" id="main" hidden>
+  <h1 style="font-size:1.5rem">成績收集器</h1>
+  <p class="muted">把學生的成績報告（.html）拖進來，可以分很多次、重複上傳：同一位學生同一課有幾份報告時，<b>自動取最高分一份</b>。兩人一組的報告會同時記入兩位組員。資料儲存在這部電腦的瀏覽器內，下次打開仍在；換電腦前請先「匯出備份」。</p>
+
+  <div class="panel">
+    <h2>① 上傳成績報告</h2>
+    <div class="drop" id="drop"><b>把成績報告拖到這裏</b><br><span class="small muted">可以一次放很多個檔案；之後再放新的也可以</span><br>
+      <label class="btn" style="margin-top:10px">選擇檔案<input type="file" id="file" multiple accept=".html,.htm,text/html" hidden></label></div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="panel">
+    <h2>② 學生名單（建議先貼上，缺交的同學才會顯示出來）</h2>
+    <p class="small muted">從 Excel 複製「班別、學號、姓名」三欄貼上（每行一位）。沒有貼名單時，只會列出有交報告的學生。</p>
+    <textarea class="inp" id="roster" placeholder="1A	1	陳大文&#10;1A	2	李小明"></textarea>
+    <div class="btnrow"><button class="btn primary" id="saveRoster" type="button">儲存名單</button><span class="small muted" id="rosterInfo"></span></div>
+  </div>
+
+  <div class="panel">
+    <h2>③ 成績表</h2>
+    <div class="opts" id="lessonOpts"></div>
+    <div class="opts" style="margin-top:6px">
+      <label><input type="checkbox" id="showAll"> 也顯示沒有計分的課</label>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <p class="small muted legend">按格子可看所有上傳及調整分數：
+      <span><span class="tag t-dup">×2</span> 上傳了 2 份（已取最高分）</span>
+      <span><span class="tag t-gap">漏 2</span> 有 2 項未完成</span>
+      <span><span class="tag t-ex">豁免</span> 缺席，按比例計</span>
+      <span><span class="tag t-man">✎</span> 老師輸入</span>
+      <span><span class="tag t-bad">⚠</span> 有報告驗證失敗（不計）</span>
+      <span class="none">欠</span> 沒有報告</p>
+    <div class="tbl-wrap" id="tbl"></div>
+    <div class="btnrow">
+      <button class="btn go" id="csv" type="button">📥 匯出 CSV（Excel）</button>
+      <button class="btn" id="missing" type="button">📋 欠交名單</button>
+      <button class="btn" id="backup" type="button">💾 匯出備份</button>
+      <label class="btn">📂 匯入備份<input type="file" id="restore" accept=".json,application/json" hidden></label>
+      <button class="btn ghost" id="clear" type="button">清除全部資料</button>
+      <a class="btn ghost" href="index.html">返回老師區</a>
+    </div>
+    <div id="missOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>計分方法</h2>
+    <ul class="small">
+      <li><b>每課分數</b>：取該學生該課所有有效報告中最高分的一份（同分取較新的一份）。驗證失敗的報告不計。</li>
+      <li><b>原始總分</b>：計分課的分數相加；沒有報告當 0 分（表上顯示「欠」）。</li>
+      <li><b>豁免</b>：該課不計，其餘各課按比例換算成滿分，例如 3 課中豁免 1 課：(L1 ＋ L3) ÷ 100 × 150。</li>
+      <li><b>缺交（0 分）</b>／<b>老師輸入分數</b>：在格子內設定，會蓋過報告的分數，並可寫備註。</li>
+    </ul>
+  </div>
+</div>
+
+<script src="../assets/config.js"></script>
+<script src="../assets/sha.js"></script>
+<script>
+(function () {
+  var C = window.F1CONFIG || window.C;
+  var KEY = 'f1dt:collector', LS = ['L1', 'L2', 'L3', 'L4', 'PJ'], STD = 50;
+  var LN = { L1: '第一堂', L2: '第二堂', L3: '第三堂', L4: '第四堂', PJ: '單元專題' };
+  function $(s) { return document.querySelector(s); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fmt(t) { if (!t) return ''; var d = new Date(t), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
+  function r1(x) { return Math.round(x * 10) / 10; }
+  function half(s) { return String(s == null ? '' : s).replace(/[！-～]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xfee0); }).replace(/　/g, ' '); }
+  function nCls(c) { return half(c).replace(/\s+/g, '').toUpperCase(); }
+  function nNo(n) { var s = half(n).replace(/\s+/g, ''); return /^\d+$/.test(s) ? String(parseInt(s, 10)) : s; }
+  function sk(cls, no) { return nCls(cls) + '|' + nNo(no); }
+
+  /* ---------- 儲存 ---------- */
+  var S = { v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'] };
+  function load() { try { var x = JSON.parse(localStorage.getItem(KEY) || 'null'); if (x && x.v === 1) S = Object.assign(S, x); } catch (e) {} }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alertBox('未能儲存（瀏覽器空間不足或被封鎖）。請先「匯出備份」。'); } }
+
+  /* ---------- 密碼 ---------- */
+  function open() { $('#gate').hidden = true; $('#main').hidden = false; load(); $('#roster').value = S.roster.map(function (r) { return [r.cls, r.no, r.name].join('\t'); }).join('\n'); render(); }
+  try { if (sessionStorage.getItem('f1dt:teacher') === '1') open(); } catch (e) {}
+  function go() { if ($('#pin').value !== C.TEACHER_PIN) { $('#err').textContent = '密碼不正確。'; return; } try { sessionStorage.setItem('f1dt:teacher', '1'); } catch (e) {} open(); }
+  $('#go').onclick = go; $('#pin').onkeydown = function (e) { if (e.key === 'Enter') go(); };
+
+  /* ---------- 讀取報告 ---------- */
+  function parse(text, fname) {
+    var m = /<script type="application\/json" id="f1-report">([\s\S]*?)<\/script>/.exec(text);
+    if (!m) return { err: '不是本單元的成績報告', fname: fname };
+    try {
+      var box = JSON.parse(m[1]), d = JSON.parse(box.payload);
+      var ok = SHA.hmac(C.SIGN_KEY, box.payload) === box.sig && d.app === C.APP;
+      return { sig: box.sig, ok: ok, fname: fname, added: Date.now(), lesson: d.lesson, title: d.title, cls: d.cls, no: d.no, name: d.name,
+        partner: d.partner && d.partner.name ? { no: d.partner.no, name: d.partner.name } : null, total: +d.total || 0, max: +d.max || STD, exported: d.exported, teacherUsed: !!d.teacherUsed,
+        items: (d.items || []).filter(function (it) { return it.max > 0; }).map(function (it) {
+          var x = { label: it.label, score: it.score, max: it.max, done: !!it.done };
+          if (it.detail && it.detail.type === 'verify') x.verify = it.detail.lv || (it.detail.ok ? '已驗收' : '');
+          return x;
+        }) };
+    } catch (e) { return { err: '檔案損壞', fname: fname }; }
+  }
+  function addFiles(files) {
+    var list = Array.prototype.slice.call(files), n = list.length, res = { add: 0, dup: 0, bad: 0, err: [] };
+    if (!n) return;
+    list.forEach(function (f) {
+      var rd = new FileReader();
+      rd.onload = function () {
+        var x = parse(String(rd.result), f.name);
+        if (x.err) res.err.push(f.name + '：' + x.err);
+        else if (S.reps[x.sig]) res.dup++;
+        else { S.reps[x.sig] = x; res.add++; if (!x.ok) res.bad++; }
+        if (--n === 0) {
+          save(); render();
+          $('#msg').innerHTML = '新增 <b>' + res.add + '</b> 份' + (res.dup ? '；完全相同的檔案 ' + res.dup + ' 份（已略過）' : '') +
+            (res.bad ? '；<span style="color:var(--no)">驗證失敗 ' + res.bad + ' 份（不計分）</span>' : '') +
+            (res.err.length ? '<br><span style="color:var(--no)">無法讀取：' + res.err.map(esc).join('、') + '</span>' : '');
+        }
+      };
+      rd.readAsText(f);
+    });
+  }
+  var drop = $('#drop');
+  drop.addEventListener('dragover', function (e) { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', function () { drop.classList.remove('over'); });
+  drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); });
+  $('#file').onchange = function () { addFiles(this.files); this.value = ''; };
+
+  /* ---------- 名單 ---------- */
+  function parseRoster(t) {
+    var out = [];
+    String(t || '').split(/\r?\n/).forEach(function (line) {
+      line = line.trim(); if (!line) return;
+      var p = line.split(/\t|,|，/).map(function (s) { return s.trim(); }).filter(Boolean);
+      if (p.length < 3) p = line.split(/\s+/);
+      if (p.length < 2 || /班別|class/i.test(p[0])) return;
+      out.push({ cls: nCls(p[0]), no: nNo(p[1]), name: p.slice(2).join(' ') });
+    });
+    return out;
+  }
+  $('#saveRoster').onclick = function () { S.roster = parseRoster($('#roster').value); save(); render(); };
+
+  /* ---------- 計算 ---------- */
+  function entries() {          // 每份報告 → 主報告人及組員二各一項
+    var out = [];
+    Object.keys(S.reps).forEach(function (sig) {
+      var r = S.reps[sig], sc = r.max ? r.total / r.max * STD : 0;
+      out.push({ k: sk(r.cls, r.no), cls: nCls(r.cls), no: nNo(r.no), name: r.name, r: r, sc: r1(sc), mate: r.partner ? r.partner.name : '' });
+      if (r.partner) out.push({ k: sk(r.cls, r.partner.no), cls: nCls(r.cls), no: nNo(r.partner.no), name: r.partner.name, r: r, sc: r1(sc), mate: r.name, asPartner: true });
+    });
+    return out;
+  }
+  function model() {
+    var es = entries(), stu = {}, order = [];
+    function ensure(cls, no, name, fromRoster) {
+      var k = cls + '|' + no;
+      if (!stu[k]) { stu[k] = { k: k, cls: cls, no: no, name: name || '', inRoster: !!fromRoster, L: {} }; order.push(k); }
+      else if (fromRoster) { stu[k].name = name || stu[k].name; stu[k].inRoster = true; }
+      return stu[k];
+    }
+    S.roster.forEach(function (r) { ensure(r.cls, r.no, r.name, true); });
+    es.forEach(function (e) {
+      var s = ensure(e.cls, e.no, e.name, false);
+      if (!s.inRoster && e.name && (!s.name || (e.r.exported || 0) > (s._t || 0))) { s.name = e.name; s._t = e.r.exported || 0; }
+      if (s.inRoster && e.name && s.name && e.name.replace(/\s/g, '') !== s.name.replace(/\s/g, '')) s.nameWarn = (s.nameWarn || []).concat(e.name);
+      var c = s.L[e.r.lesson] || (s.L[e.r.lesson] = { ups: [] });
+      c.ups.push(e);
+    });
+    Object.keys(stu).forEach(function (k) {
+      var s = stu[k];
+      Object.keys(s.L).forEach(function (l) {
+        var c = s.L[l], good = c.ups.filter(function (u) { return u.r.ok; });
+        good.sort(function (a, b) { return b.sc - a.sc || (b.r.exported || 0) - (a.r.exported || 0); });
+        c.best = good[0] || null; c.nGood = good.length; c.nBad = c.ups.length - good.length;
+        c.gaps = c.best ? c.best.r.items.filter(function (it) { return !it.done; }) : [];
+      });
+    });
+    order.sort(function (a, b) { var x = stu[a], y = stu[b]; return x.cls.localeCompare(y.cls) || ((+x.no || 0) - (+y.no || 0)) || x.no.localeCompare(y.no); });
+    return { stu: stu, order: order };
+  }
+  function cellVal(s, l) {      // → {score|null, kind: 'rep'|'ex'|'zero'|'man'|'miss'}
+    var m = S.marks[s.k + '|' + l], c = s.L[l];
+    if (m && m.type === 'ex') return { score: null, kind: 'ex', m: m };
+    if (m && m.type === 'zero') return { score: 0, kind: 'zero', m: m };
+    if (m && m.type === 'man') return { score: +m.score || 0, kind: 'man', m: m };
+    if (c && c.best) return { score: c.best.sc, kind: 'rep', c: c };
+    return { score: null, kind: 'miss', c: c };
+  }
+  function sumOf(s) {
+    var raw = 0, mx = 0, miss = [], ex = 0, cnt = S.counted.length;
+    S.counted.forEach(function (l) {
+      var v = cellVal(s, l);
+      if (v.kind === 'ex') { ex++; return; }
+      mx += STD; raw += v.score || 0;
+      if (v.kind === 'miss') miss.push(l);
+    });
+    var full = STD * cnt, fin = mx ? raw / mx * full : 0;
+    return { raw: r1(raw), mx: mx, full: full, fin: r1(fin), pct: mx ? Math.round(raw / mx * 100) : 0, miss: miss, ex: ex };
+  }
+
+  /* ---------- 畫表 ---------- */
+  var curCls = '全部';
+  function render() {
+    var M = model(), clsList = ['全部'];
+    M.order.forEach(function (k) { if (clsList.indexOf(M.stu[k].cls) < 0) clsList.push(M.stu[k].cls); });
+    if (clsList.indexOf(curCls) < 0) curCls = '全部';
+    $('#rosterInfo').textContent = S.roster.length ? '名單：' + S.roster.length + ' 人' : '未有名單';
+    $('#lessonOpts').innerHTML = '<b>計分的課：</b>' + LS.map(function (l) { return '<label><input type="checkbox" data-l="' + l + '"' + (S.counted.indexOf(l) >= 0 ? ' checked' : '') + '> ' + LN[l] + '</label>'; }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('#lessonOpts input'), function (b) {
+      b.onchange = function () { var l = b.getAttribute('data-l'); S.counted = LS.filter(function (x) { return x === l ? b.checked : S.counted.indexOf(x) >= 0; }); save(); render(); };
+    });
+    $('#tabs').innerHTML = clsList.map(function (c) {
+      var n = c === '全部' ? M.order.length : M.order.filter(function (k) { return M.stu[k].cls === c; }).length;
+      return '<button type="button" data-c="' + esc(c) + '" aria-pressed="' + (c === curCls) + '">' + esc(c) + '（' + n + '）</button>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (b) { b.onclick = function () { curCls = b.getAttribute('data-c'); render(); }; });
+    var show = LS.filter(function (l) { return S.counted.indexOf(l) >= 0 || ($('#showAll').checked && M.order.some(function (k) { return M.stu[k].L[l]; })); });
+    var keys = M.order.filter(function (k) { return curCls === '全部' || M.stu[k].cls === curCls; });
+    if (!keys.length) { $('#tbl').innerHTML = '<p class="muted">未有資料：先上傳成績報告或貼上學生名單。</p>'; return; }
+    var h = '<table class="g"><thead><tr><th class="l">班別</th><th>學號</th><th class="l">姓名</th>' +
+      show.map(function (l) { return '<th>' + LN[l] + (S.counted.indexOf(l) >= 0 ? '' : '<br><span class="small muted">不計分</span>') + '<br><span class="small muted">/' + STD + '</span></th>'; }).join('') +
+      '<th>原始總分</th><th>最後分數<br><span class="small muted">/' + (STD * S.counted.length) + '</span></th><th>%</th><th class="l">狀態</th></tr></thead><tbody>';
+    keys.forEach(function (k) {
+      var s = M.stu[k], t = sumOf(s);
+      h += '<tr><td class="l">' + esc(s.cls) + '</td><td>' + esc(s.no) + '</td><td class="l">' + esc(s.name) + (s.nameWarn ? ' <span class="tag t-bad" title="報告上的名字：' + esc(s.nameWarn.join('、')) + '">名?</span>' : '') + (!s.inRoster && S.roster.length ? ' <span class="tag t-bad" title="不在名單內：可能學號或班別填錯">名單外</span>' : '') + '</td>';
+      show.forEach(function (l) {
+        var v = cellVal(s, l), c = s.L[l], tags = '';
+        if (c && c.nGood > 1) tags += '<span class="tag t-dup">×' + c.nGood + '</span>';
+        if (c && c.nBad) tags += '<span class="tag t-bad">⚠</span>';
+        var body;
+        if (v.kind === 'ex') body = '<span class="tag t-ex">豁免</span>';
+        else if (v.kind === 'zero') body = '<span class="sc">0</span><span class="tag t-miss">缺交</span>';
+        else if (v.kind === 'man') body = '<span class="sc">' + v.score + '</span><span class="tag t-man">✎</span>';
+        else if (v.kind === 'rep') body = '<span class="sc">' + v.score + '</span>' + (c.gaps.length ? '<span class="tag t-gap" title="未完成：' + esc(c.gaps.map(function (g) { return g.label; }).join('、')) + '">漏 ' + c.gaps.length + '</span>' : '');
+        else body = '<span class="none">欠</span>';
+        h += '<td class="cell" data-k="' + esc(k) + '" data-l="' + l + '" title="按這裏查看及調整">' + body + tags + '</td>';
+      });
+      h += '<td>' + t.raw + (t.ex ? '<span class="small muted"> /' + t.mx + '</span>' : '') + '</td><td><b>' + t.fin + '</b></td><td>' + t.pct + '</td>' +
+        '<td class="l">' + (t.miss.length ? '<span class="st-no">欠 ' + t.miss.map(function (l) { return LN[l]; }).join('、') + '</span>' : '<span class="st-ok">齊</span>') + (t.ex ? '<span class="small muted">（豁免 ' + t.ex + ' 課）</span>' : '') + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    $('#tbl').innerHTML = h;
+    Array.prototype.forEach.call(document.querySelectorAll('#tbl td.cell'), function (td) { td.onclick = function () { detail(td.getAttribute('data-k'), td.getAttribute('data-l')); }; });
+  }
+  $('#showAll').onchange = render;
+
+  /* ---------- 詳情及調整 ---------- */
+  function modal(html, onok) {
+    var m = document.createElement('div'); m.className = 'modal'; m.innerHTML = '<div class="box" role="dialog" aria-modal="true">' + html + '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', function (e) { if (e.target === m) m.remove(); });
+    Array.prototype.forEach.call(m.querySelectorAll('[data-close]'), function (b) { b.onclick = function () { m.remove(); }; });
+    var ok = m.querySelector('[data-ok]'); if (ok) ok.onclick = function () { if (onok(m) !== false) m.remove(); };
+    return m;
+  }
+  function alertBox(t) { modal('<p>' + esc(t) + '</p><div class="acts"><button class="btn primary" data-close>好</button></div>'); }
+  function detail(k, l) {
+    var M = model(), s = M.stu[k], c = s.L[l], mk = S.marks[k + '|' + l] || {}, h = '<h3>' + esc(s.cls) + ' ' + esc(s.no) + ' ' + esc(s.name) + '｜' + LN[l] + '</h3>';
+    if (c && c.ups.length) {
+      var ups = c.ups.slice().sort(function (a, b) { return (b.r.exported || 0) - (a.r.exported || 0); });
+      h += '<table class="ups"><tr><th>輸出時間</th><th>分數</th><th>驗證</th><th>組員</th><th>檔案</th></tr>' + ups.map(function (u) {
+        var use = c.best && u === c.best;
+        return '<tr class="' + (use ? 'use' : '') + '"><td>' + fmt(u.r.exported) + (use ? ' <b>（採用）</b>' : '') + '</td><td>' + u.r.total + ' / ' + u.r.max + (u.r.max !== STD ? '（＝' + u.sc + '）' : '') + '</td><td>' + (u.r.ok ? '✔' : '<span style="color:var(--no)">✘ 不計</span>') + '</td><td>' + esc(u.mate || '') + (u.asPartner ? '<br><span class="small muted">由組員上傳</span>' : '') + '</td><td class="small">' + esc(u.r.fname) + '</td></tr>';
+      }).join('') + '</table>';
+      if (c.best) h += '<p class="small" style="margin-top:8px"><b>採用報告的各項分數：</b>' + c.best.r.items.map(function (it) { return esc(it.label) + ' ' + it.score + '/' + it.max + (it.verify ? '（' + esc(it.verify) + '）' : '') + (it.done ? '' : ' <span class="tag t-gap">未完成</span>'); }).join('；') + '</p>';
+    } else h += '<p class="none">沒有這一課的報告。</p>';
+    h += '<h3 style="margin-top:14px">調整</h3><div class="mkopts">' +
+      '<label><input type="radio" name="mk" value=""' + (!mk.type ? ' checked' : '') + '> 自動：用報告最高分' + (c && c.best ? '（' + c.best.sc + '）' : '（沒有報告＝欠）') + '</label>' +
+      '<label><input type="radio" name="mk" value="ex"' + (mk.type === 'ex' ? ' checked' : '') + '> 豁免（缺席，這課不計，其餘按比例計）</label>' +
+      '<label><input type="radio" name="mk" value="zero"' + (mk.type === 'zero' ? ' checked' : '') + '> 缺交（0 分）</label>' +
+      '<label><input type="radio" name="mk" value="man"' + (mk.type === 'man' ? ' checked' : '') + '> 老師輸入分數：<input class="inp" id="mkScore" type="number" min="0" max="' + STD + '" step="0.5" style="width:7em" value="' + (mk.type === 'man' ? esc(mk.score) : '') + '"> / ' + STD + '</label>' +
+      '</div><p class="small" style="margin:8px 0 4px">備註（會匯出到 CSV）：</p><input class="inp" id="mkNote" value="' + esc(mk.note || '') + '" placeholder="例：病假，已補做；遺失報告，按驗收記錄給分">' +
+      '<div class="acts"><button class="btn" data-close>取消</button><button class="btn primary" data-ok>儲存</button></div>';
+    modal(h, function (m) {
+      var t = (m.querySelector('input[name=mk]:checked') || {}).value || '', note = m.querySelector('#mkNote').value.trim();
+      if (t === 'man') { var v = parseFloat(m.querySelector('#mkScore').value); if (!(v >= 0 && v <= STD)) { m.querySelector('#mkScore').focus(); return false; } S.marks[k + '|' + l] = { type: 'man', score: v, note: note }; }
+      else if (t) S.marks[k + '|' + l] = { type: t, note: note };
+      else if (note) S.marks[k + '|' + l] = { type: '', note: note };
+      else delete S.marks[k + '|' + l];
+      save(); render();
+    });
+  }
+
+  /* ---------- 匯出 ---------- */
+  function download(name, text, type) {
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type })); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function csvLine(arr) { return arr.map(function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(','); }
+  $('#csv').onclick = function () {
+    var M = model(), keys = M.order.filter(function (k) { return curCls === '全部' || M.stu[k].cls === curCls; });
+    var head = ['班別', '學號', '姓名'];
+    S.counted.forEach(function (l) { head.push(LN[l] + '（/' + STD + '）', LN[l] + ' 上傳份數', LN[l] + ' 備註'); });
+    head = head.concat(['原始總分', '計分滿分', '最後分數（/' + STD * S.counted.length + '）', '百分比', '狀態']);
+    var lines = [head].concat(keys.map(function (k) {
+      var s = M.stu[k], t = sumOf(s), row = [s.cls, s.no, s.name];
+      S.counted.forEach(function (l) {
+        var v = cellVal(s, l), c = s.L[l], mk = S.marks[k + '|' + l];
+        row.push(v.kind === 'ex' ? '豁免' : v.kind === 'miss' ? '欠' : v.score, c ? c.nGood : 0,
+          [mk && mk.type === 'zero' ? '缺交' : '', mk && mk.type === 'man' ? '老師輸入' : '', v.kind === 'rep' && c.gaps.length ? '未完成：' + c.gaps.map(function (g) { return g.label; }).join('、') : '', mk && mk.note ? mk.note : ''].filter(Boolean).join('；'));
+      });
+      return row.concat([t.raw, t.mx, t.fin, t.pct, t.miss.length ? '欠 ' + t.miss.map(function (l) { return LN[l]; }).join('、') : '齊']);
+    }));
+    download('F1DT_成績_' + (curCls === '全部' ? '全部' : curCls) + '.csv', '﻿' + lines.map(csvLine).join('\r\n'), 'text/csv;charset=utf-8');
+  };
+  $('#missing').onclick = function () {
+    var M = model(), keys = M.order.filter(function (k) { return curCls === '全部' || M.stu[k].cls === curCls; }), out = [];
+    S.counted.forEach(function (l) {
+      var miss = keys.filter(function (k) { return cellVal(M.stu[k], l).kind === 'miss'; }).map(function (k) { var s = M.stu[k]; return s.cls + ' ' + s.no + ' ' + s.name; });
+      var gap = keys.filter(function (k) { var v = cellVal(M.stu[k], l); return v.kind === 'rep' && v.c.gaps.length; }).map(function (k) { var s = M.stu[k]; return s.cls + ' ' + s.no + ' ' + s.name + '（未完成：' + s.L[l].gaps.map(function (g) { return g.label.replace(/^\d+\.\s*/, ''); }).join('、') + '）'; });
+      out.push(LN[l] + ' 欠交（' + miss.length + ' 人）：' + (miss.join('、') || '沒有'));
+      if (gap.length) out.push(LN[l] + ' 有未完成項目（' + gap.length + ' 人）：' + gap.join('、'));
+    });
+    $('#missOut').innerHTML = '<p class="small" style="margin-top:12px"><b>欠交名單</b>（可複製貼到 Google Classroom）：</p><textarea class="inp" readonly id="missText">' + esc(out.join('\n\n')) + '</textarea>';
+    $('#missText').select();
+  };
+  $('#backup').onclick = function () { download('F1DT_成績收集器備份_' + fmt(Date.now()).replace(/[ :]/g, '-') + '.json', JSON.stringify(S), 'application/json'); };
+  $('#restore').onchange = function () {
+    var f = this.files[0]; this.value = ''; if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      try {
+        var x = JSON.parse(String(rd.result)); if (!x || x.v !== 1 || !x.reps) throw 0;
+        var n = 0; Object.keys(x.reps).forEach(function (k) { if (!S.reps[k]) { S.reps[k] = x.reps[k]; n++; } });
+        Object.keys(x.marks || {}).forEach(function (k) { if (!S.marks[k]) S.marks[k] = x.marks[k]; });
+        if (!S.roster.length && x.roster) { S.roster = x.roster; $('#roster').value = S.roster.map(function (r) { return [r.cls, r.no, r.name].join('\t'); }).join('\n'); }
+        save(); render(); $('#msg').textContent = '已匯入備份：新增 ' + n + ' 份報告。';
+      } catch (e) { alertBox('這不是成績收集器的備份檔。'); }
+    };
+    rd.readAsText(f);
+  };
+  $('#clear').onclick = function () {
+    modal('<h3>清除全部資料？</h3><p>會刪除這部電腦上收集器內所有報告、名單及調整，不能復原。建議先「匯出備份」。</p><div class="acts"><button class="btn" data-close>取消</button><button class="btn primary" data-ok>清除</button></div>',
+      function () { S = { v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'] }; save(); $('#roster').value = ''; $('#msg').textContent = ''; render(); });
+  };
+
+  window.F1Collector = { addText: function (t, n) { var x = parse(t, n); if (!x.err && !S.reps[x.sig]) { S.reps[x.sig] = x; save(); render(); } return x; }, model: model, sumOf: sumOf, state: function () { return S; } };
+})();
+</script>
+</body>
+</html>

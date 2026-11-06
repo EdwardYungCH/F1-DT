@@ -5,7 +5,7 @@ import os, re, sys, base64, json
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'dist', 'single')
-LESSONS = [('L1', '第1堂_認識機械人'), ('L2', '第2堂_小車走正方形'), ('L3', '第3堂_巡線機械人'), ('L4', '第4堂_流程圖與巡線優化'), ('PJ', '單元專題_START到FINISH')]
+LESSONS = [('teacher/collector.html', '老師用_成績收集器'), ('L1', '第1堂_認識機械人'), ('L2', '第2堂_小車走正方形'), ('L3', '第3堂_巡線機械人'), ('L4', '第4堂_流程圖與巡線優化'), ('PJ', '單元專題_START到FINISH')]
 MIME = {'.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg'}
 IMG_DIR = os.path.join(ROOT, 'assets', 'img')
 
@@ -16,8 +16,10 @@ def data_uri(name):
 
 
 def build(lid, outname):
-    src_dir = os.path.join(ROOT, lid)
-    html = open(os.path.join(src_dir, 'index.html'), encoding='utf-8').read()
+    src = os.path.join(ROOT, lid)
+    if os.path.isdir(src): src = os.path.join(src, 'index.html')
+    src_dir = os.path.dirname(src)
+    html = open(src, encoding='utf-8').read()
 
     # 1. CSS
     def css(m):

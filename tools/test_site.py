@@ -26,7 +26,7 @@ with sync_playwright() as p:
     pg = ctx.new_page(); E = errs_of(pg)
 
     print('1. 每頁載入沒有錯誤')
-    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'tools/mcblocks/render.html', 'PJ/index.html', 'teacher/index.html', 'teacher/summary.html']:
+    for page in ['index.html', 'L1/index.html', 'L2/index.html', 'L3/index.html', 'L4/index.html', 'sim/index.html?m=l3lap', 'sim/index.html?m=l2sq', 'tools/mcblocks/render.html', 'PJ/index.html', 'teacher/index.html', 'teacher/summary.html', 'teacher/collector.html']:
         E.clear(); pg.goto(U(page)); pg.wait_for_timeout(700)
         check(not E, page + ' 沒有錯誤 ' + (str(E) if E else ''))
 
