@@ -29,7 +29,7 @@ table.g td.cell:hover{background:#eef5ff}
 .sc{font-weight:800;font-size:1rem}
 .tag{display:inline-block;font-size:.72rem;font-weight:800;border-radius:6px;padding:0 5px;margin-left:3px;vertical-align:middle}
 .t-miss{background:#fdeaea;color:#b42318}.t-ex{background:#eef2ff;color:#3e3090}.t-man{background:#fff4d6;color:#8a5a00}
-.t-dup{background:#e7f1fb;color:#1e5aa8}.t-bad{background:#fdeaea;color:#b42318}.t-gap{background:#fff1e0;color:#a14d00}
+.t-dup{background:#e7f1fb;color:#1e5aa8}.t-old{background:#eceff3;color:#4a5868}.t-bad{background:#fdeaea;color:#b42318}.t-gap{background:#fff1e0;color:#a14d00}
 .none{color:#b42318;font-weight:800}
 .st-ok{color:#1f7a44;font-weight:800}.st-no{color:#b42318;font-weight:800}
 .modal .box{max-width:720px}
@@ -89,6 +89,7 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
       <span><span class="tag t-ex">豁免</span> 缺席，按比例計</span>
       <span><span class="tag t-man">✎</span> 老師輸入</span>
       <span><span class="tag t-bad">⚠</span> 有報告驗證失敗（不計）</span>
+      <span><span class="tag t-old">舊</span> 舊版報告（已換算為 50 分）</span>
       <span class="none">欠</span> 沒有報告</p>
     <div class="tbl-wrap" id="tbl"></div>
     <div class="btnrow">
@@ -189,7 +190,7 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
   /* ---------- 讀取報告 ---------- */
   function parse(text, fname) {
     var m = /<script type="application\/json" id="f1-report">([\s\S]*?)<\/script>/.exec(text);
-    if (!m) return { err: '不是本單元的成績報告', fname: fname };
+    if (!m) return parseLegacy(text, fname);
     try {
       var box = JSON.parse(m[1]), d = JSON.parse(box.payload);
       var ok = SHA.hmac(C.SIGN_KEY, box.payload) === box.sig && d.app === C.APP;
@@ -201,6 +202,27 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
           return x;
         }) };
     } catch (e) { return { err: '檔案損壞', fname: fname }; }
+  }
+  /* 舊版報告（2026 年 9 月版本）：資料在 <!-- DATA: {...} --> 內，沒有驗證碼 */
+  function legacyTime(t, date) {
+    var m = /(\d{1,2})\/(\d{1,2})\/(\d{4})\D*?(上午|下午|AM|PM)?\s*(\d{1,2}):(\d{2})(?::(\d{2}))?/i.exec(t || '');
+    if (m) { var h = +m[5]; if (/下午|PM/i.test(m[4] || '') && h < 12) h += 12; if (/上午|AM/i.test(m[4] || '') && h === 12) h = 0; return new Date(+m[3], +m[2] - 1, +m[1], h, +m[6], +(m[7] || 0)).getTime(); }
+    var d = Date.parse(date || ''); return isNaN(d) ? 0 : d;
+  }
+  function parseLegacy(text, fname) {
+    var m = /<!-- DATA: ([\s\S]*?) -->/.exec(text);
+    if (!m) return { err: '不是本單元的成績報告', fname: fname };
+    var d; try { d = JSON.parse(m[1]); } catch (e) { return { err: '舊版報告損壞', fname: fname }; }
+    var tt = (/<title>([^<]*)<\/title>/.exec(text) || [])[1] || '', h1 = (/<h1>([^<]*)<\/h1>/.exec(text) || [])[1] || '';
+    var ln = (/DT 功課 L(\d)/.exec(tt) || [])[1];
+    var lesson = null;
+    if (ln === '1' && /自動化與機械人（第一堂）/.test(h1)) lesson = 'L1';     /* 舊版第一堂 ＝ 新版第一堂（內容大致相同） */
+    if (!lesson) return { err: '舊版' + (ln ? '第' + ln + '堂' : '') + '報告：內容與新版不同，未能計分', fname: fname };
+    if (!d.stu || !d.stu.cls) return { err: '舊版報告沒有學生資料', fname: fname };
+    var items = [], tb = /<h2>總成績<\/h2>[\s\S]*?<table>([\s\S]*?)<\/table>/.exec(text), re = /<tr><td>([^<]*)<\/td><td>([\d.]+)<\/td><td>([\d.]+)<\/td><\/tr>/g, r;
+    if (tb) while ((r = re.exec(tb[1]))) items.push({ label: r[1], score: +r[2], max: +r[3], done: +r[2] > 0 });
+    return { sig: 'legacy:' + SHA.hex(SHA.hash(SHA.enc(m[1]))), ok: true, legacy: true, fname: fname, added: Date.now(), lesson: lesson, title: h1,
+      cls: d.stu.cls, no: d.stu.num, name: d.stu.name, partner: null, total: +d.total || 0, max: +d.max || 45, exported: legacyTime(d.time, d.stu.date), teacherUsed: false, items: items };
   }
   /* ---------- 讀取檔案：檔案、文件夾、.zip ---------- */
   function isHtml(n) { return /\.html?$/i.test(n); }
@@ -275,7 +297,7 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
           S.log = batch.concat(S.log || []).slice(0, 5000);
           save(); render(); renderLog(); busy = false;
           $('#msg').innerHTML = '讀取了 ' + srcs.length + ' 個報告檔：新增 <b>' + res.add + '</b> 份' + (res.better ? '（其中 ' + res.better + ' 份分數比之前高，已改用）' : '') +
-            (res.dup ? '；已上傳過 ' + res.dup + ' 份（略過）' : '') + (res.bad ? '；<span style="color:var(--no)">驗證失敗 ' + res.bad + ' 份（不計分）</span>' : '') +
+            (res.legacy ? '（其中舊版報告 ' + res.legacy + ' 份）' : '') + (res.dup ? '；已上傳過 ' + res.dup + ' 份（略過）' : '') + (res.bad ? '；<span style="color:var(--no)">驗證失敗 ' + res.bad + ' 份（不計分）</span>' : '') +
             (o.skip ? '；略過非報告檔 ' + o.skip + ' 個' : '') + (res.err.length ? '<br><span style="color:var(--no)">無法讀取 ' + res.err.length + ' 個：' + res.err.slice(0, 8).map(esc).join('、') + (res.err.length > 8 ? '…' : '') + '</span>' : '');
           return;
         }
@@ -289,7 +311,7 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
             if (S.reps[x.sig]) { res.dup++; lg.res = 'dup'; }
             else {
               var prev = bestFor(x);
-              S.reps[x.sig] = x; res.add++; lg.res = x.ok ? 'add' : 'bad';
+              S.reps[x.sig] = x; res.add++; lg.res = x.ok ? 'add' : 'bad'; if (x.legacy) { lg.why = '舊版報告'; res.legacy = (res.legacy || 0) + 1; }
               if (!x.ok) res.bad++; else if (prev !== null && x.total / x.max * STD > prev) { res.better++; lg.res = 'better'; }
             }
           }
@@ -428,7 +450,7 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
         if (v.kind === 'ex') body = '<span class="tag t-ex">豁免</span>';
         else if (v.kind === 'zero') body = '<span class="sc">0</span><span class="tag t-miss">缺交</span>';
         else if (v.kind === 'man') body = '<span class="sc">' + v.score + '</span><span class="tag t-man">✎</span>';
-        else if (v.kind === 'rep') body = '<span class="sc">' + v.score + '</span>' + (c.gaps.length ? '<span class="tag t-gap" title="未完成：' + esc(c.gaps.map(function (g) { return g.label; }).join('、')) + '">漏 ' + c.gaps.length + '</span>' : '');
+        else if (v.kind === 'rep') body = '<span class="sc">' + v.score + '</span>' + (c.gaps.length ? '<span class="tag t-gap" title="未完成：' + esc(c.gaps.map(function (g) { return g.label; }).join('、')) + '">漏 ' + c.gaps.length + '</span>' : '') + (c.best.r.legacy ? '<span class="tag t-old" title="舊版報告（沒有驗證碼），已換算為 50 分">舊</span>' : '');
         else body = '<span class="none">欠</span>';
         h += '<td class="cell" data-k="' + esc(k) + '" data-l="' + l + '" title="按這裏查看及調整">' + body + tags + '</td>';
       });
@@ -457,9 +479,9 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
       var ups = c.ups.slice().sort(function (a, b) { return (b.r.exported || 0) - (a.r.exported || 0); });
       h += '<table class="ups"><tr><th>輸出時間</th><th>分數</th><th>驗證</th><th>組員</th><th>檔案</th></tr>' + ups.map(function (u) {
         var use = c.best && u === c.best;
-        return '<tr class="' + (use ? 'use' : '') + '"><td>' + fmt(u.r.exported) + (use ? ' <b>（採用）</b>' : '') + '</td><td>' + u.r.total + ' / ' + u.r.max + (u.r.max !== STD ? '（＝' + u.sc + '）' : '') + '</td><td>' + (u.r.ok ? '✔' : '<span style="color:var(--no)">✘ 不計</span>') + '</td><td>' + esc(u.mate || '') + (u.asPartner ? '<br><span class="small muted">由組員上傳</span>' : '') + '</td><td class="small">' + esc(u.r.fname) + '</td></tr>';
+        return '<tr class="' + (use ? 'use' : '') + '"><td>' + fmt(u.r.exported) + (use ? ' <b>（採用）</b>' : '') + '</td><td>' + u.r.total + ' / ' + u.r.max + (u.r.max !== STD ? '（＝' + u.sc + '）' : '') + '</td><td>' + (u.r.legacy ? '舊版（沒有驗證碼）' : u.r.ok ? '✔' : '<span style="color:var(--no)">✘ 不計</span>') + '</td><td>' + esc(u.mate || '') + (u.asPartner ? '<br><span class="small muted">由組員上傳</span>' : '') + '</td><td class="small">' + esc(u.r.fname) + '</td></tr>';
       }).join('') + '</table>';
-      if (c.best) h += '<p class="small" style="margin-top:8px"><b>採用報告的各項分數：</b>' + c.best.r.items.map(function (it) { return esc(it.label) + ' ' + it.score + '/' + it.max + (it.verify ? '（' + esc(it.verify) + '）' : '') + (it.done ? '' : ' <span class="tag t-gap">未完成</span>'); }).join('；') + '</p>';
+      if (c.best) h += '<p class="small" style="margin-top:8px"><b>採用報告的各項分數：</b>' + c.best.r.items.map(function (it) { return esc(it.label) + ' ' + it.score + '/' + it.max + (it.verify ? '（' + esc(it.verify) + '）' : '') + (it.done ? '' : ' <span class="tag t-gap">未完成</span>'); }).join('；') + '</p>' + (c.best.r.legacy ? '<p class="small muted">舊版報告：沒有驗證碼，滿分 ' + c.best.r.max + ' 分，已按比例換算為 ' + STD + ' 分；0 分的項目當作未完成。</p>' : '');
     } else h += '<p class="none">沒有這一課的報告。</p>';
     h += '<h3 style="margin-top:14px">調整</h3><div class="mkopts">' +
       '<label><input type="radio" name="mk" value=""' + (!mk.type ? ' checked' : '') + '> 自動：用報告最高分' + (c && c.best ? '（' + c.best.sc + '）' : '（沒有報告＝欠）') + '</label>' +
@@ -494,7 +516,7 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
       S.counted.forEach(function (l) {
         var v = cellVal(s, l), c = s.L[l], mk = S.marks[k + '|' + l];
         row.push(v.kind === 'ex' ? '豁免' : v.kind === 'miss' ? '欠' : v.score, c ? c.nGood : 0,
-          [mk && mk.type === 'zero' ? '缺交' : '', mk && mk.type === 'man' ? '老師輸入' : '', v.kind === 'rep' && c.gaps.length ? '未完成：' + c.gaps.map(function (g) { return g.label; }).join('、') : '', mk && mk.note ? mk.note : ''].filter(Boolean).join('；'));
+          [mk && mk.type === 'zero' ? '缺交' : '', mk && mk.type === 'man' ? '老師輸入' : '', v.kind === 'rep' && c.best.r.legacy ? '舊版報告（' + c.best.r.total + '/' + c.best.r.max + '）' : '', v.kind === 'rep' && c.gaps.length ? '未完成：' + c.gaps.map(function (g) { return g.label; }).join('、') : '', mk && mk.note ? mk.note : ''].filter(Boolean).join('；'));
       });
       return row.concat([t.raw, t.mx, t.fin, t.pct, t.miss.length ? '欠 ' + t.miss.map(function (l) { return LN[l]; }).join('、') : '齊']);
     }));
