@@ -52,13 +52,21 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
 
 <div class="wrap" id="main" hidden>
   <h1 style="font-size:1.5rem">成績收集器</h1>
-  <p class="muted">把學生的成績報告（.html）拖進來，可以分很多次、重複上傳：同一位學生同一課有幾份報告時，<b>自動取最高分一份</b>。兩人一組的報告會同時記入兩位組員。資料儲存在這部電腦的瀏覽器內，下次打開仍在；換電腦前請先「匯出備份」。</p>
+  <p class="muted">把學生的成績報告（.html）拖進來，可以分很多次、重複上傳：同一位學生同一課有幾份報告時，<b>自動取最高分一份</b>。兩人一組的報告會同時記入兩位組員。可以直接放整個文件夾或 Google Drive 下載的 .zip。所有資料自動暫存在這部電腦的瀏覽器內，關掉再開仍在；換電腦前請先「匯出備份」。</p>
 
   <div class="panel">
     <h2>① 上傳成績報告</h2>
-    <div class="drop" id="drop"><b>把成績報告拖到這裏</b><br><span class="small muted">可以一次放很多個檔案；之後再放新的也可以</span><br>
-      <label class="btn" style="margin-top:10px">選擇檔案<input type="file" id="file" multiple accept=".html,.htm,text/html" hidden></label></div>
+    <div class="drop" id="drop"><b>把成績報告、整個文件夾或 .zip 拖到這裏</b><br><span class="small muted">文件夾內的子文件夾也會讀取；Google Drive／Classroom 下載的 .zip 不用解壓。之後再放新的也可以。</span><br>
+      <div class="btnrow" style="justify-content:center;margin-top:10px">
+        <label class="btn">📄 選擇檔案<input type="file" id="file" multiple accept=".html,.htm,.zip,text/html,application/zip" hidden></label>
+        <label class="btn primary">📁 選擇文件夾<input type="file" id="folder" webkitdirectory directory multiple hidden></label>
+      </div></div>
     <div class="msg" id="msg"></div>
+    <p class="small" id="saved"></p>
+    <details id="logBox"><summary class="small"><b>上傳記錄</b>（每個檔案的處理結果）</summary>
+      <div class="tbl-wrap" id="log" style="max-height:340px;overflow:auto"></div>
+      <div class="btnrow"><button class="btn ghost" id="clearLog" type="button">清除上傳記錄（不影響成績）</button></div>
+    </details>
   </div>
 
   <div class="panel">
@@ -122,12 +130,58 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
   function sk(cls, no) { return nCls(cls) + '|' + nNo(no); }
 
   /* ---------- 儲存 ---------- */
-  var S = { v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'] };
-  function load() { try { var x = JSON.parse(localStorage.getItem(KEY) || 'null'); if (x && x.v === 1) S = Object.assign(S, x); } catch (e) {} }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alertBox('未能儲存（瀏覽器空間不足或被封鎖）。請先「匯出備份」。'); } }
+  var S = { v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'], log: [] };
+  /* 暫存：IndexedDB（空間大），不能用時改用 localStorage */
+  var DB = null, savedAt = 0, saveOk = true;
+  function idb() {
+    return new Promise(function (ok) {
+      try {
+        var rq = indexedDB.open('f1dt-collector', 1);
+        rq.onupgradeneeded = function () { rq.result.createObjectStore('kv'); };
+        rq.onsuccess = function () { DB = rq.result; ok(DB); };
+        rq.onerror = function () { ok(null); };
+      } catch (e) { ok(null); }
+    });
+  }
+  function apply(x) { if (x && x.v === 1) { S = Object.assign({ v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'], log: [] }, x); savedAt = x.savedAt || 0; } }
+  function load() {
+    return idb().then(function (db) {
+      var fromLS = null; try { fromLS = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+      if (!db) { apply(fromLS); return; }
+      return new Promise(function (ok) {
+        var g = db.transaction('kv').objectStore('kv').get('state');
+        g.onsuccess = function () {
+          var x = g.result || null;
+          if (!x && fromLS) { x = fromLS; }                       /* 舊版資料搬入 IndexedDB */
+          else if (x && fromLS && (fromLS.savedAt || 0) > (x.savedAt || 0)) x = fromLS;
+          apply(x); ok();
+        };
+        g.onerror = function () { apply(fromLS); ok(); };
+      });
+    });
+  }
+  function save() {
+    S.savedAt = savedAt = Date.now();
+    var done = function (ok) { saveOk = ok; showSaved(); if (!ok) alertBox('未能暫存（瀏覽器空間不足或被封鎖）。請立即按「匯出備份」。'); };
+    if (DB) {
+      try {
+        var tx = DB.transaction('kv', 'readwrite'); tx.objectStore('kv').put(JSON.parse(JSON.stringify(S)), 'state');
+        tx.oncomplete = function () { try { localStorage.removeItem(KEY); } catch (e) {} done(true); };
+        tx.onerror = tx.onabort = function () { done(false); };
+      } catch (e) { done(false); }
+    } else { try { localStorage.setItem(KEY, JSON.stringify(S)); done(true); } catch (e) { done(false); } }
+  }
+  function showSaved() {
+    var n = Object.keys(S.reps).length, el = $('#saved'); if (!el) return;
+    el.innerHTML = (saveOk ? '💾 已暫存在這部電腦' : '<span style="color:var(--no)">⚠ 未能暫存</span>') + '：' + n + ' 份報告、名單 ' + S.roster.length + ' 人' + (savedAt ? '（最後更新 ' + fmt(savedAt) + '）' : '') + '。關掉瀏覽器再開，資料仍在。';
+  }
 
   /* ---------- 密碼 ---------- */
-  function open() { $('#gate').hidden = true; $('#main').hidden = false; load(); $('#roster').value = S.roster.map(function (r) { return [r.cls, r.no, r.name].join('\t'); }).join('\n'); render(); }
+  var ready = null;
+  function open() {
+    $('#gate').hidden = true; $('#main').hidden = false;
+    ready = load().then(function () { $('#roster').value = S.roster.map(function (r) { return [r.cls, r.no, r.name].join('\t'); }).join('\n'); render(); showSaved(); renderLog(); });
+  }
   try { if (sessionStorage.getItem('f1dt:teacher') === '1') open(); } catch (e) {}
   function go() { if ($('#pin').value !== C.TEACHER_PIN) { $('#err').textContent = '密碼不正確。'; return; } try { sessionStorage.setItem('f1dt:teacher', '1'); } catch (e) {} open(); }
   $('#go').onclick = go; $('#pin').onkeydown = function (e) { if (e.key === 'Enter') go(); };
@@ -148,31 +202,126 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
         }) };
     } catch (e) { return { err: '檔案損壞', fname: fname }; }
   }
-  function addFiles(files) {
-    var list = Array.prototype.slice.call(files), n = list.length, res = { add: 0, dup: 0, bad: 0, err: [] };
-    if (!n) return;
-    list.forEach(function (f) {
-      var rd = new FileReader();
-      rd.onload = function () {
-        var x = parse(String(rd.result), f.name);
-        if (x.err) res.err.push(f.name + '：' + x.err);
-        else if (S.reps[x.sig]) res.dup++;
-        else { S.reps[x.sig] = x; res.add++; if (!x.ok) res.bad++; }
-        if (--n === 0) {
-          save(); render();
-          $('#msg').innerHTML = '新增 <b>' + res.add + '</b> 份' + (res.dup ? '；完全相同的檔案 ' + res.dup + ' 份（已略過）' : '') +
-            (res.bad ? '；<span style="color:var(--no)">驗證失敗 ' + res.bad + ' 份（不計分）</span>' : '') +
-            (res.err.length ? '<br><span style="color:var(--no)">無法讀取：' + res.err.map(esc).join('、') + '</span>' : '');
-        }
-      };
-      rd.readAsText(f);
+  /* ---------- 讀取檔案：檔案、文件夾、.zip ---------- */
+  function isHtml(n) { return /\.html?$/i.test(n); }
+  function unzip(file) {         /* 簡單 zip 解壓：只取 .html／.htm；需要瀏覽器支援 DecompressionStream（Chrome、Edge） */
+    return file.arrayBuffer().then(function (buf) {
+      var dv = new DataView(buf), u8 = new Uint8Array(buf), e = -1, i;
+      for (i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { e = i; break; }
+      if (e < 0) throw new Error('zip');
+      var n = dv.getUint16(e + 10, true), p = dv.getUint32(e + 16, true), out = [], td = new TextDecoder('utf-8');
+      for (i = 0; i < n; i++) {
+        if (dv.getUint32(p, true) !== 0x02014b50) break;
+        var meth = dv.getUint16(p + 10, true), cs = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true);
+        var name = td.decode(u8.subarray(p + 46, p + 46 + nl));
+        p += 46 + nl + el + cl;
+        if (!isHtml(name) || /(^|\/)__MACOSX\//.test(name)) continue;
+        var st = lo + 30 + dv.getUint16(lo + 26, true) + dv.getUint16(lo + 28, true), data = u8.slice(st, st + cs);
+        out.push({ name: name.split('/').pop(), path: file.name + ' › ' + name, meth: meth, data: data });
+      }
+      return out.map(function (x) {
+        return { name: x.name, path: x.path, text: function () {
+          if (x.meth === 0) return Promise.resolve(td.decode(x.data));
+          if (x.meth !== 8 || typeof DecompressionStream === 'undefined') return Promise.reject(new Error('unsupported'));
+          return new Response(new Blob([x.data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer().then(function (b) { return td.decode(new Uint8Array(b)); });
+        } };
+      });
     });
   }
+  function sourcesOf(files) {    /* File → 待讀項目；.zip 會展開 */
+    var srcs = [], skip = 0, zips = [];
+    files.forEach(function (f) {
+      var path = f._path || f.webkitRelativePath || f.name;
+      if (isHtml(f.name) || f.type === 'text/html' || (!/\.[a-z0-9]{1,5}$/i.test(f.name) && f.size < 5e6)) srcs.push({ name: f.name, path: path, text: function () { return f.text(); } });
+      else if (/\.zip$/i.test(f.name)) zips.push(unzip(f).then(function (list) { srcs = srcs.concat(list); }, function () { srcs.push({ name: f.name, path: path, text: function () { return Promise.reject(new Error('zip')); } }); }));
+      else skip++;
+    });
+    return Promise.all(zips).then(function () { return { srcs: srcs, skip: skip }; });
+  }
+  function walk(entry, path, out) {   /* 拖入文件夾：逐層讀取 */
+    return new Promise(function (ok) {
+      if (!entry) return ok();
+      if (entry.isFile) entry.file(function (f) { f._path = path + f.name; out.push(f); ok(); }, function () { ok(); });
+      else if (entry.isDirectory) {
+        var rd = entry.createReader(), all = [];
+        (function more() {
+          rd.readEntries(function (es) {
+            if (!es.length) Promise.all(all.map(function (x) { return walk(x, path + entry.name + '/', out); })).then(ok);
+            else { all = all.concat(Array.prototype.slice.call(es)); more(); }
+          }, function () { ok(); });
+        })();
+      } else ok();
+    });
+  }
+  function filesFromDrop(dt) {
+    var items = dt.items ? Array.prototype.slice.call(dt.items) : [];
+    if (items.length && items[0].webkitGetAsEntry) {
+      var out = [], es = items.map(function (it) { return it.kind === 'file' ? it.webkitGetAsEntry() : null; });
+      var plain = Array.prototype.slice.call(dt.files || []);
+      return Promise.all(es.map(function (en) { return walk(en, '', out); })).then(function () { return out.length ? out : plain; });
+    }
+    return Promise.resolve(Array.prototype.slice.call(dt.files || []));
+  }
+  var busy = false;
+  function addFiles(files) {
+    files = Array.prototype.slice.call(files || []);
+    if (!files.length || busy) return Promise.resolve();
+    busy = true; $('#msg').textContent = '正在讀取…';
+    return (ready || Promise.resolve()).then(function () { return sourcesOf(files); }).then(function (o) {
+      var srcs = o.srcs, res = { add: 0, dup: 0, bad: 0, err: [], better: 0 }, i = 0, batch = [];
+      if (!srcs.length) { busy = false; $('#msg').innerHTML = '<span style="color:var(--no)">找不到成績報告（.html）' + (o.skip ? '；略過其他檔案 ' + o.skip + ' 個' : '') + '。</span>'; return; }
+      function next() {
+        if (i >= srcs.length) {
+          S.log = batch.concat(S.log || []).slice(0, 5000);
+          save(); render(); renderLog(); busy = false;
+          $('#msg').innerHTML = '讀取了 ' + srcs.length + ' 個報告檔：新增 <b>' + res.add + '</b> 份' + (res.better ? '（其中 ' + res.better + ' 份分數比之前高，已改用）' : '') +
+            (res.dup ? '；已上傳過 ' + res.dup + ' 份（略過）' : '') + (res.bad ? '；<span style="color:var(--no)">驗證失敗 ' + res.bad + ' 份（不計分）</span>' : '') +
+            (o.skip ? '；略過非報告檔 ' + o.skip + ' 個' : '') + (res.err.length ? '<br><span style="color:var(--no)">無法讀取 ' + res.err.length + ' 個：' + res.err.slice(0, 8).map(esc).join('、') + (res.err.length > 8 ? '…' : '') + '</span>' : '');
+          return;
+        }
+        var src = srcs[i++];
+        if (i % 10 === 0) $('#msg').textContent = '正在讀取… ' + i + ' / ' + srcs.length;
+        src.text().then(function (t) { return parse(t, src.name); }, function () { return { err: '無法讀取', fname: src.name }; }).then(function (x) {
+          var lg = { t: Date.now(), path: src.path };
+          if (x.err) { res.err.push(src.path + '（' + x.err + '）'); lg.res = 'err'; lg.why = x.err; }
+          else {
+            lg.lesson = x.lesson; lg.who = [x.cls, x.no, x.name].join(' ') + (x.partner ? '＋' + x.partner.name : ''); lg.score = x.total + '/' + x.max;
+            if (S.reps[x.sig]) { res.dup++; lg.res = 'dup'; }
+            else {
+              var prev = bestFor(x);
+              S.reps[x.sig] = x; res.add++; lg.res = x.ok ? 'add' : 'bad';
+              if (!x.ok) res.bad++; else if (prev !== null && x.total / x.max * STD > prev) { res.better++; lg.res = 'better'; }
+            }
+          }
+          batch.unshift(lg);
+          setTimeout(next, 0);
+        });
+      }
+      next();
+    });
+  }
+  function bestFor(x) {          /* 這位學生這一課之前最高的有效分（沒有＝null） */
+    var k = sk(x.cls, x.no), best = null;
+    Object.keys(S.reps).forEach(function (sig) {
+      var r = S.reps[sig]; if (!r.ok || r.lesson !== x.lesson) return;
+      if (sk(r.cls, r.no) === k || (r.partner && sk(r.cls, r.partner.no) === k)) { var v = r.total / r.max * STD; if (best === null || v > best) best = v; }
+    });
+    return best;
+  }
+  var LOGT = { add: '新增', better: '新增（分數較高，已改用）', dup: '已上傳過，略過', bad: '驗證失敗，不計分', err: '無法讀取' };
+  function renderLog() {
+    var lg = S.log || [];
+    $('#log').innerHTML = lg.length ? '<table class="ups"><tr><th>時間</th><th>檔案</th><th>課</th><th>學生</th><th>分數</th><th>結果</th></tr>' + lg.slice(0, 1000).map(function (x) {
+      return '<tr><td class="small">' + fmt(x.t) + '</td><td class="small">' + esc(x.path) + '</td><td>' + esc(LN[x.lesson] || '') + '</td><td>' + esc(x.who || '') + '</td><td>' + esc(x.score || '') + '</td><td' + (x.res === 'bad' || x.res === 'err' ? ' style="color:var(--no)"' : '') + '>' + (LOGT[x.res] || '') + (x.why ? '：' + esc(x.why) : '') + '</td></tr>';
+    }).join('') + '</table>' + (lg.length > 1000 ? '<p class="small muted">只顯示最近 1000 項。</p>' : '') : '<p class="small muted">未有上傳記錄。</p>';
+  }
+  $('#clearLog').onclick = function () { S.log = []; save(); renderLog(); };
   var drop = $('#drop');
   drop.addEventListener('dragover', function (e) { e.preventDefault(); drop.classList.add('over'); });
   drop.addEventListener('dragleave', function () { drop.classList.remove('over'); });
-  drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); });
-  $('#file').onchange = function () { addFiles(this.files); this.value = ''; };
+  drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('over'); filesFromDrop(e.dataTransfer).then(addFiles); });
+  $('#file').onchange = function () { var f = Array.prototype.slice.call(this.files); this.value = ''; addFiles(f); };
+  $('#folder').onchange = function () { var f = Array.prototype.slice.call(this.files); this.value = ''; addFiles(f); };
 
   /* ---------- 名單 ---------- */
   function parseRoster(t) {
@@ -372,17 +521,17 @@ textarea.inp{width:100%;min-height:110px;font:inherit;border:1px solid #b8c8da;b
         var n = 0; Object.keys(x.reps).forEach(function (k) { if (!S.reps[k]) { S.reps[k] = x.reps[k]; n++; } });
         Object.keys(x.marks || {}).forEach(function (k) { if (!S.marks[k]) S.marks[k] = x.marks[k]; });
         if (!S.roster.length && x.roster) { S.roster = x.roster; $('#roster').value = S.roster.map(function (r) { return [r.cls, r.no, r.name].join('\t'); }).join('\n'); }
-        save(); render(); $('#msg').textContent = '已匯入備份：新增 ' + n + ' 份報告。';
+        save(); render(); renderLog(); $('#msg').textContent = '已匯入備份：新增 ' + n + ' 份報告。';
       } catch (e) { alertBox('這不是成績收集器的備份檔。'); }
     };
     rd.readAsText(f);
   };
   $('#clear').onclick = function () {
     modal('<h3>清除全部資料？</h3><p>會刪除這部電腦上收集器內所有報告、名單及調整，不能復原。建議先「匯出備份」。</p><div class="acts"><button class="btn" data-close>取消</button><button class="btn primary" data-ok>清除</button></div>',
-      function () { S = { v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'] }; save(); $('#roster').value = ''; $('#msg').textContent = ''; render(); });
+      function () { S = { v: 1, roster: [], reps: {}, marks: {}, counted: ['L1', 'L2', 'L3'], log: [] }; save(); $('#roster').value = ''; $('#msg').textContent = ''; render(); renderLog(); });
   };
 
-  window.F1Collector = { addText: function (t, n) { var x = parse(t, n); if (!x.err && !S.reps[x.sig]) { S.reps[x.sig] = x; save(); render(); } return x; }, model: model, sumOf: sumOf, state: function () { return S; } };
+  window.F1Collector = { addText: function (t, n) { var x = parse(t, n); if (!x.err && !S.reps[x.sig]) { S.reps[x.sig] = x; save(); render(); } return x; }, model: model, sumOf: sumOf, state: function () { return S; }, ready: function () { return ready; } };
 })();
 </script>
 </body>

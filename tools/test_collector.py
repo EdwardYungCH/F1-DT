@@ -1,6 +1,6 @@
-"""成績收集器測試：重複上傳取最高分、兩人一組、名單、豁免／老師輸入、欠交名單、CSV、備份還原、真報告。
+"""成績收集器測試：重複上傳取最高分、兩人一組、名單、豁免／老師輸入、欠交名單、CSV、備份還原、真報告、文件夾及 zip 上傳、暫存。
 執行：python3 tools/test_collector.py"""
-import os, re, json
+import os, re, json, zipfile, tempfile, shutil
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 U = lambda p: 'file://' + ROOT + '/' + p
@@ -23,8 +23,12 @@ with sync_playwright() as p:
     ctx = b.new_context(viewport={'width': 1366, 'height': 900}, accept_downloads=True)
     pg = ctx.new_page(); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
-    pg.goto(U('teacher/collector.html')); pg.evaluate("localStorage.removeItem('f1dt:collector')")
-    pg.fill('#pin', PIN); pg.click('#go'); pg.wait_for_timeout(300)
+    def reset():
+        pg.evaluate("() => new Promise(r => { localStorage.removeItem('f1dt:collector'); var q = indexedDB.deleteDatabase('f1dt-collector'); q.onsuccess = q.onerror = q.onblocked = () => r(); })")
+    def reopen():
+        pg.reload(); pg.wait_for_function("window.F1Collector && F1Collector.ready()"); pg.evaluate("F1Collector.ready()"); pg.wait_for_timeout(200)
+    pg.goto(U('teacher/collector.html')); reset(); pg.reload()
+    pg.fill('#pin', PIN); pg.click('#go'); pg.wait_for_function("F1Collector.ready()"); pg.evaluate("F1Collector.ready()")
 
     print('1. 名單及上傳')
     pg.fill('#roster', '班別\t學號\t姓名\n1A\t1\t陳大文\n1A\t2\t李小明\n1A\t3\t張三\n1A\t4\t何四\n1B\t1\t王五')
@@ -87,22 +91,55 @@ with sync_playwright() as p:
     with pg.expect_download() as dl: pg.click('#csv')
     csv = open(dl.value.path(), encoding='utf-8-sig').read()
     check('病假' in csv and '老師輸入' in csv and '欠' in csv and '1B' not in csv, 'CSV 只匯出 1A，包括備註')
-    pg.reload(); pg.wait_for_timeout(300)
-    check(pg.evaluate("Object.keys(F1Collector.state().reps).length") == len(reps), '重新開頁資料仍在')
+    pg.wait_for_timeout(300); reopen()
+    check(pg.evaluate("Object.keys(F1Collector.state().reps).length") == len(reps), '重新開頁資料仍在（IndexedDB 暫存）')
+    check('已暫存在這部電腦' in pg.inner_text('#saved') and '份報告' in pg.inner_text('#saved'), '顯示暫存狀態')
     with pg.expect_download() as dl2: pg.click('#backup')
     bk = dl2.value.path()
-    pg.evaluate("localStorage.removeItem('f1dt:collector')"); pg.reload(); pg.wait_for_timeout(300)
-    pg.set_input_files('#restore', bk); pg.wait_for_timeout(400)
+    reset(); reopen()
+    check(pg.evaluate("Object.keys(F1Collector.state().reps).length") == 0, '清空後沒有資料')
+    pg.set_input_files('#restore', bk); pg.wait_for_timeout(600)
     check(pg.evaluate("Object.keys(F1Collector.state().reps).length") == len(reps) and pg.evaluate("F1Collector.state().marks['1A|2|L3'].type") == 'ex', '匯入備份還原報告及調整')
 
     print('5. 真的成績報告')
     lp = ctx.new_page(); lp.goto(U('L1/index.html')); lp.wait_for_timeout(400)
     lp.fill('#f_cls', '1A'); lp.fill('#f_num', '3'); lp.fill('#f_name', '張三')
     with lp.expect_download() as d3: lp.locator('#submitBtns .btn.go').click()
-    pg.bring_to_front(); pg.set_input_files('#file', d3.value.path()); pg.wait_for_timeout(500)
-    check('新增 1 份' in pg.inner_text('#msg'), '上傳真報告')
+    rp = os.path.join(tempfile.mkdtemp(), d3.value.suggested_filename); d3.value.save_as(rp)
+    pg.bring_to_front(); pg.set_input_files('#file', rp); pg.wait_for_timeout(500)
+    pg.wait_for_function("!document.querySelector('#msg').textContent.startsWith('正在')")
+    check('新增 1 份' in pg.inner_text('#msg'), '上傳真報告 ' + pg.inner_text('#msg'))
     s = pg.evaluate("F1Collector.model().stu['1A|3'].L.L1")
     check(s is not None and s['best'] is not None, '真報告記入 1A 3 第一堂')
+
+    print('6. 文件夾及 zip 上傳')
+    tmp = tempfile.mkdtemp()
+    def mk(r):
+        return pg.evaluate(MAKE, r)
+    os.makedirs(os.path.join(tmp, 'F1', '1A', 'L2'))
+    open(os.path.join(tmp, 'F1', '1A', 'L2', 'a.html'), 'w', encoding='utf-8').write(mk(dict(lesson='L2', d=dict(cls='1A', no='3', name='張三', total=30))))
+    open(os.path.join(tmp, 'F1', '1A', 'b.html'), 'w', encoding='utf-8').write(mk(dict(lesson='L3', d=dict(cls='1A', no='3', name='張三', total=20))))
+    open(os.path.join(tmp, 'F1', 'readme.txt'), 'w').write('x')
+    n0 = pg.evaluate("Object.keys(F1Collector.state().reps).length")
+    pg.set_input_files('#folder', os.path.join(tmp, 'F1')); pg.wait_for_timeout(1200)
+    check(pg.evaluate("Object.keys(F1Collector.state().reps).length") == n0 + 2, '選擇文件夾：讀到子文件夾內 2 份報告 ' + pg.inner_text('#msg'))
+    check('略過非報告檔 1' in pg.inner_text('#msg'), '略過非報告檔')
+    zp = os.path.join(tmp, 'classroom.zip')
+    with zipfile.ZipFile(zp, 'w', zipfile.ZIP_DEFLATED) as z:
+        z.writestr('作業/1A 4 何四/report.html', mk(dict(lesson='L2', d=dict(cls='1A', no='4', name='何四', total=44))))
+        z.writestr('作業/1A 4 何四/old.html', mk(dict(lesson='L2', d=dict(cls='1A', no='4', name='何四', total=20, exported=1))))
+        z.writestr('__MACOSX/作業/._report.html', 'junk')
+    pg.set_input_files('#file', zp); pg.wait_for_timeout(1200)
+    s4 = pg.evaluate("F1Collector.model().stu['1A|4'].L.L2")
+    check(s4 and s4['best']['sc'] == 44 and s4['nGood'] == 2, 'zip（含中文路徑、壓縮）：讀到 2 份，取最高 44 ' + pg.inner_text('#msg'))
+    pg.set_input_files('#file', zp); pg.wait_for_timeout(800)
+    check('已上傳過 2 份' in pg.inner_text('#msg'), '同一個 zip 再上傳：顯示已上傳過')
+    pg.locator('#logBox summary').click()
+    lg = pg.inner_text('#log')
+    check('classroom.zip' in lg and '已上傳過' in lg and '何四' in lg, '上傳記錄列出每個檔案及結果')
+    reopen()
+    check('classroom.zip' in pg.text_content('#log'), '上傳記錄亦會暫存')
+    shutil.rmtree(tmp)
     check(not errs, '沒有頁面錯誤 ' + str(errs[:2]))
     b.close()
 print('\n結果：' + ('全部通過' if not fails else '失敗 %d 項' % len(fails)))
