@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第二堂：小車走正方形｜中一 DT 自動化與機械人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/common.css">
+<link rel="stylesheet" href="../assets/preview.css">
+</head>
+<body data-theme="l2">
+
+<header class="hero">
+  <div class="in">
+    <div>
+      <div class="kicker">F1 DT · LESSON 2</div>
+      <h1>第二堂：小車走正方形</h1>
+      <p>兩人一組，用 MakeCode 寫程式，令麥昆小車在一格地磚上走一個正方形。不斷「下載 → 測試 → 觀察 → 調整」，直至小車走得準。</p>
+    </div>
+    <div class="art"><img src="../assets/img/hero-l2.svg" alt=""></div>
+  </div>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="card" id="student-sec" data-short="開始之前">
+  <header><span class="num">0</span><h2>開始之前</h2></header>
+  <p>今課 1–2 人一組，<b>每組用一部電腦、交一份報告</b>。第一行填用這部電腦的同學；兩人一組的話，在「組員二」填另一位同學。</p>
+  <div id="student"></div>
+  <div class="goals" style="margin-top:14px">
+    <b>完成今課後，你能夠：</b>
+    <ol>
+      <li>用兩個變數 <span class="vchip">forward</span> 和 <span class="vchip">turn</span> 控制小車走正方形。</li>
+      <li>把程式下載到 micro:bit，用「測試 → 觀察 → 調整」令小車走得準。</li>
+    </ol>
+  </div>
+  <p class="small muted">本課滿分 50 分：真車試驗記錄 20、老師驗收 30（圓滿完成 30／部分完成 18／未完成 6）。資料會自動儲存在這部電腦。</p>
+</section>
+
+<section class="card" id="s1" data-short="準備">
+  <header><span class="num">1</span><h2>準備：分工、小車和 MakeCode</h2></header>
+  <div class="callout key"><span class="ttl">今次任務</span>令小車沿<b>一格地磚（30 cm）</b>走出一個<b>正方形</b>，最後回到起點，車頭轉回原來方向。</div>
+  <h3>兩人分工（每下載一次就對調）</h3>
+  <div class="roles">
+    <div><b>甲：電腦</b>改數字、下載程式、填記錄表</div>
+    <div><b>乙：小車</b>放車、開關電源、觀察、看守路線</div>
+  </div>
+  <p class="small muted">一人一組的同學兩份工作都要做。</p>
+  <figure class="fig zoomable">
+    <div class="art"><img src="../assets/img/car-photo.svg" alt="麥昆 Plus V2 小車相片，標示 micro:bit、電池盒、車輪及馬達、前燈 LED、校準按鈕；巡線感應器在車底，L2、R2 在左右兩側"></div>
+    <figcaption>麥昆 Plus V2 小車</figcaption>
+  </figure>
+  <h3>器材（每組）</h3>
+  <ul><li>麥昆 Plus V2 小車、micro:bit、USB 線、電腦</li></ul>
+  <div class="step"><h4><span class="sn">1</span>開啟 MakeCode，建立新專案</h4>
+    <ol><li>按這裏開啟：<a href="https://makecode.microbit.org/" target="_blank" rel="noopener"><b>makecode.microbit.org</b></a>，再按「新專案」。</li>
+      <li>專案名稱：<code class="pname">班別_學號_square</code>（例如 <code>1A_12_square</code>）。</li></ol></div>
+  <div class="step"><h4><span class="sn">2</span>加入麥昆 Plus 擴展</h4>
+    <ol><li>在積木清單最下面按「<b>擴展</b>」。</li>
+      <li>按下面的「複製」，再在擴展的搜尋欄按 <b>Ctrl＋V</b> 貼上，按 Enter。<div class="copybox" data-copy="https://github.com/DFRobot/pxt-DFRobot_MaqueenPlus_v20"></div></li>
+      <li>選 <b>maqueenPlusV2</b>。成功後積木清單多了「<b>麥昆Plus V2&amp;V3</b>」。</li></ol>
+    <figure class="fig zoomable"><div class="art"><img src="../assets/img/ext-steps.svg" alt="MakeCode 加入擴展的三個步驟示意圖"></div><figcaption>加入 maqueenPlusV2 擴展</figcaption></figure></div>
+  <div class="step"><h4><span class="sn">3</span>今次要用的積木</h4>
+    <div class="tbl-wrap"><table class="blktbl">
+      <thead><tr><th style="width:52%">積木</th><th style="width:18%">在哪裏找</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><img src="../assets/img/mc-on-start.png" width="172" alt="當啟動時"></td><td>基本</td><td>開電源後執行一次</td></tr>
+        <tr><td><img src="../assets/img/mc-set-var.png" width="279" alt="變數 forward 設為 3000"></td><td>變數</td><td>把數字存入變數</td></tr>
+        <tr><td><img src="../assets/img/mc-init.png" width="146" alt="初始化麥昆Plus"></td><td>麥昆Plus V2&amp;V3</td><td><b>每個程式都要加</b>，連接小車</td></tr>
+        <tr><td><img src="../assets/img/mc-pause.png" width="167" alt="暫停 (ms) 100"></td><td>基本</td><td>等待（1000 ms ＝ 1 秒）</td></tr>
+        <tr><td><img src="../assets/img/mc-repeat.png" width="172" alt="重複 4 次 執行"></td><td>迴圈</td><td>同一組動作做 4 次</td></tr>
+        <tr><td><img src="../assets/img/mc-motor.png" width="373" alt="設置 全部馬達 方向 前進 速度 50"></td><td>麥昆Plus V2&amp;V3</td><td>令馬達轉動</td></tr>
+        <tr><td><img src="../assets/img/mc-stop.png" width="208" alt="設置 全部馬達 停止"></td><td>麥昆Plus V2&amp;V3</td><td>停車</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout safe"><span class="ttl">速度一律用 50</span>馬達積木的速度預設是 100，太快會衝過頭。記得每一塊都改成 <b>50</b>。</div></div>
+</section>
+
+<section class="card" id="s2" data-short="正方形程式">
+  <header><span class="num">2</span><h2>正方形程式</h2></header>
+  <p>正方形 ＝（直行一條邊 ＋ 轉 90°）做 4 次。照右邊的程式砌出來。</p>
+  <div class="fig-row">
+    <figure class="fig zoomable"><div class="art"><img src="../assets/img/square-task.svg" alt="正方形路線：直行一邊加原地轉90度，重複4次"></div><figcaption>正方形 ＝（直行一邊 ＋ 轉 90°）× 4</figcaption></figure>
+    <figure class="fig zoomable"><div class="art"><img src="../assets/img/blocks-sq-full.png" alt="完整程式：當啟動時，變數 forward 設為 3000，變數 turn 設為 1000，初始化麥昆Plus，暫停1000，重複4次：全部馬達前進50，暫停 forward，全部馬達停止，暫停500，左側馬達前進50，右側馬達後退50，暫停 turn，全部馬達停止，暫停500"></div><figcaption>調整時只改最頂兩行的數字</figcaption></figure>
+  </div>
+  <div class="callout key"><span class="ttl">只改兩個數字</span><span class="vchip">forward</span> 控制每條邊走多遠；<span class="vchip">turn</span> 控制每次轉多少度。其他數字不用改。</div>
+  <div class="step"><h4><span class="sn">✚</span>怎樣建立變數</h4>
+    <ol><li>按積木清單的「<b>變數</b>」→「<b>建立一個變數…</b>」。</li>
+      <li>輸入 <code>forward</code>，按「確定」。</li>
+      <li>再按一次「建立一個變數…」，輸入 <code>turn</code>，按「確定」。</li>
+      <li>「變數」清單就會有 <img src="../assets/img/mc-set-var.png" width="190" alt="變數 forward 設為" style="vertical-align:middle"> 和圓角的 <span class="vchip">forward</span>、<span class="vchip">turn</span> 積木，照程式圖拖出來用。</li></ol></div>
+</section>
+
+<section class="card" id="s3" data-short="下載到 micro:bit">
+  <header><span class="num">3</span><h2>把程式下載到 micro:bit</h2></header>
+  <p>每改一次數字，就要<b>重新下載一次</b>。</p>
+  <div class="callout safe">下載時小車的<b>電源要關掉</b>，車放在<b>地上</b>，不要放在桌上。</div>
+  <div class="step"><h4><span class="sn">1</span>接上 USB 線</h4>
+    <ol><li>確認小車電源關掉。micro:bit 可以留在車上。</li>
+      <li>USB 線一端接電腦，另一端接 micro:bit 頂部。micro:bit 背面的<b>黃燈</b>會亮起。</li></ol></div>
+  <div class="step"><h4><span class="sn">2</span>第一次：配對 micro:bit（只需做一次）</h4>
+    <ol><li>在 MakeCode 按「<b>下載</b>」旁邊的「<b>⋯</b>」→「<b>連接裝置</b>」。</li>
+      <li>按「下一步」，選 <b>BBC micro:bit CMSIS-DAP</b>，再按「連接」。</li></ol>
+    <details class="more"><summary>配對不到？改用拖放方法</summary><div><ol>
+      <li>按「下載」，瀏覽器會儲存一個 <code>.hex</code> 檔。</li>
+      <li>開啟「檔案總管」，把 <code>.hex</code> 檔拖到 <b>MICROBIT</b> 磁碟機。</li></ol></div></details></div>
+  <div class="step"><h4><span class="sn">3</span>按「下載」，等黃燈停止閃動</h4>
+    <ol><li>按左下角紫色的「<b>下載</b>」。</li>
+      <li>黃燈<b>快速閃動</b>＝正在寫入；停止閃動＝完成。<b>閃動時不要拔線。</b></li></ol></div>
+  <div class="step"><h4><span class="sn">4</span>拔線、放車、開電源</h4>
+    <ol><li>拔掉 USB 線。</li>
+      <li>把小車放在一格地磚的一角，<b>車頭對正磚縫</b>。</li>
+      <li>開電源，立即縮手站開。小車等 1 秒就會起步，走完會自己停。</li></ol></div>
+  <details class="more"><summary>用 iPad？</summary><div><p>iPad 不能用 USB 下載。請用「micro:bit」app 經藍牙配對 micro:bit，然後在 app 內開啟 MakeCode 專案並按「Flash」。</p></div></details>
+</section>
+
+<section class="card" id="s4" data-short="測試→觀察→調整">
+  <header><span class="num">4</span><h2>測試 → 觀察 → 調整 → 再下載</h2><span class="marks">20 分</span></header>
+  <p>第一次下載，小車通常<b>不會</b>走得準——這很正常。不斷重複這個循環：</p>
+  <figure class="fig zoomable"><div class="art"><img src="../assets/img/dl-cycle.svg" alt="循環圖：修改程式、下載、測試、觀察記錄、決定調整，然後再修改程式"></div><figcaption>每一圈只改一個數字</figcaption></figure>
+
+  <h3>觀察：用眼睛看磚縫</h3>
+  <ol>
+    <li><b>邊長：</b>第一條邊走完，車頭停在磚縫上嗎？未到＝太短；過了＝太長。</li>
+    <li><b>轉角：</b>轉完後，車身和磚縫平行嗎？未轉夠＝太少；轉過了＝太多。</li>
+  </ol>
+  <figure class="fig zoomable"><div class="art"><img src="../assets/img/observe.svg" alt="四種常見走法：直行太短、直行太長、轉得太少、轉得太多，每種都附上調整方法"></div><figcaption>虛線是地磚，藍線是小車走過的路</figcaption></figure>
+
+  <h3>調整：每次只改一個數字</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:30%">看到</th><th>怎樣改</th></tr></thead>
+    <tbody>
+      <tr><td>邊太短／太長</td><td><span class="vchip">forward</span> 加或減 200</td></tr>
+      <tr><td>轉太少／太多</td><td><span class="vchip">turn</span> 加或減 50</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout tip">先調好 <b>forward</b>（邊長），再調 <b>turn</b>（角度）。同時改兩個，就不知道是哪一個有效。</div>
+
+  <h3>真車試驗記錄表<span class="tag">20 分</span></h3>
+  <p>每下載一次就填一行。最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。</p>
+  <div id="trials"></div>
+
+  <h3>出了問題？</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:32%">現象</th><th>檢查</th></tr></thead>
+    <tbody>
+      <tr><td>完全不動</td><td>電源開了嗎？有「初始化麥昆Plus」嗎？</td></tr>
+      <tr><td>改了數字但走法一樣</td><td>改完有沒有再按「下載」？</td></tr>
+      <tr><td>一直向前不停</td><td>每個動作後有「停止」嗎？</td></tr>
+      <tr><td>衝得太快、打滑</td><td>速度是不是 50？</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="card" id="s5" data-short="老師驗收">
+  <header><span class="num">5</span><h2>老師驗收</h2><span class="marks">30 分</span></header>
+  <p>小車走得準了（或已盡力），就請老師來看一次完整的正方形，老師會揀選結果。</p>
+  <div id="verify"></div>
+  <div id="mclink" style="margin-top:12px"></div>
+  <h3>挑戰（做得快的組別）</h3>
+  <p>走 2 × 2 格地磚的大正方形：只改<b>一個</b>數字，應該改哪一個？</p>
+</section>
+
+<section class="card" id="s6" data-short="學習日誌">
+  <header><span class="num">6</span><h2>總結及學習日誌</h2></header>
+  <ol>
+    <li>正方形 ＝（直行 ＋ 轉彎）× 4，用「重複 4 次」。</li>
+    <li>把要調整的數字放進變數：只改 forward 和 turn。</li>
+    <li>程式很少一次就對：測試 → 觀察 → 調整 → 再下載。</li>
+  </ol>
+  <h3>學習日誌（不計分）</h3>
+  <p class="small muted">你們試了幾次才成功？最後 forward 和 turn 是多少？</p>
+  <div id="log"></div>
+  <div class="callout key"><span class="ttl">下一課預告</span>巡線感應器：為小車加上「眼睛」，令它自己沿着黑線行走。</div>
+</section>
+
+<section class="card" id="submit" data-short="成績及交功課" data-nonext>
+  <header><span class="num">✓</span><h2>成績及交功課</h2></header>
+  <div id="scoretable"></div>
+  <div class="btnrow" id="submitBtns"></div>
+  <p class="small muted">完成必做項目後，可直接在這裏繳交。請只使用試用名單。</p>
+</section>
+
+<footer class="foot">中一設計與科技｜自動化與機械人｜第二堂</footer>
+</main>
+</div>
+
+<script src="../assets/art.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/submission.js"></script>
+<script>
+F1.start({ id: 'L2', key: 'f1dt:L2', theme: 'l2', title: '第二堂：小車走正方形', short: '第二堂', pair: true });
+
+/* ---- 4 試驗記錄 ---- */
+(function () {
+  var ED = [{ v: 'short', t: '太短' }, { v: 'ok', t: '剛好 ✔' }, { v: 'long', t: '太長' }];
+  var JT = [{ v: 'less', t: '太少' }, { v: 'ok', t: '剛好 ✔' }, { v: 'more', t: '太多' }];
+  function sugg(r) {
+    var f = parseFloat(r.f), tt = parseFloat(r.t);
+    if (!(f > 0 && tt > 0) || !r.ed || !r.jt) return null;
+    if (r.ed === 'short') return { f: f + 200, t: tt, what: 'f' };
+    if (r.ed === 'long') return { f: Math.max(0, f - 200), t: tt, what: 'f' };
+    if (r.jt === 'less') return { f: f, t: tt + 50, what: 't' };
+    if (r.jt === 'more') return { f: f, t: Math.max(0, tt - 50), what: 't' };
+    return { f: f, t: tt, what: 'ok' };
+  }
+  F1.trials('#trials', { key: 'trials', label: '1. 真車試驗記錄', max: 20, sec: 's4', minRows: 3,
+    cols: [{ k: 'f', label: 'forward', type: 'number', ph: '3000', w: '6.5em' }, { k: 'ed', label: '邊長', type: 'select', options: ED, w: '7em' },
+      { k: 't', label: 'turn', type: 'number', ph: '1000', w: '6.5em' }, { k: 'jt', label: '轉角', type: 'select', options: JT, w: '7em' }],
+    example: ['3000', '太短', '1000', '太少', 'forward 改 3200'],
+    next: function (r) {
+      var s = sugg(r); if (!s) return '';
+      if (s.what === 'ok') return '<b style="color:var(--ok)">✔ 完成！請老師驗收</b>';
+      return s.what === 'f' ? 'forward 改 <b>' + s.f + '</b>' : 'turn 改 <b>' + s.t + '</b>';
+    },
+    carry: function (last, nr) { var s = sugg(last); if (s) { nr.f = String(s.f); nr.t = String(s.t); } },
+    complete: function (r) { return String(r.f || '').trim() && r.ed && String(r.t || '').trim() && r.jt; } });
+})();
+
+/* ---- 5 驗收 ---- */
+F1.verify('#verify', { key: 'real', label: '2. 真車走正方形（老師驗收）', what: '真車走一格地磚正方形', max: 30, sec: 's5', levels: [{ v: 'full', t: '圓滿完成', s: 30, d: '走完正方形，回到起點附近' }, { v: 'part', t: '部分完成', s: 18, d: '走完四條邊，但偏差明顯' }, { v: 'none', t: '未完成', s: 6, d: '未能走完正方形（參與分）' }] });
+F1.mclink('#mclink', { key: 'link', sec: 's5' });
+
+/* ---- 6 學習日誌（不計分） ---- */
+F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 10, sec: 's6', placeholder: '例：我們試了 4 次，最後 forward 是 3400，turn 是 1050。' });
+
+/* 專案名稱提示 */
+function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_square'; }); }
+pname(); document.addEventListener('input', function (e) { if (e.target.id === 'f_cls' || e.target.id === 'f_num') pname(); });
+F1.ready();
+</script>
+</body>
+</html>

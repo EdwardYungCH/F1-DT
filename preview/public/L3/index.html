@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第三堂：巡線機械人｜中一 DT 自動化與機械人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/common.css">
+<link rel="stylesheet" href="../assets/preview.css">
+</head>
+<body data-theme="l3">
+
+<header class="hero">
+  <div class="in">
+    <div>
+      <div class="kicker">F1 DT · LESSON 3</div>
+      <h1>第三堂：巡線機械人</h1>
+      <p>上一課小車只會「計時」，不知道自己走歪了。今課用車底的巡線感應器，令小車自己沿着黑線走完一個圈。</p>
+    </div>
+    <div class="art"><img src="../assets/img/hero-l3.svg" alt=""></div>
+  </div>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="card" id="student-sec" data-short="開始之前">
+  <header><span class="num">0</span><h2>開始之前</h2></header>
+  <p>今課 1–2 人一組，<b>每組用一部電腦、交一份報告</b>。兩人一組的話，在「組員二」填另一位同學。</p>
+  <div id="student"></div>
+  <div class="goals" style="margin-top:14px">
+    <b>完成今課後，你能夠：</b>
+    <ol>
+      <li>說出巡線感應器的讀數：黑線 ＝ 1，白色 ＝ 0。</li>
+      <li>用巡線程式令小車自己走完一圈，再逐步提速。</li>
+    </ol>
+  </div>
+  <p class="small muted">本課滿分 50 分：讀 1 定 0 練習 10、提速記錄 15、老師驗收 25（圓滿完成 25／部分完成 15／未完成 5）。</p>
+</section>
+
+<section class="card" id="s1" data-short="巡線感應器">
+  <header><span class="num">1</span><h2>巡線感應器：黑線 ＝ 1，白色 ＝ 0</h2><span class="marks">10 分</span></header>
+  <p>巡線感應器會射出<b>紅外線</b>，再看反射回來多少：</p>
+  <ul>
+    <li><b>白色</b>地面反射多 → 讀數 <b>0</b>，車底指示燈熄。</li>
+    <li><b>黑線</b>吸收紅外線、反射少 → 讀數 <b>1</b>，車底指示燈亮。</li>
+  </ul>
+  <figure class="fig zoomable"><div class="art"><img src="../assets/img/ir-principle.svg" alt="白色地面反射強、讀數0；黑線吸收紅外線、讀數1，車底指示燈亮起"></div><figcaption>白色反射多＝0；黑線反射少＝1</figcaption></figure>
+  <figure class="fig zoomable"><div class="art"><img src="../assets/img/car-under.svg" alt="車底示意圖：由左至右 L2、L1、M、R1、R2 五個感應器；L2、R2 在車身左右兩側"></div><figcaption>車底有 5 個巡線感應器。今課只用中間 3 個：<b>L1、M、R1</b></figcaption></figure>
+  <h3>練習：會讀到 1 定 0？<span class="tag">10 分</span></h3>
+  <p class="small muted">記住：感應器不懂看顏色，只看反射多少。反射少就是 1。</p>
+  <div id="q-surf"></div>
+  <div class="callout safe">車頭伸出桌邊（懸空）會讀到 1，小車以為在黑線上，會繼續向前跌落地！所以一定要在<b>地面</b>測試。</div>
+</section>
+
+<section class="card" id="s2" data-short="巡線程式">
+  <header><span class="num">2</span><h2>巡線程式</h2></header>
+  <div class="callout key"><span class="ttl">記住一句：黑線在哪邊，就轉向那邊</span>M 看到黑線就直行；L1 看到就向左轉；R1 看到就向右轉；三個都看不到就停車。</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>感應器</th><th>小車要做什麼</th><th>馬達</th></tr></thead>
+    <tbody>
+      <tr><td>M ＝ 1</td><td>直行</td><td>全部馬達 前進 20</td></tr>
+      <tr><td>L1 ＝ 1</td><td>向左轉</td><td>左側 後退 10、右側 前進 20</td></tr>
+      <tr><td>R1 ＝ 1</td><td>向右轉</td><td>左側 前進 20、右側 後退 10</td></tr>
+      <tr><td>都是 0</td><td>停車</td><td>全部馬達 停止</td></tr>
+    </tbody>
+  </table></div>
+  <h3>今次的新積木</h3>
+  <div class="tbl-wrap"><table class="blktbl">
+    <thead><tr><th style="width:52%">積木</th><th style="width:18%">在哪裏找</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><img src="../assets/img/mc-forever.png" width="172" alt="重複無限次"></td><td>基本</td><td>不停重複：不停看感應器、不停修正</td></tr>
+      <tr><td><img src="../assets/img/mc-if.png" width="220" alt="如果 那麼 否則如果 那麼 否則"></td><td>邏輯</td><td>按左下角的 ⊕ 可以加入「否則如果」</td></tr>
+      <tr><td><img src="../assets/img/mc-line-eq.png" width="300" alt="讀取循跡感測器 M 狀態 = 1"></td><td>邏輯 ＋ 麥昆Plus V2&amp;V3</td><td>放進「如果」：這個感應器看到黑線嗎？</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">「＝」積木在「邏輯」；「讀取循跡感測器」在「麥昆Plus V2&amp;V3」，把它放進「＝」的左邊。</p>
+  <h3>照圖砌出程式</h3>
+  <figure class="fig narrow zoomable"><div class="art"><img src="../assets/img/blocks-line.png" alt="巡線程式：當啟動時初始化及暫停1000；重複無限次內，如果M=1前進20，否則如果L1=1左後退10右前進20，否則如果R1=1左前進20右後退10，否則停止"></div><figcaption>巡線程式（這次不用「暫停」，要用「重複無限次」）</figcaption></figure>
+  <div class="step"><h4><span class="sn">✚</span>開新專案及加入擴展（和上一課一樣）</h4>
+    <ol><li>開啟 <a href="https://makecode.microbit.org/" target="_blank" rel="noopener"><b>makecode.microbit.org</b></a>，按「新專案」，名稱：<code class="pname">班別_學號_linebot</code>。</li>
+      <li>按「<b>擴展</b>」，按下面的「複製」，在搜尋欄按 <b>Ctrl＋V</b> 貼上，按 Enter，選 <b>maqueenPlusV2</b>。<div class="copybox" data-copy="https://github.com/DFRobot/pxt-DFRobot_MaqueenPlus_v20"></div></li></ol></div>
+</section>
+
+<section class="card" id="s3" data-short="校準及測試">
+  <header><span class="num">3</span><h2>校準、下載、測試</h2></header>
+  <div class="step"><h4><span class="sn">1</span>校準感應器（第一次測試前）</h4>
+    <ol><li>把小車放在巡線圖的黑色位置，令車底感應器對着黑色。</li>
+      <li><b>長按車面的校準按鈕（Cal-Key）約 1 秒</b>，指示燈閃過就完成。</li>
+      <li>檢查：放在白色上，車底指示燈熄；放在黑線上，指示燈亮。</li></ol></div>
+  <div class="step"><h4><span class="sn">2</span>下載</h4>
+    <p>和上一課一樣：關電源 → 接 USB → 按「下載」→ 等黃燈停閃 → 拔線。</p></div>
+  <div class="step"><h4><span class="sn">3</span>放車、開電源</h4>
+    <ol><li>把小車放在 O 形巡線圖上，<b>黑線在車底正中（M 對正黑線）</b>。</li>
+      <li>開電源，縮手。小車 1 秒後起步，自己沿黑線走。</li></ol></div>
+  <figure class="fig narrow zoomable"><div class="art" id="map"></div><figcaption>O 形（圓形）巡線圖：小車沿圓圈一直轉彎</figcaption></figure>
+</section>
+
+<section class="card" id="s4" data-short="10 秒挑戰">
+  <header><span class="num">4</span><h2>走得完之後：10 秒內走完一圈</h2><span class="marks">15 分</span></header>
+  <div class="callout key"><span class="ttl">目標：10 秒內走完一圈</span>小車走得完一圈後，逐步提速，直至可以在 <b>10 秒內</b>走完一整圈而不脫線。</div>
+  <p>同組一人開電源，另一人用<b>下面的計時器</b>計時：小車起步就按「開始」，回到起點就按「停止」，再按「填入記錄表」。<b>每次只改一樣</b>，再記錄結果。</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:30%">記錄表的欄</th><th>程式裏哪個數字</th><th style="width:22%">起步數字</th></tr></thead>
+    <tbody>
+      <tr><td>直行</td><td>M ＝ 1 時「全部馬達 前進」</td><td>20</td></tr>
+      <tr><td>後退的一邊</td><td>L1 或 R1 ＝ 1 時，向後轉的馬達（向左轉＝左側）</td><td>10</td></tr>
+      <tr><td>前進的一邊</td><td>L1 或 R1 ＝ 1 時，向前轉的馬達（向左轉＝右側）</td><td>20</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>提速方法：</b>直行和前進的一邊每次一齊加 10；後退的一邊改成前進的一邊的一半。</p>
+  <h3>提速記錄表<span class="tag">15 分</span></h3>
+  <p>每試一次填一行，最後一欄會告訴你下一次試什麼。至少記錄 <b>3 次</b>。</p>
+  <div id="sw"></div>
+  <div id="speedlog"></div>
+  <h3>出了問題？</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:32%">現象</th><th>檢查</th></tr></thead>
+    <tbody>
+      <tr><td>完全不動</td><td>有「初始化麥昆Plus」嗎？電源開了嗎？</td></tr>
+      <tr><td>不理黑線，一直向前</td><td>「＝ 1」寫對嗎？有沒有校準？</td></tr>
+      <tr><td>一開始就打轉</td><td>放車時黑線要在車底正中</td></tr>
+      <tr><td>彎位衝出黑線</td><td>速度太快，減 10</td></tr>
+      <tr><td>轉錯方向</td><td>黑線在左就向左轉：左輪後退、右輪前進</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="card" id="s5" data-short="老師驗收">
+  <header><span class="num">5</span><h2>老師驗收</h2><span class="marks">25 分</span></header>
+  <p>達到目標（或已盡力）後，請老師來看一次，老師會揀選結果。</p>
+  <div id="verify"></div>
+  <div id="mclink" style="margin-top:12px"></div>
+  <h3>挑戰（做得快的組別）</h3>
+  <p>在不脫線的情況下，看看你們最快可以幾秒走完一圈。</p>
+</section>
+
+<section class="card" id="s6" data-short="學習日誌">
+  <header><span class="num">6</span><h2>總結及學習日誌</h2></header>
+  <ol>
+    <li>巡線感應器：黑線 ＝ 1，白色 ＝ 0。</li>
+    <li>黑線在哪邊，就轉向那邊。</li>
+    <li>巡線程式放在「重複無限次」內，令小車不停看、不停修正。</li>
+  </ol>
+  <h3>學習日誌（不計分）</h3>
+  <p class="small muted">你們最快幾秒走完一圈？用了什麼速度？</p>
+  <div id="log"></div>
+  <div class="callout key"><span class="ttl">下一課預告</span>流程圖：先畫圖，再寫程式，令小車轉得更順。</div>
+</section>
+
+<section class="card" id="submit" data-short="成績及交功課" data-nonext>
+  <header><span class="num">✓</span><h2>成績及交功課</h2></header>
+  <div id="scoretable"></div>
+  <div class="btnrow" id="submitBtns"></div>
+  <p class="small muted">完成必做項目後，可直接在這裏繳交。請只使用試用名單。</p>
+</section>
+
+<footer class="foot">中一設計與科技｜自動化與機械人｜第三堂</footer>
+</main>
+</div>
+
+<script src="../sim/engine.js"></script>
+<script src="../assets/art.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/submission.js"></script>
+<script>
+F1.start({ id: 'L3', key: 'f1dt:L3', theme: 'l3', title: '第三堂：巡線機械人', short: '第三堂', pair: true });
+
+function img(f, alt) { return '<img src="../assets/img/' + f + '" alt="' + alt + '" style="display:block;width:100%">'; }
+var B = [{ v: '1', t: '讀到 1（當黑線）' }, { v: '0', t: '讀到 0（當白色）' }];
+F1.choice('#q-surf', { key: 'surf', label: '1. 讀 1 定 0', sec: 's1', max: 10, shuffle: true, options: B, items: [
+  { id: 'white', title: '白色地磚', pic: img('surf-white.svg', '白色地面'), answer: '0', why: '白色反射多 → 0。' },
+  { id: 'tape', title: '黑色膠帶', pic: img('surf-tape.svg', '黑膠帶'), answer: '1', why: '黑色吸收紅外線、反射少 → 1。' },
+  { id: 'carpet', title: '深藍色地毯', pic: img('surf-carpet.svg', '深藍色地毯'), answer: '1', why: '深色反射少，感應器當它是黑線。' },
+  { id: 'edge', title: '車頭伸出桌邊（懸空）', pic: img('surf-edge.svg', '懸空'), answer: '1', why: '下面沒有東西反射 → 以為是黑線 → 繼續向前 → 跌落地！' },
+  { id: 'pencil', title: '白紙上的淺灰鉛筆線', pic: img('surf-pencil.svg', '鉛筆線'), answer: '0', why: '淺灰仍反射很多，感應器分不出來 → 0。' }] });
+
+document.getElementById('map').innerHTML = F1Art.trackMap('oval');
+
+var SP = [{ v: 'ok', t: '走完一圈 ✔', s: '走完 ✔' }, { v: 'out', t: '彎位衝出黑線', s: '衝出線' }, { v: 'swing', t: '左右擺得很厲害', s: '急擺' }, { v: 'stop', t: '不動／打轉', s: '不動' }];
+F1.trials('#speedlog', { key: 'speed', label: '2. 提速記錄', max: 15, sec: 's4', minRows: 3,
+  cols: [{ k: 'sp', label: '直行', type: 'number', ph: '20', w: '5em' }, { k: 'tb', label: '後退的一邊', type: 'number', ph: '10', w: '5.5em' },
+    { k: 'tf', label: '前進的一邊', type: 'number', ph: '20', w: '5.5em' },
+    { k: 'jd', label: '結果', type: 'select', options: SP, w: '7.5em' }, { k: 'sec', label: '秒數', type: 'number', ph: '18', w: '5em' }],
+  example: ['20', '10', '20', '走完 ✔', '18', '未夠快：直行 30、前進的一邊 30、後退的一邊 15'],
+  next: function (r) {
+    var sp = parseFloat(r.sp), tb = parseFloat(r.tb), tf = parseFloat(r.tf), t = parseFloat(r.sec);
+    if (!(sp > 0) || !(tb >= 0) || !(tf > 0) || !r.jd) return '';
+    if (r.jd === 'ok') {
+      if (!(t > 0)) return '<span style="color:var(--amber)">↑ 請填秒數</span>';
+      if (t <= 10) return '<b style="color:var(--ok)">✔ 達標！請老師驗收</b>';
+      return '未夠快：直行 <b>' + (sp + 10) + '</b>、前進的一邊 <b>' + (tf + 10) + '</b>、後退的一邊 <b>' + Math.round((tf + 10) / 2) + '</b>';
+    }
+    if (r.jd === 'out') return '太快：直行減到 <b>' + Math.max(10, sp - 10) + '</b>';
+    if (r.jd === 'swing') return '後退的一邊減到 <b>' + Math.max(5, tb - 5) + '</b>';
+    return '<b>檢查放車位置及程式</b>';
+  },
+  carry: function (last, nr) {
+    ['sp', 'tb', 'tf'].forEach(function (k) { if (last[k] !== undefined && last[k] !== '') nr[k] = last[k]; });
+    var sp = parseFloat(last.sp), tf = parseFloat(last.tf), t = parseFloat(last.sec);
+    if (last.jd === 'ok' && t > 10) { if (sp > 0) nr.sp = String(sp + 10); if (tf > 0) { nr.tf = String(tf + 10); nr.tb = String(Math.round((tf + 10) / 2)); } }
+  },
+  complete: function (r) { return ['sp', 'tb', 'tf'].every(function (k) { return String(r[k] || '').trim(); }) && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
+
+F1.stopwatch('#sw', { label: '計時器：走一圈用幾秒？', target: 10, fill: '#speedlog' });
+F1.verify('#verify', { key: 'real', label: '3. 真車巡線（老師驗收）', what: '真車在 O 形巡線圖上自己走一圈', max: 25, sec: 's5', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '10 秒內走完一圈' }, { v: 'part', t: '部分完成', s: 15, d: '走完一圈，但超過 10 秒' }, { v: 'none', t: '未完成', s: 5, d: '未能走完一圈（參與分）' }] });
+F1.mclink('#mclink', { key: 'link', sec: 's5' });
+F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 5, sec: 's6', placeholder: '例：直行 40 還可以，50 就會在彎位衝出黑線。' });
+
+function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_linebot'; }); }
+pname(); document.addEventListener('input', function (e) { if (e.target.id === 'f_cls' || e.target.id === 'f_num') pname(); });
+F1.ready();
+</script>
+</body>
+</html>

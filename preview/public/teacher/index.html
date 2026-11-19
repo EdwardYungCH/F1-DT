@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>老師收集器｜中一 DT 試用版</title>
+  <link rel="stylesheet" href="/assets/preview.css">
+  <script defer src="/assets/teacher.js"></script>
+</head>
+<body class="preview-shell">
+  <header class="shell-top">
+    <a class="brand" href="/"><span>DT</span> 中一設計與科技</a>
+    <a href="/">試用版首頁</a>
+  </header>
+  <main class="shell-main">
+    <div class="page-heading">
+      <span class="preview-tag">本機試用版</span>
+      <h1>老師收集器</h1>
+      <p>查看四堂課的提交紀錄和欠交名單。</p>
+    </div>
+    <form id="login" class="surface login-panel">
+      <h2>登入老師區</h2>
+      <label for="password">老師密碼</label>
+      <div class="login-row">
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit" class="action primary">登入</button>
+      </div>
+      <p class="minor">試用密碼 <code>robot-demo</code></p>
+      <p class="form-status" id="login-status" role="status"></p>
+    </form>
+    <section id="dashboard" hidden>
+      <div class="stats" id="stats"></div>
+      <div class="surface records">
+        <div class="records-head">
+          <div><h2>班別 1A</h2><p class="minor">試用名單 · 4 位學生</p></div>
+          <div class="toolbar">
+            <button type="button" class="action secondary" id="reload">更新紀錄</button>
+            <button type="button" class="action secondary" id="download">匯出 CSV</button>
+            <button type="button" class="action secondary" id="logout">登出</button>
+          </div>
+        </div>
+        <p class="form-status" id="dashboard-status" role="status"></p>
+        <div class="filters" id="filters" aria-label="選擇堂次"></div>
+        <div class="table-scroll">
+          <table>
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dialog id="record-detail" class="surface">
+    <form method="dialog"><button class="action secondary" type="submit" aria-label="關閉紀錄">關閉</button></form>
+    <div id="detail-content"></div>
+  </dialog>
+</body>
+</html>

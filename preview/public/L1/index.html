@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第一堂：認識機械人｜中一 DT 自動化與機械人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/common.css">
+<link rel="stylesheet" href="../assets/preview.css">
+</head>
+<body data-theme="l1">
+
+<header class="hero">
+  <div class="in">
+    <div>
+      <div class="kicker">F1 DT · LESSON 1</div>
+      <h1>第一堂：認識機械人</h1>
+      <p>掃地機械人怎樣知道前面有牆？今課找出機械人和普通機器有什麼分別，再用「輸入 → 處理 → 輸出」拆解一部機械人。</p>
+    </div>
+    <div class="art"><img src="../assets/img/hero-l1.svg" alt=""></div>
+  </div>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="card" id="student-sec" data-short="開始之前">
+  <header><span class="num">0</span><h2>開始之前</h2></header>
+  <div id="student"></div>
+  <div class="goals" style="margin-top:14px">
+    <b>完成今課後，你能夠：</b>
+    <ol>
+      <li>用「感知、決定、動作」分辨機械人、自動化系統和普通機器。</li>
+      <li>用「輸入 → 處理 → 輸出」拆解一部機械人。</li>
+    </ol>
+  </div>
+  <p class="small muted">本課滿分 50 分。選擇題<b>以第一次作答計分</b>，之後可以再試，是為了學習。答案會自動儲存在這部電腦。</p>
+</section>
+
+<section class="card" id="s1" data-short="什麼是機械人？">
+  <header><span class="num">1</span><h2>什麼是機械人？</h2><span class="marks">10 分</span></header>
+  <div class="def">
+    <span class="lbl">機械人的定義</span>
+    機械人通常是能夠<em>感知環境</em>，然後依照<em>程式</em>作出<em>決定</em>，從而<em>執行動作</em>的系統。
+  </div>
+  <figure class="fig zoomable">
+    <div class="art"><img src="../assets/img/sda-loop.svg" alt="感知、決定、動作的循環圖，以掃地機械人碰到牆為例"></div>
+    <figcaption>機械人的「感知 → 決定 → 動作」循環</figcaption>
+  </figure>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:24%">關鍵字</th><th>意思</th><th style="width:30%">掃地機械人的例子</th></tr></thead>
+    <tbody>
+      <tr><td><b>感知</b> Sense</td><td>用感應器「知道」周圍發生什麼事</td><td>碰撞感應器碰到牆</td></tr>
+      <tr><td><b>程式</b> Program</td><td>事先寫好的一連串指令</td><td>「如果碰到牆，就轉彎」</td></tr>
+      <tr><td><b>決定</b> Decide</td><td>根據感知到的資料，選擇下一步做什麼</td><td>決定向右轉</td></tr>
+      <tr><td><b>動作</b> Act</td><td>真的動起來：移動、轉動、發聲、發光</td><td>右輪後退、左輪前進</td></tr>
+    </tbody>
+  </table></div>
+  <h3>練習 1：填寫英文定義<span class="tag">10 分</span></h3>
+  <p>按每一格，由字詞庫選出正確的英文字。</p>
+  <div id="q-fill"></div>
+</section>
+
+<section class="card" id="s2" data-short="機械人？自動化系統？">
+  <header><span class="num">2</span><h2>是機械人、自動化系統，還是都不是？</h2><span class="marks">10 分</span></header>
+  <p>很多東西都「會動」，但不是全部都是機械人。今次分三類：</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:24%">類別</th><th>特點</th><th style="width:28%">例子</th></tr></thead>
+    <tbody>
+      <tr><td><b>機械人</b></td><td>會感知、會依程式決定、會動作；通常<b>可以改寫程式做不同工作</b>，而且會移動或操控物件</td><td>工業機械手臂、掃地機械人</td></tr>
+      <tr><td><b>自動化系統</b></td><td>也會感知和自動反應，但只做<b>一件固定的工作</b></td><td>自動門、升降機</td></tr>
+      <tr><td><b>都不是</b></td><td>不會自己感知和決定：由人即時操控，或者只會重複同一動作</td><td>遙控車、普通風扇</td></tr>
+    </tbody>
+  </table></div>
+  <p>問自己：<b>「它會感知嗎？」「它會自己決定嗎？」「它可以改做其他工作嗎？」</b></p>
+  <div id="q-robot"></div>
+  <details class="more">
+    <summary>做完之後，看重點</summary>
+    <div><ul>
+      <li>會動不等於機械人：<b>風扇</b>只重複同一動作，不感知、不決定。</li>
+      <li>由人即時操控的<b>遙控車</b>和<b>夾公仔機</b>，「大腦」是人。</li>
+      <li><b>自動門和升降機</b>會感知和自動反應，但只做一件固定的工作，所以叫「自動化系統」。有些書也會叫它們做機械人——分類有時會有爭議，最重要是講得出理由。</li>
+      <li><b>機械人造型擺設</b>外形最像機械人，卻完全沒有感應器：樣子不是重點，會不會感知和決定才是重點。</li>
+    </ul></div>
+  </details>
+</section>
+
+<section class="card" id="s3" data-short="用途配對">
+  <header><span class="num">3</span><h2>配對：機械人和自動化系統的用途</h2><span class="marks">10 分</span></header>
+  <p>為每一項選出最合適的用途。</p>
+  <div id="q-match"></div>
+  <div class="callout tip">
+    <span class="ttl">香港的例子</span>
+    香港的醫院有運送藥物和物資的機械人；機場的行李處理系統會自動把行李分送到正確的航班；很多大型倉庫用「自動導引車」（AGV）沿着地上的線運貨——第三堂我們就會做一部這樣的巡線車。
+  </div>
+</section>
+
+<section class="card" id="s4" data-short="影片：機械人運動會">
+  <header><span class="num">4</span><h2>影片：世界人形機器人運動會</h2><span class="marks">8 分</span></header>
+  <p>2026 年 8 月，第二屆世界人形機器人運動會在北京國家速滑館「冰絲帶」舉行，有來自 16 個國家和地區的 666 支隊伍、超過 2000 個機械人參加 51 個項目。</p>
+  <h3>影片一：機械人也會「失手」</h3>
+  <div id="v1"></div>
+  <p class="small"><b>邊看邊想：</b>為什麼機械人「行路」這麼困難？它要感知什麼資料才能保持平衡？</p>
+  <h3>影片二：精彩瞬間</h3>
+  <div id="v2"></div>
+  <p class="small"><b>邊看邊想：</b>這些動作背後，機械人要靠哪些<b>感應器</b>和哪些<b>驅動器</b>？</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>100 米</th><th>成績</th><th>比較</th></tr></thead>
+    <tbody>
+      <tr><td>天工 Ultra（2026 年預賽）</td><td>9.39 秒</td><td>快過人類世界紀錄 9.58 秒</td></tr>
+      <tr><td>大型組冠軍（2026 年）</td><td>8.64 秒</td><td>新華社報道</td></tr>
+      <tr><td>2025 年第一屆最佳</td><td>21.50 秒</td><td>一年之間快了一倍以上</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">資料來源：新華網、iThome 2026 年 8 月報道。機械人和人類的比賽規則不同，所以只可作參考。</p>
+  <h3>觀後討論（每題 4 分，最少寫 15 字）</h3>
+  <p><b>Q1　機械人在運動會上比賽，對真實生活有什麼用？</b></p>
+  <div id="d1"></div>
+  <p style="margin-top:14px"><b>Q2　如果人形機械人進入工廠、酒店、醫院或家庭，會帶來什麼好處和問題？</b></p>
+  <div id="d2"></div>
+  <details class="more" id="model">
+    <summary>寫好之後，看參考答案</summary>
+    <div>
+      <p><b>Q1：</b>比賽是最嚴格的測試場——跑、跳、跌倒後起身，都考驗平衡控制、感應器反應和即時決定，這些正是將來救災、工廠、照顧長者需要的能力。公開比賽也令各隊互相學習，技術進步得更快，又可以測出電池、關節等真實問題。</p>
+      <div class="tbl-wrap"><table><thead><tr><th>好處</th><th>問題／隱憂</th></tr></thead><tbody><tr>
+        <td><ul><li>代替危險、重複、辛苦的工作</li><li>可以 24 小時工作，品質穩定</li><li>應付人口老化和人手短缺</li><li>醫院送藥送餐，減少交叉感染</li></ul></td>
+        <td><ul><li>部分工人失業，需要再培訓</li><li>購買和維修費用高</li><li>私隱：鏡頭和咪高峰收集資料</li><li>安全：碰撞、跌倒可能傷人</li><li>程式出錯時，誰負責？</li></ul></td>
+      </tr></tbody></table></div>
+      <p><b>科技本身沒有好壞，關鍵是人怎樣設計和使用它</b>——這正是設計與科技科要學的設計思維。</p>
+    </div>
+  </details>
+</section>
+
+<section class="card" id="s5" data-short="輸入→處理→輸出">
+  <header><span class="num">5</span><h2>機械人的運作：輸入 → 處理 → 輸出</h2><span class="marks">10 分</span></header>
+  <p>所有機械人（其實所有電子系統）都可以拆成三部分：</p>
+  <figure class="fig zoomable">
+    <div class="art"><img src="../assets/img/ipo.svg" alt="輸入、處理、輸出三格，以及由輸出回到輸入的回饋箭頭"></div>
+    <figcaption>輸入 → 處理 → 輸出；動作改變環境後，感應器會再讀一次</figcaption>
+  </figure>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:18%">階段</th><th>掃地機械人</th><th>自動門</th></tr></thead>
+    <tbody>
+      <tr><td><b>輸入</b></td><td>碰撞感應器、防跌感應器、塵埃感應器</td><td>紅外線感應器偵測有人接近</td></tr>
+      <tr><td><b>處理</b></td><td>晶片 + 程式：決定轉左？後退？加大吸力？</td><td>控制電路：有人 → 開門；5 秒沒有人 → 關門</td></tr>
+      <tr><td><b>輸出</b></td><td>車輪馬達、吸塵馬達、掃刷、提示聲</td><td>電動馬達拉動門</td></tr>
+    </tbody>
+  </table></div>
+  <h3>練習 3：這個部件屬於哪一階段？<span class="tag">10 分</span></h3>
+  <div id="q-ipo"></div>
+</section>
+
+<section class="card" id="s6" data-short="總結及學習日誌">
+  <header><span class="num">6</span><h2>總結、詞彙及學習日誌</h2><span class="marks">2 分</span></header>
+  <ol>
+    <li>機械人能<b>感知環境 → 依程式作決定 → 執行動作</b>；自動化系統只做一件固定的工作。</li>
+    <li>會動的不一定是機械人（風扇、遙控車），像機械人的也不一定是（擺設）。</li>
+    <li>任何機械人都可拆成<b>輸入（感應器）→ 處理（控制器＋程式）→ 輸出（驅動器）</b>。</li>
+  </ol>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>中文</th><th>English</th><th>中文</th><th>English</th></tr></thead>
+    <tbody>
+      <tr><td>機械人</td><td>Robot</td><td>自動化</td><td>Automation</td></tr>
+      <tr><td>感應器</td><td>Sensor</td><td>驅動器</td><td>Actuator</td></tr>
+      <tr><td>輸入／處理／輸出</td><td>Input / Process / Output</td><td>微控制器</td><td>Microcontroller</td></tr>
+      <tr><td>程式</td><td>Program</td><td>決定</td><td>Decision</td></tr>
+    </tbody>
+  </table></div>
+  <h3>學習日誌（最少 20 字）</h3>
+  <p class="small muted">今課最令你意外的是什麼？試舉一部你身邊的機械人或自動化系統，說出它的輸入、處理和輸出。</p>
+  <div id="log"></div>
+  <div class="callout key"><span class="ttl">下一課預告</span>用 MakeCode 寫程式，令麥昆小車在地磚上走一個正方形。</div>
+</section>
+
+<section class="card" id="submit" data-short="成績及交功課" data-nonext>
+  <header><span class="num">✓</span><h2>成績及交功課</h2></header>
+  <div id="scoretable"></div>
+  <div class="btnrow" id="submitBtns"></div>
+  <p class="small muted">完成必做項目後，可直接在這裏繳交。請只使用試用名單。</p>
+</section>
+
+<footer class="foot">中一設計與科技｜自動化與機械人｜第一堂　·　插圖為本網站自繪示意圖</footer>
+</main>
+</div>
+
+<script src="../assets/art.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/submission.js"></script>
+<script src="../assets/sample.js"></script>
+<script>
+F1.start({ id: 'L1', key: 'f1dt:L1', theme: 'l1', title: '第一堂：認識機械人', short: '第一堂' });
+
+/* ---- 1 填充 ---- */
+F1.fill('#q-fill', { key: 'fill', label: '1. 英文定義填充', sec: 's1', max: 10,
+  zh: '中文：機械人是一部能夠感知環境、依照程式作出決定，然後執行動作的機器。',
+  parts: ['A robot is a machine that can ', { ans: 'sense' }, ' the ', { ans: 'environment' }, ', make ', { ans: 'decisions' }, ' using a ', { ans: 'program' }, ', and then carry out ', { ans: 'actions' }, '.'],
+  bank: ['sense', 'environment', 'decisions', 'program', 'actions', 'remote', 'decorations', 'sound'] });
+
+/* ---- 2 分類 ---- */
+var R3 = [{ v: 'R', t: '機械人' }, { v: 'A', t: '自動化系統' }, { v: 'N', t: '都不是' }];
+function pic(f, alt) { return '<img src="../assets/img/' + f + '" alt="' + alt + '" style="display:block;width:100%">'; }
+F1.choice('#q-robot', { key: 'robot', label: '2. 機械人／自動化系統分類', sec: 's2', max: 10, shuffle: true, options: R3, items: [
+  { id: 'arm', title: '工業機械手臂', en: 'Industrial robot arm', pic: pic('q1-arm.svg', '工業機械手臂'), answer: 'R', why: '有位置感應器（不少還有鏡頭），依程式做精確動作；改寫程式就可以由焊接改做搬運。' },
+  { id: 'deli', title: '送餐機械人', en: 'Food delivery robot', pic: pic('q2-delivery.svg', '送餐機械人'), answer: 'R', why: '用鏡頭和感應器認路、避開客人，自己決定路線，再用馬達行走。' },
+  { id: 'vac', title: '自動掃地機械人', en: 'Robot vacuum', pic: pic('q3-vacuum.svg', '掃地機械人'), answer: 'R', why: '碰到牆會轉向，電量低會回充電座：典型的「感知 → 決定 → 動作」。' },
+  { id: 'lift', title: '升降機', en: 'Lift', pic: pic('q4-lift.svg', '升降機'), answer: 'A', why: '會感知按鈕、門有沒有夾到人，自動控制馬達；但只做「上落樓層」一件固定工作，所以是自動化系統。' },
+  { id: 'door', title: '自動門', en: 'Automatic door', pic: pic('q5-door.svg', '自動門'), answer: 'A', why: '紅外線感應器偵測到人 → 控制電路 → 馬達開門。只做一件固定工作：自動化系統。' },
+  { id: 'rc', title: '手動遙控車', en: 'Remote-controlled car', pic: pic('q6-rc.svg', '遙控車'), answer: 'N', why: '每個動作都由人即時操控，「大腦」是人，車本身不感知、不決定。' },
+  { id: 'fan', title: '普通風扇', en: 'Electric fan', pic: pic('q7-fan.svg', '風扇'), answer: 'N', why: '只重複同一動作，不感知環境。（有溫度感應、自動調速的智能風扇就屬於自動化系統。）' },
+  { id: 'claw', title: '夾公仔機', en: 'Claw machine', pic: pic('q8-claw.svg', '夾公仔機'), answer: 'N', why: '左右前後和落爪都由玩家操控，機器不會「看見」公仔，也不會自己決定夾哪一隻。' },
+  { id: 'orn', title: '機械人造型擺設', en: 'Robot figurine', pic: pic('q9-ornament.svg', '機械人造型擺設'), answer: 'N', why: '外形最像機械人，但沒有感應器、沒有控制器，也不會動。樣子不是重點。' }
+] });
+
+/* ---- 3 用途配對 ---- */
+F1.match('#q-match', { key: 'match', label: '3. 用途配對', sec: 's3', max: 10, head: ['機械人／系統', '用途'],
+  hint: '把答錯的再想：它感知什麼？做什麼動作？',
+  rows: [
+    { html: '<b>工業機械手臂</b>', answer: 'a' }, { html: '<b>送餐機械人</b>', answer: 'b' }, { html: '<b>自動掃地機械人</b>', answer: 'c' },
+    { html: '<b>升降機</b>', answer: 'd' }, { html: '<b>自動門</b>', answer: 'e' }],
+  options: [
+    { v: 'a', t: '在工廠重複進行焊接、噴漆、搬運等精確而危險的工作' },
+    { v: 'b', t: '在餐廳沿路線把食物送到餐桌，並避開行人' },
+    { v: 'c', t: '在家中自行走動吸塵，電量低會回充電座' },
+    { v: 'd', t: '把人和貨物在大廈不同樓層之間安全地運送' },
+    { v: 'e', t: '感應到有人接近時自動打開，方便出入' }] });
+
+/* ---- 4 影片及討論 ---- */
+F1.video('#v1', { type: 'gdrive', id: '1FJHNPTfrtjKMGWVqamwlrLC3Ewh1rGth', title: '2026 第二屆世界人形機器人運動會：失手片段剪輯' });
+F1.video('#v2', { type: 'gdrive', id: '1i5gbkzhbU8x-xQmlK-8BfT2VbyG8lmcp', title: '世界人形機器人運動會：精彩瞬間' });
+F1.text('#d1', { key: 'd1', label: '4. 討論 Q1：運動會對真實生活有什麼用', max: 4, min: 15, sec: 's4' });
+F1.text('#d2', { key: 'd2', label: '4. 討論 Q2：人形機械人的好處與問題', max: 4, min: 15, sec: 's4', placeholder: '好處……／問題……' });
+
+/* ---- 5 輸入處理輸出 ---- */
+var IPO = [{ v: 'in', t: '輸入' }, { v: 'pr', t: '處理' }, { v: 'ou', t: '輸出' }];
+function part(f, alt) { return pic('part-' + f + '.svg', alt); }
+F1.choice('#q-ipo', { key: 'ipo', label: '5. 部件分類（輸入／處理／輸出）', sec: 's5', layout: 'rows', max: 10, shuffle: true, options: IPO, items: [
+  { id: 'us', title: '超聲波感應器：發出聲波再接收回音，量度距離', pic: part('ultrasonic', '超聲波感應器'), answer: 'in' },
+  { id: 'line', title: '巡線感應器：分辨地面是黑線還是白色', pic: part('line', '巡線感應器'), answer: 'in' },
+  { id: 'btn', title: '按鈕 A、B：讓使用者告訴機械人「開始」', pic: part('buttons', '按鈕'), answer: 'in' },
+  { id: 'cam', title: '攝影機：拍攝影像，讓機械人「看見」', pic: part('camera', '攝影機'), answer: 'in' },
+  { id: 'mb', title: 'micro:bit 微控制器：讀取資料並執行程式', pic: part('microbit', 'micro:bit'), answer: 'pr' },
+  { id: 'prog', title: '程式（積木）：決定機械人幾時做什麼', pic: part('program', '程式'), answer: 'pr' },
+  { id: 'motor', title: '馬達＋車輪：令小車前進、後退和轉彎', pic: part('motor', '馬達和車輪'), answer: 'ou' },
+  { id: 'led', title: 'LED 顯示屏：顯示數字或圖案', pic: part('led', 'LED 顯示屏'), answer: 'ou' },
+  { id: 'buz', title: '蜂鳴器：發出提示聲', pic: part('buzzer', '蜂鳴器'), answer: 'ou' },
+  { id: 'servo', title: '伺服馬達：轉到指定角度，用於機械臂和爪', pic: part('servo', '伺服馬達'), answer: 'ou' }
+], after: '記住：感應器＝輸入；控制器和程式＝處理；會動、會發聲發光＝輸出。' });
+
+/* ---- 6 學習日誌 ---- */
+F1.text('#log', { key: 'log', label: '6. 學習日誌', max: 2, min: 20, sec: 's6', placeholder: '例：我家的冷氣機會量度室溫（輸入），……' });
+
+F1.ready();
+</script>
+</body>
+</html>

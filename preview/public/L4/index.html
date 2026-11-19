@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第四堂：流程圖與巡線優化｜中一 DT 自動化與機械人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/common.css">
+<link rel="stylesheet" href="../assets/preview.css">
+<style>
+.fcwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fcwrap svg{display:block;min-width:560px;width:100%;height:auto}
+</style>
+</head>
+<body data-theme="l4">
+
+<header class="hero">
+  <div class="in">
+    <div>
+      <div class="kicker">F1 DT · LESSON 4</div>
+      <h1>第四堂：流程圖與巡線優化</h1>
+      <p>工程師寫程式之前，會先畫流程圖。今課學看流程圖，再優化巡線程式，令小車在 <b>20 秒內</b>走完 <b>8 字線</b>。</p>
+    </div>
+    <div class="art"><img src="../assets/img/hero-l4.svg" alt=""></div>
+  </div>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="card" id="student-sec" data-short="開始之前">
+  <header><span class="num">0</span><h2>開始之前</h2></header>
+  <p>今課 1–2 人一組，<b>每組用一部電腦、交一份報告</b>。兩人一組的話，在「組員二」填另一位同學。</p>
+  <div id="student"></div>
+  <div class="goals" style="margin-top:14px">
+    <b>完成今課後，你能夠：</b>
+    <ol>
+      <li>認出流程圖的 4 個符號，完成上一課巡線程式的流程圖。</li>
+      <li>認識轉彎 3 種方法，用 ③ 優化巡線程式，令小車在 20 秒內走完 8 字線。</li>
+    </ol>
+  </div>
+  <p class="small muted">本課滿分 50 分：符號練習 5、巡線流程圖 10、測試記錄 10、老師驗收 25（圓滿完成 25／部分完成 15／未完成 5）。</p>
+</section>
+
+<section class="card" id="s1" data-short="流程圖的符號">
+  <header><span class="num">1</span><h2>流程圖的 4 個符號</h2><span class="marks">5 分</span></header>
+  <p>流程圖用<b>符號</b>和<b>箭頭</b>畫出程式的步驟，就像建屋前先畫圖則。</p>
+  <div class="fig-row" id="legend"></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:26%">符號</th><th style="width:22%">名稱</th><th>例子</th></tr></thead>
+    <tbody>
+      <tr><td>圓角長方形</td><td>開始／結束</td><td>開始（當啟動時）</td></tr>
+      <tr><td>長方形</td><td>處理（動作）</td><td>設置馬達、暫停</td></tr>
+      <tr><td>平行四邊形</td><td>輸入／輸出</td><td>讀取感應器</td></tr>
+      <tr><td>菱形</td><td>判斷</td><td>M ＝ 1 ？（一定有「是」和「否」兩條路）</td></tr>
+    </tbody>
+  </table></div>
+  <h3>練習：這個符號叫什麼？<span class="tag">5 分</span></h3>
+  <div id="q-sym"></div>
+</section>
+
+<section class="card" id="s2" data-short="流程圖示範">
+  <header><span class="num">2</span><h2>流程圖示範：自動風扇</h2></header>
+  <p>自動風扇：太熱就開風扇，不熱就關風扇，而且要不停檢查溫度。用手指沿着箭頭走一次。</p>
+  <figure class="fig zoomable"><div class="art fcwrap" id="fan"></div><figcaption>自動風扇的流程圖</figcaption></figure>
+  <ol>
+    <li><b>開始</b>（圓角長方形）。</li>
+    <li><b>讀取溫度</b>（平行四邊形）：由感應器取得資料，是輸入。</li>
+    <li><b>溫度 &gt; 28？</b>（菱形）：答「是」走右邊去開風扇；答「否」走下面去關風扇。</li>
+    <li>做完後，箭頭<b>回到「讀取溫度」</b>，不停重複 ＝「重複無限次」。</li>
+  </ol>
+  <div class="callout key"><span class="ttl">記住</span>菱形一定有「是」和「否」兩條路；箭頭回到上方就是不停重複。</div>
+</section>
+
+<section class="card" id="s3" data-short="畫巡線流程圖">
+  <header><span class="num">3</span><h2>練習：完成上一課巡線程式的流程圖</h2><span class="marks">10 分</span></header>
+  <p>左邊是上一課的巡線程式。把上面的卡<b>拖</b>到流程圖的空格（或先按卡，再按空格），完成流程圖，再按「檢查答案」。</p>
+  <div id="q-flow"></div>
+  <div class="callout tip">提示：菱形放問題（M、L1、R1 ＝ 1？），次序和程式一樣；三個菱形都答「否」，就走到最後的「否則」。</div>
+</section>
+
+<section class="card" id="s4" data-short="任務：8 字線">
+  <header><span class="num">4</span><h2>新任務：優化巡線程式，20 秒內走完 8 字線</h2></header>
+  <div class="callout key"><span class="ttl">今堂任務</span>優化上一課的巡線程式，令小車沿 <b>8 字線</b>走完一圈，回到起點，<b>用時 20 秒或以內</b>，全程不脫線。</div>
+  <figure class="fig narrow zoomable" style="max-width:440px;margin-left:auto;margin-right:auto"><div class="art" id="map8"></div><figcaption>8 字巡線圖（橫放的「∞」）：中間有一個交叉位</figcaption></figure>
+  <p class="small muted">交叉位：小車走到交叉位時，M 會看到黑線，程式第一個判斷是「M ＝ 1 → 前進」，所以小車會直行穿過，不會轉錯路。</p>
+  <h3>小車轉彎的 3 種方法（以向左轉為例）</h3>
+  <p>只要令左右兩個馬達<b>輸出不同</b>，小車就會轉彎。輸出相差越大，轉得越急。</p>
+  <div class="fig-row">
+    <figure class="fig"><div class="art" id="tp1"></div><figcaption>① 一邊慢、一邊快：輕輕轉（大弧線）</figcaption></figure>
+    <figure class="fig"><div class="art" id="tp2"></div><figcaption>② 一邊停、一邊行：中等</figcaption></figure>
+    <figure class="fig"><div class="art" id="tp3"></div><figcaption>③ 一邊後退、一邊前進：急轉（接近原地轉）</figcaption></figure>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:24%">方法</th><th style="width:5.5em">左側馬達</th><th style="width:5.5em">右側馬達</th><th style="width:3.5em">轉得</th><th>好處</th><th>壞處</th></tr></thead>
+    <tbody>
+      <tr><td>① 一邊慢、一邊快</td><td>前進 20</td><td>前進 40</td><td>最輕</td><td>車身最順</td><td>轉得不夠急，急彎會衝出線</td></tr>
+      <tr><td>② 一邊停、一邊行</td><td>停止</td><td>前進 40</td><td>中等</td><td>順，少擺動</td><td>速度低時推不動；急彎容易脫線</td></tr>
+      <tr><td>③ 一邊後退、一邊前進</td><td>後退 20</td><td>前進 40</td><td>最急</td><td>最穩陣，急彎也跟得到</td><td>車身會左右擺</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">向右轉就把左右調轉。</p>
+  <div class="callout key"><span class="ttl">今堂用 ③ 一邊後退、一邊前進</span>8 字線的彎位急，③ 轉得最急、最不容易脫線；上一課已經用 ③，今堂只要<b>改數字</b>，一堂內做得到。① 和 ② 留給做得快的組別挑戰。</div>
+
+  <h3>優化巡線程式：改數字</h3>
+  <div id="optBox">
+  <p>程式的結構和上一課一樣，只改數字，而且「否則」改為後退：</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>感應器</th><th>小車要做什麼</th><th>上一課</th><th>今課（起步數字）</th></tr></thead>
+    <tbody>
+      <tr><td>M ＝ 1</td><td>直行</td><td>全部馬達 前進 20</td><td>全部馬達 前進 <b>40</b></td></tr>
+      <tr><td>L1 ＝ 1</td><td>向左轉</td><td>左側 後退 10、右側 前進 20</td><td>左側 後退 <b>20</b>、右側 前進 <b>40</b></td></tr>
+      <tr><td>R1 ＝ 1</td><td>向右轉</td><td>左側 前進 20、右側 後退 10</td><td>左側 前進 <b>40</b>、右側 後退 <b>20</b></td></tr>
+      <tr><td>都是 0（否則）</td><td>脫線</td><td>全部馬達 停止</td><td><b>全部馬達 後退 20</b></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout key"><span class="ttl">「否則」由停止改為後退</span>上一課脫線就停車。今課改為<b>後退</b>：小車退回去，感應器會再看到黑線，然後繼續走，不用人手幫忙。</div>
+  <figure class="fig zoomable"><div class="art fcwrap" id="opt"></div><figcaption>優化後巡線程式的流程圖（③）</figcaption></figure>
+  <figure class="fig narrow zoomable"><div class="art"><img src="../assets/img/blocks-opt.png" alt="優化後的巡線程式：如果M=1前進40；否則如果L1=1左後退20右前進40；否則如果R1=1左前進40右後退20；否則全部馬達後退20"></div><figcaption>優化後的巡線程式（③）</figcaption></figure>
+  <div class="step"><h4><span class="sn">1</span>修改上一課的程式</h4>
+    <ol><li>開啟 <a href="https://makecode.microbit.org/" target="_blank" rel="noopener"><b>makecode.microbit.org</b></a>，打開上一課的專案。如果要開新專案（名稱：<code class="pname">班別_學號_flowbot</code>），先按「<b>擴展</b>」，按下面的「複製」，在搜尋欄按 <b>Ctrl＋V</b> 貼上，按 Enter，選 <b>maqueenPlusV2</b>。<div class="copybox" data-copy="https://github.com/DFRobot/pxt-DFRobot_MaqueenPlus_v20"></div></li>
+      <li>直行改成 <b>40</b>。</li>
+      <li>轉彎：後退的一邊改成 <b>20</b>，前進的一邊改成 <b>40</b>。</li>
+      <li>「否則」改成「全部馬達 後退 20」。</li></ol></div>
+  <div class="step"><h4><span class="sn">2</span>校準、下載、測試</h4>
+    <p>和上一課一樣：校準 → 下載 → 放在 8 字線的起點（黑線在車底正中）→ 開電源。同組一人用第 5 節的<b>計時器</b>計時，由起步到回到起點。</p></div>
+  <div class="step"><h4><span class="sn">3</span>逐步提速，目標 20 秒</h4>
+    <p>走得完之後，<b>直行</b>和轉彎時<b>前進的一邊</b>每次一齊加 10；轉彎時<b>後退的一邊</b>保持大約是一半。左右擺得厲害，就把後退的一邊減 10。<b>每次只改一樣</b>，並記錄秒數。</p></div>
+  </div>
+  <div class="callout safe">在地面測試；懸空會令感應器讀到 1，小車會繼續向前。</div>
+</section>
+
+<section class="card" id="s5" data-short="測試記錄">
+  <header><span class="num">5</span><h2>測試記錄：目標 20 秒</h2><span class="marks">10 分</span></header>
+  <p>每試一次填一行，把程式裏的數字<b>全部</b>照填，最後一欄會告訴你下一次改什麼。至少記錄 <b>3 次</b>。計時：小車起步按「開始」，回到起點按「停止」，再按「填入記錄表」。</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:30%">欄</th><th>填什麼</th></tr></thead>
+    <tbody>
+      <tr><td>直行</td><td>M ＝ 1 時「全部馬達 前進」的速度</td></tr>
+      <tr><td>後退的一邊</td><td>轉彎時向後轉的馬達速度（向左轉＝左側）</td></tr>
+      <tr><td>前進的一邊</td><td>轉彎時向前轉的馬達速度（向左轉＝右側）</td></tr>
+      <tr><td>否則後退</td><td>脫線時「全部馬達 後退」的速度</td></tr>
+    </tbody>
+  </table></div>
+  <div id="sw"></div>
+  <div id="tierlog"></div>
+  <h3>出了問題？</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:32%">現象</th><th>檢查</th></tr></thead>
+    <tbody>
+      <tr><td>在交叉位轉錯路</td><td>第一個判斷要是「M ＝ 1 → 前進」</td></tr>
+      <tr><td>彎位衝出黑線</td><td>直行減 10；或後退的一邊加 10（轉得更急）；左右有沒有調轉？</td></tr>
+      <tr><td>左右擺得很厲害</td><td>後退的一邊減 10</td></tr>
+      <tr><td>脫線後一直後退，回不到黑線</td><td>否則後退減到 10；放車時黑線要在車底正中</td></tr>
+      <tr><td>只會前進，不會修正</td><td>要用「否則如果」，次序是 M → L1 → R1</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="card" id="s6" data-short="老師驗收">
+  <header><span class="num">6</span><h2>老師驗收</h2><span class="marks">25 分</span></header>
+  <p>達到目標（或已盡力）後，請老師來看一次 8 字線，老師會揀選結果。</p>
+  <div id="verify"></div>
+  <div id="mclink" style="margin-top:12px"></div>
+  <h3>挑戰（做得快的組別）</h3>
+  <p>試試把轉彎改用 ① 或 ②，看看會不會更快、更順；或者看看用 ③ 最快可以幾秒走完 8 字線。</p>
+</section>
+
+<section class="card" id="s7" data-short="學習日誌">
+  <header><span class="num">7</span><h2>總結及學習日誌</h2></header>
+  <ol>
+    <li>流程圖：圓角＝開始，長方形＝動作，平行四邊形＝輸入，菱形＝判斷。</li>
+    <li>菱形一個接一個 ＝「否則如果」；箭頭回到上方 ＝「重複無限次」。</li>
+    <li>轉彎 3 種方法：一邊慢一邊快、一邊停一邊行、一邊後退一邊前進。</li>
+    <li>今堂用 ③：轉得最急、最穩陣；脫線就後退。車走得穩，就可以開得更快。</li>
+  </ol>
+  <h3>學習日誌（不計分）</h3>
+  <p class="small muted">你們最快幾秒走完 8 字線？直行和轉彎兩邊各用了什麼速度？</p>
+  <div id="log"></div>
+</section>
+
+<section class="card" id="submit" data-short="成績及交功課" data-nonext>
+  <header><span class="num">✓</span><h2>成績及交功課</h2></header>
+  <div id="scoretable"></div>
+  <div class="btnrow" id="submitBtns"></div>
+  <p class="small muted">完成必做項目後，可直接在這裏繳交。請只使用試用名單。</p>
+</section>
+
+<footer class="foot">中一設計與科技｜自動化與機械人｜第四堂</footer>
+</main>
+</div>
+
+<script src="../sim/engine.js"></script>
+<script src="../assets/art.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/submission.js"></script>
+<script>
+F1.start({ id: 'L4', key: 'f1dt:L4', theme: 'l4', title: '第四堂：流程圖與巡線優化', short: '第四堂', pair: true });
+var A = F1Art;
+
+/* ---- 1 符號 ---- */
+var LEG = [['term', '開始／結束', ['開始']], ['proc', '處理（動作）', ['全部馬達', '前進 20']], ['io', '輸入／輸出', ['讀取感應器']], ['dec', '判斷', ['M = 1 ？']]];
+document.getElementById('legend').innerHTML = LEG.map(function (l) {
+  var h = l[0] === 'dec' ? 76 : 54;
+  return '<figure class="fig" style="margin:0"><div class="art"><svg viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg">' + A.fcShape(l[0], 110, 55, 180, h, l[2], {}) + '</svg></div><figcaption>' + l[1] + '</figcaption></figure>';
+}).join('');
+function shapePic(k) { var h = k === 'dec' ? 80 : 52; return '<svg viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg"><rect width="220" height="110" fill="#fff"/>' + A.fcShape(k, 110, 55, 170, h, [], { palette: 'grey' }) + '</svg>'; }
+var KIND = [{ v: 'T', t: '開始／結束' }, { v: 'P', t: '處理（動作）' }, { v: 'IO', t: '輸入／輸出' }, { v: 'D', t: '判斷' }];
+F1.choice('#q-sym', { key: 'sym', label: '1. 符號辨認', sec: 's1', max: 5, shuffle: true, options: KIND, items: [
+  { id: 'a1', title: '這個符號叫什麼？', pic: shapePic('dec'), answer: 'D', why: '菱形＝判斷，一定有「是／否」兩條路。' },
+  { id: 'a2', title: '這個符號叫什麼？', pic: shapePic('term'), answer: 'T', why: '圓角長方形＝開始／結束。' },
+  { id: 'a3', title: '這個符號叫什麼？', pic: shapePic('io'), answer: 'IO', why: '平行四邊形＝輸入／輸出，例如讀取感應器。' },
+  { id: 'a4', title: '這個符號叫什麼？', pic: shapePic('proc'), answer: 'P', why: '長方形＝處理（動作），例如設置馬達。' }] });
+
+/* ---- 2 示範：自動風扇 ---- */
+(function () {
+  var p = 'fan' + A.uid() + '_', s = '<svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">' + A.markers(p);
+  s += A.fcArrow(p, '170,52 170,84') + A.fcArrow(p, '170,135 170,169') + A.fcArrow(p, '270,210 402,210', '是', 300, 201) + A.fcArrow(p, '170,250 170,284', '否', 178, 272);
+  s += A.fcLine('575,210 640,210') + A.fcLine('170,335 170,362') + A.fcArrow(p, '640,210 640,362 40,362 40,110 67,110');
+  s += A.fcShape('term', 170, 32, 160, 40, ['開始']) + A.fcShape('io', 170, 110, 200, 50, ['讀取溫度']) + A.fcShape('dec', 170, 210, 200, 80, ['溫度 > 28 ？']);
+  s += A.fcShape('proc', 490, 210, 170, 50, ['開風扇']) + A.fcShape('proc', 170, 310, 170, 50, ['關風扇']);
+  s += A.text(350, 390, '↑ 回到「讀取溫度」：不停重複', 13, '#5f6f82', 'middle', 600);
+  document.getElementById('fan').innerHTML = s + '</svg>';
+})();
+
+/* ---- 3 練習：巡線程式的流程圖（拖放） ---- */
+var FLOW = [
+  { kind: 'io', t: '讀取 L1、M、R1', d: ['讀取 L1、M、R1'] },
+  { kind: 'dec', t: 'M ＝ 1 ？', d: ['M = 1 ？'] }, { kind: 'proc', t: '全部馬達 前進 20', d: ['全部馬達', '前進 20'] },
+  { kind: 'dec', t: 'L1 ＝ 1 ？', d: ['L1 = 1 ？'] }, { kind: 'proc', t: '左側 後退 10、右側 前進 20', d: ['左側 後退 10', '右側 前進 20'] },
+  { kind: 'dec', t: 'R1 ＝ 1 ？', d: ['R1 = 1 ？'] }, { kind: 'proc', t: '左側 前進 20、右側 後退 10', d: ['左側 前進 20', '右側 後退 10'] },
+  { kind: 'proc', t: '全部馬達 停止', d: ['全部馬達 停止'] }];
+var FEX = [{ t: '結束', d: ['結束'] }, { t: '全部馬達 後退 20', d: ['全部馬達', '後退 20'] }];
+var FALL = FLOW.concat(FEX);
+var POS = [[210, 254, 240, 56], [210, 352, 210, 82], [565, 352, 215, 56], [210, 464, 210, 82], [565, 464, 215, 56], [210, 576, 210, 82], [565, 576, 215, 56], [210, 674, 210, 48]];
+function drawFlow(picked, marks) {
+  var p = 'fl' + A.uid() + '_', s = '<svg viewBox="0 0 790 790" xmlns="http://www.w3.org/2000/svg">' + A.markers(p);
+  s += A.fcArrow(p, '210,53 210,80') + A.fcArrow(p, '210,130 210,154') + A.fcArrow(p, '210,204 210,224') + A.fcArrow(p, '210,282 210,309');
+  [352, 464, 576].forEach(function (y) { s += A.fcArrow(p, '315,' + y + ' 455,' + y, '是', 334, y - 9) + A.fcLine('672,' + y + ' 730,' + y); });
+  s += A.fcArrow(p, '210,393 210,421', '否', 219, 412) + A.fcArrow(p, '210,505 210,533', '否', 219, 524) + A.fcArrow(p, '210,617 210,648', '否', 219, 636);
+  s += A.fcLine('210,698 210,742') + A.fcArrow(p, '730,352 730,742 40,742 40,254 87,254');
+  s += A.fcShape('term', 210, 32, 210, 42, ['開始']) + A.fcShape('proc', 210, 106, 210, 48, ['初始化麥昆Plus']) + A.fcShape('proc', 210, 180, 210, 48, ['暫停 1000']);
+  s += A.text(400, 768, '↑ 回到「讀取」：重複無限次', 13, '#5f6f82', 'middle', 600);
+  POS.forEach(function (q, i) {
+    var v = picked && picked[i], o = {}, lines;
+    if (v !== undefined && v !== '') lines = FALL[+v].d; else { lines = ['(' + (i + 1) + ')']; o = { fill: '#f7f9fc', stroke: '#a9b8cc', dash: true, size: 17, tcolor: '#7b8a9c' }; }
+    if (marks && marks[i] === true) o.stroke = '#1f9d55';
+    if (marks && marks[i] === false) { o.stroke = '#d63a3a'; o.fill = '#fdeaea'; }
+    s += A.fcShape(FLOW[i].kind, q[0], q[1], q[2], q[3], lines, o) + A.fcNum(q[0] + q[2] / 2 - 4, q[1] - q[3] / 2 + 4, i + 1);
+  });
+  return s + '</svg>';
+}
+var unlockOpt = F1.lock('#optBox', '先完成上面第 3 節的流程圖練習，並按「檢查答案」，這裏才會顯示要改的數字、優化後的流程圖和程式。');
+F1.flowdrag('#q-flow', { key: 'flow', label: '2. 巡線程式的流程圖', sec: 's3', max: 10, vb: [790, 790],
+  side: '<img src="../assets/img/blocks-line.png" alt="第三堂巡線程式">', sideTitle: '上一課的巡線程式',
+  hint: '先看形狀（菱形＝問題），再對照左邊的程式，由上至下填。',
+  slots: POS.map(function (q, i) { return { x: q[0], y: q[1], w: q[2], h: q[3], answer: String(i), label: '空格 (' + (i + 1) + ')' }; }),
+  cards: FALL.map(function (f, i) { return { v: String(i), t: f.t }; }),
+  draw: drawFlow, onFirst: unlockOpt });
+
+/* ---- 4 轉彎方法及優化後的流程圖 ---- */
+document.getElementById('map8').innerHTML = A.trackMap('eight');
+document.getElementById('tp1').innerHTML = A.turnPanel(1);
+document.getElementById('tp2').innerHTML = A.turnPanel(2);
+document.getElementById('tp3').innerHTML = A.turnPanel(3);
+(function () {
+  var p = 'op' + A.uid() + '_', s = '<svg viewBox="0 0 790 790" xmlns="http://www.w3.org/2000/svg">' + A.markers(p);
+  s += A.fcArrow(p, '210,53 210,80') + A.fcArrow(p, '210,130 210,154') + A.fcArrow(p, '210,204 210,224') + A.fcArrow(p, '210,282 210,309');
+  [352, 464, 576].forEach(function (y) { s += A.fcArrow(p, '315,' + y + ' 455,' + y, '是', 334, y - 9) + A.fcLine('672,' + y + ' 730,' + y); });
+  s += A.fcArrow(p, '210,393 210,421', '否', 219, 412) + A.fcArrow(p, '210,505 210,533', '否', 219, 524) + A.fcArrow(p, '210,617 210,648', '否', 219, 636);
+  s += A.fcLine('210,698 210,742') + A.fcArrow(p, '730,352 730,742 40,742 40,254 87,254');
+  s += A.fcShape('term', 210, 32, 210, 42, ['開始']) + A.fcShape('proc', 210, 106, 210, 48, ['初始化麥昆Plus']) + A.fcShape('proc', 210, 180, 210, 48, ['暫停 1000']);
+  s += A.fcShape('io', 210, 254, 240, 56, ['讀取 L1、M、R1']);
+  s += A.fcShape('dec', 210, 352, 210, 82, ['M = 1 ？']) + A.fcShape('proc', 565, 352, 215, 56, ['全部馬達', '前進 40']);
+  s += A.fcShape('dec', 210, 464, 210, 82, ['L1 = 1 ？']) + A.fcShape('proc', 565, 464, 215, 56, ['③ 左側 後退 20', '右側 前進 40']);
+  s += A.fcShape('dec', 210, 576, 210, 82, ['R1 = 1 ？']) + A.fcShape('proc', 565, 576, 215, 56, ['③ 左側 前進 40', '右側 後退 20']);
+  s += A.fcShape('proc', 210, 674, 210, 48, ['全部馬達 後退 20'], { stroke: '#e08600' });
+  s += A.text(400, 768, '↑ 回到「讀取」：重複無限次', 13, '#5f6f82', 'middle', 600);
+  document.getElementById('opt').innerHTML = s + '</svg>';
+})();
+
+/* ---- 5 測試記錄（③） ---- */
+var TR = [{ v: 'ok', t: '走完一圈 ✔', s: '走完 ✔' }, { v: 'out', t: '彎位衝出黑線', s: '衝出線' }, { v: 'swing', t: '左右擺得很厲害', s: '急擺' }, { v: 'cross', t: '在交叉位轉錯路', s: '交叉轉錯' }, { v: 'lost', t: '脫線後退，回不到黑線', s: '回不到線' }];
+F1.trials('#tierlog', { key: 'log20', label: '3. 8 字線測試記錄', max: 10, sec: 's5', minRows: 3,
+  cols: [{ k: 'sp', label: '直行', type: 'number', ph: '40', w: '5em' },
+    { k: 'tb', label: '後退的一邊', type: 'number', ph: '20', w: '5.5em' }, { k: 'tf', label: '前進的一邊', type: 'number', ph: '40', w: '5.5em' },
+    { k: 'bk', label: '否則後退', type: 'number', ph: '20', w: '5em' },
+    { k: 'jd', label: '結果', type: 'select', options: TR, w: '7.5em' }, { k: 'sec', label: '秒數', type: 'number', ph: '25', w: '5em' }],
+  example: ['40', '20', '40', '20', '走完 ✔', '28', '未夠快：直行 50、前進的一邊 50、後退的一邊 25'],
+  next: function (r) {
+    var sp = parseFloat(r.sp), tb = parseFloat(r.tb), tf = parseFloat(r.tf), bk = parseFloat(r.bk), t = parseFloat(r.sec);
+    if (!(sp > 0) || !(tb >= 0) || !(tf > 0) || !(bk >= 0) || !r.jd) return '';
+    if (r.jd === 'ok') {
+      if (!(t > 0)) return '<span style="color:var(--amber)">↑ 請填秒數</span>';
+      if (t <= 20) return '<b style="color:var(--ok)">✔ 達標！請老師驗收</b>';
+      return '未夠快：直行 <b>' + (sp + 10) + '</b>、前進的一邊 <b>' + (tf + 10) + '</b>、後退的一邊 <b>' + Math.round((tf + 10) / 2) + '</b>';
+    }
+    if (r.jd === 'out') return '太快：直行減到 <b>' + Math.max(20, sp - 10) + '</b>；或後退的一邊加到 <b>' + (tb + 10) + '</b>';
+    if (r.jd === 'swing') return '後退的一邊減到 <b>' + Math.max(10, tb - 10) + '</b>';
+    if (r.jd === 'cross') return '把「M ＝ 1 → 前進」放在第一個';
+    return '否則後退減到 <b>' + Math.max(10, bk - 10) + '</b>；放車時黑線要在車底正中';
+  },
+  carry: function (last, nr) {
+    var t = parseFloat(last.sec), up = last.jd === 'ok' && t > 20;
+    ['sp', 'tb', 'tf', 'bk'].forEach(function (k) { if (last[k] !== undefined && last[k] !== '') nr[k] = last[k]; });
+    if (up) { if (parseFloat(last.sp) > 0) nr.sp = String(parseFloat(last.sp) + 10); if (parseFloat(last.tf) > 0) { nr.tf = String(parseFloat(last.tf) + 10); nr.tb = String(Math.round((parseFloat(last.tf) + 10) / 2)); } }
+  },
+  complete: function (r) { return ['sp', 'tb', 'tf', 'bk'].every(function (k) { return String(r[k] || '').trim(); }) && r.jd && (r.jd !== 'ok' || String(r.sec || '').trim()); } });
+
+F1.stopwatch('#sw', { label: '計時器：走一圈 8 字線用幾秒？', target: 20, fill: '#tierlog' });
+F1.verify('#verify', { key: 'real', label: '4. 真車走 8 字線（老師驗收）', what: '真車用優化後的巡線程式走 8 字線一圈', max: 25, sec: 's6', levels: [{ v: 'full', t: '圓滿完成', s: 25, d: '20 秒內走完 8 字線' }, { v: 'part', t: '部分完成', s: 15, d: '走完 8 字線，但超過 20 秒' }, { v: 'none', t: '未完成', s: 5, d: '未能走完 8 字線（參與分）' }] });
+F1.mclink('#mclink', { key: 'link', sec: 's6' });
+F1.text('#log', { key: 'log', label: '學習日誌', max: 0, min: 5, sec: 's7', placeholder: '例：直行 60、前進的一邊 60、後退的一邊 30，18 秒走完。' });
+
+function pname() { var s = F1.stu || {}; F1.$$('.pname').forEach(function (e) { e.textContent = (s.cls || '班別') + '_' + (s.num || '學號') + '_flowbot'; }); }
+pname(); document.addEventListener('input', function (e) { if (e.target.id === 'f_cls' || e.target.id === 'f_num') pname(); });
+F1.ready();
+</script>
+</body>
+</html>
